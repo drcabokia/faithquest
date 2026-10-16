@@ -2,11 +2,11 @@
 
 ## Current state
 
-The demo builds as a standard Next.js application without credentials, a custom server, Docker, or paid services. The Git remote is `https://github.com/drcabokia/faithquest.git`. Milestone commits exist locally; the initial push received HTTP 403 because the active account `drchristinelsk` lacks write access. No Vercel/Supabase account was created and nothing has been deployed.
+The demo builds as a standard Next.js application without credentials, a custom server, Docker, or paid services. The Git remote is `https://github.com/drcabokia/faithquest.git`. The initial five milestone commits are published to `main`; write access for `drchristinelsk` was verified and the earlier HTTP 403 blocker is resolved. The first GitHub CI run passed. No Vercel/Supabase account was created and no hosted site has been deployed.
 
 ## 1. Publish the Git history
 
-Grant the current GitHub account write access to the repository, or authenticate Git with an account that has permission. Do not use recovery codes as development credentials or commit them. Then run:
+The initial history has been published. For later validated milestones, use the connected account with repository write access. Do not use recovery codes as development credentials or commit them. Push subsequent commits with:
 
 ```powershell
 git push -u origin main
@@ -22,7 +22,7 @@ The `.gitignore` excludes local environment files, recovery-code files, the orig
 4. Select Node.js 22.x or a newer supported version compatible with package.json. Use `npm ci` as the install command and `npm run build` as the build command; use the default Next.js output settings.
 5. Leave environment variables empty for the demo. Deploy.
 6. Open the returned HTTPS address and run the acceptance flow in README. A new deployment URL/origin has separate demo browser data.
-7. Pushes to `main` trigger production deployments; pull requests receive previews according to your project settings. The included GitHub workflow runs lint, types, tests, build, and browser checks once pushed.
+7. Pushes to `main` trigger production deployments; pull requests receive previews according to your project settings. The included GitHub workflow runs lint, types, tests, build, and browser checks on pushes.
 
 No custom Vercel configuration is required. Stop any preview sharing if you do not want others to access the demo. Visitors each get their own browser-local data; there is no shared user database.
 

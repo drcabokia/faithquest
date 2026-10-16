@@ -22,8 +22,16 @@ Desktop and mobile dark-mode dashboard screenshots were captured and visually in
 ## Known verification limits
 
 - Supabase migrations are prepared, with reference-data consistency checks, but have **not been applied to PostgreSQL** or tested against live Supabase roles/RLS. No OAuth, production persistence, RPC, backup, or account-deletion implementation is claimed.
-- Vercel deployment and GitHub CI were prepared but not executed remotely. Initial Git pushes received HTTP 403 from the supplied repository.
+- Vercel deployment has not been performed. GitHub write access is now verified, the initial five commits have been published, and [the first CI run](https://github.com/drcabokia/faithquest/actions/runs/38897044834) passed.
 - Browser execution used Edge only. GitHub CI is configured for Chromium on Linux; Firefox/Safari and assistive-technology testing remain future validation.
 - Full `npm audit` reports five affected **development-tool packages** in a single `braces` stack-exhaustion advisory chain under Next’s ESLint tooling. The runtime-only audit is clean. The available npm automatic fix would downgrade the Next lint configuration across major versions, so it was not forced. Recheck the advisory/upstream patch before expanding untrusted development-tool inputs. No assertion of a fully clean development dependency audit is made.
 
 Production readiness requires the gates in AUTH_AND_SECURITY.md, not only a successful application build.
+
+## Progress review
+
+Local lint, strict TypeScript, and all 20 unit/content tests passed again on 16 October 2026. The Git working tree was clean before this review. The user's running development server was left intact; the earlier local production-build and five browser-test passes were not represented as fresh runs. Database migrations remain unexecuted against a live PostgreSQL/Supabase instance.
+
+The first GitHub Actions run passed on Ubuntu for application commit `e4d1c377c6b59023a4e2db9f8116124e1bcf7b02`: clean npm install, lint, TypeScript, 20 unit/content tests, production build, Chromium installation, and all five browser acceptance tests. The current local landing page and dashboard also returned HTTP 200 without restarting the user's development server.
+
+GitHub emitted non-blocking runner maintenance annotations: the v4 checkout/setup-node actions target deprecated Node.js 20 and were run under Node.js 24, and `ubuntu-latest` is scheduled to change runner images. Updating those workflow dependencies/pinning the runner should be included in deployment maintenance; the verified run itself succeeded.
