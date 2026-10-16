@@ -1,0 +1,12 @@
+{
+  "translation": "World English Bible Classic",
+  "edition": "2020 stable text",
+  "source": "https://ebible.org/Scriptures/eng-web_vpl.zip",
+  "license": "Public domain",
+  "licenseUrl": "https://ebible.org/eng-web/copyright.htm",
+  "retrievedOn": "2026-10-16",
+  "archiveSha256": "116f3c1a22e7e2ff316bfdae7c9b082782517d4fc1095bc5cc9a2b614308165c",
+  "books": 66,
+  "chapters": 1189,
+  "note": "Protestant canon subset. Verse text preserved; reference identifiers normalized."
+}
