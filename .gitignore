@@ -1,0 +1,17 @@
+node_modules/
+.next/
+out/
+coverage/
+test-results/
+playwright-report/
+*.tsbuildinfo
+.env*
+!.env.example
+.vercel/
+*recovery-codes*
+*credentials*
+*.pem
+*.key
+.DS_Store
+npm-debug.log*
+*.log
