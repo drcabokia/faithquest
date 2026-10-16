@@ -33,6 +33,8 @@ export const stateSchema = z.object({
     z.object({
       answer: z.number().int().min(0).max(3),
       correct: z.boolean(),
+      correctOption: z.number().int().min(0).max(3).optional(),
+      explanation: z.string().optional(),
       date,
     }),
   ),
@@ -43,6 +45,7 @@ export const stateSchema = z.object({
       updatedAt: z.iso.datetime(),
     }),
   ),
+  earnedAchievements: z.array(z.string()).optional(),
   resume: z
     .object({ book: z.string(), chapter: z.number().int().positive() })
     .refine((ref) => CHAPTER_KEYS.has(`${ref.book}.${ref.chapter}`))
