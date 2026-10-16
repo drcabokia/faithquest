@@ -8,22 +8,22 @@ Next.js App Router renders route shells and the landing page. Interactive client
 
 `src/data` holds Bible metadata and editorial quiz content. `src/services` holds pure reading-plan/gamification functions and a `BibleContentProvider`. `src/lib` holds dates, validation, and persistence adapters. `src/components` contains the application shell, UI primitives, and feature screens. `src/app` owns route composition and metadata. Business rules do not depend on React or browser APIs.
 
-Demo state is versioned and validated before use. All writes go through a repository contract; save errors remain visible. Local demo content is private to a browser profile, not encrypted or synchronized, and must not be confused with production privacy guarantees. Multiple tabs should receive storage updates.
+Demo state is versioned and validated before use. All demo writes go through a synchronous snapshot repository contract; save errors remain visible. Production has a separate async command contract (`ProductionJourneyRepository`) so clients never submit authoritative XP snapshots. Local demo content is private to a browser profile, not encrypted or synchronized, and must not be confused with production privacy guarantees. Multiple tabs should receive storage updates.
 
 ## Routes
 
-| Route | Purpose |
-| --- | --- |
-| `/` | Brand, mission, demo entry |
-| `/login` | Honest demo entry and future Google-auth explanation |
-| `/dashboard` | Today's mission, XP, streak, activity, journey summary |
-| `/reading-plan` | Searchable/paged 365-day canonical schedule |
-| `/bible` | Book/chapter navigation, verified WEB text, chapter completion |
-| `/quiz` | Curated questions, explanations, one answer per question |
-| `/journal` | Private demo reflections with edit/history |
-| `/achievements` | Earned/locked milestones and book adventure map |
-| `/community` | Future fellowship design, no fake membership or ranking |
-| `/profile` | Display name, start date, timezone, theme, summary |
+| Route           | Purpose                                                        |
+| --------------- | -------------------------------------------------------------- |
+| `/`             | Brand, mission, demo entry                                     |
+| `/login`        | Honest demo entry and future Google-auth explanation           |
+| `/dashboard`    | Today's mission, XP, streak, activity, journey summary         |
+| `/reading-plan` | Searchable/paged 365-day canonical schedule                    |
+| `/bible`        | Book/chapter navigation, verified WEB text, chapter completion |
+| `/quiz`         | Curated questions, explanations, one answer per question       |
+| `/journal`      | Private demo reflections with edit/history                     |
+| `/achievements` | Earned/locked milestones and book adventure map                |
+| `/community`    | Future fellowship design, no fake membership or ranking        |
+| `/profile`      | Display name, start date, timezone, theme, summary             |
 
 ## Production boundary
 
