@@ -43,7 +43,7 @@ body {
   background: var(--background);
   color: var(--foreground);
   font:
-    14px/1.55 Arial,
+    1rem/1.55 Arial,
     Helvetica,
     sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -84,13 +84,13 @@ h3 {
   letter-spacing: -0.025em;
 }
 h1 {
-  font-size: 32px;
+  font-size: 2rem;
 }
 h2 {
-  font-size: 20px;
+  font-size: 1.25rem;
 }
 h3 {
-  font-size: 16px;
+  font-size: 1rem;
 }
 p {
   line-height: 1.7;
@@ -136,7 +136,7 @@ em {
   min-height: 44px;
   padding: 11px 20px;
   border-radius: 8px;
-  font-size: 13px;
+  font-size: 1rem;
   font-weight: 600;
   border: 1px solid transparent;
   transition:
@@ -167,7 +167,7 @@ em {
 }
 .button-sm {
   min-height: 37px;
-  font-size: 12px;
+  font-size: 1rem;
   padding: 8px 14px;
 }
 .button-icon {
@@ -180,7 +180,7 @@ em {
   align-items: center;
   gap: 7px;
   color: var(--primary);
-  font-size: 12px;
+  font-size: 1rem;
   font-weight: 600;
 }
 .text-link:hover {
@@ -207,7 +207,7 @@ em {
 }
 .eyebrow {
   display: block;
-  font-size: 10px;
+  font-size: 0.875rem;
   line-height: 1.5;
   font-weight: 600;
   letter-spacing: 0.12em;
@@ -217,13 +217,13 @@ em {
   color: var(--muted);
 }
 .small {
-  font-size: 12px;
+  font-size: 1rem;
 }
 .soft-label {
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  font-size: 11px;
+  font-size: 1rem;
   color: var(--muted);
   padding: 5px 9px;
   background: var(--soft);
@@ -238,7 +238,7 @@ em {
   margin-bottom: 20px;
 }
 .section-heading h2 {
-  font-size: 17px;
+  font-size: 1.0625rem;
 }
 .section-heading .eyebrow {
   margin-bottom: 6px;
@@ -271,7 +271,7 @@ em {
   margin-bottom: 9px;
 }
 .page-description {
-  font-size: 13px;
+  font-size: 1rem;
   color: var(--muted);
   margin-top: 9px;
 }
@@ -289,7 +289,7 @@ em {
   margin-bottom: 8px;
 }
 .empty-state p {
-  font-size: 13px;
+  font-size: 1rem;
   max-width: 500px;
   margin: 0 auto 16px;
 }
@@ -328,7 +328,7 @@ em {
   border: 1px solid var(--border);
   border-radius: 10px;
   color: var(--muted);
-  font-size: 12px;
+  font-size: 1rem;
   margin: 20px 0;
 }
 .error-banner {
@@ -338,11 +338,11 @@ em {
   padding: 14px 18px;
   border-radius: 10px;
   margin-bottom: 20px;
-  font-size: 13px;
+  font-size: 1rem;
 }
 .field-error {
   color: #b34839;
-  font-size: 12px;
+  font-size: 1rem;
   margin: 12px 0;
 }
 .toast-region {
@@ -366,11 +366,11 @@ em {
   align-items: center;
   gap: 12px;
   animation: toast-in 0.3s ease-out;
-  font-size: 13px;
+  font-size: 1rem;
 }
 .toast-spark {
   color: #e8c86d;
-  font-size: 23px;
+  font-size: 1.4375rem;
 }
 .brand {
   display: flex;
@@ -380,7 +380,7 @@ em {
   white-space: nowrap;
 }
 .brand > span {
-  font-size: 22px;
+  font-size: 1.375rem;
   font-weight: 600;
   letter-spacing: -0.055em;
   line-height: 1.1;
@@ -391,7 +391,7 @@ em {
 }
 .brand small {
   display: block;
-  font-size: 7px;
+  font-size: 0.75rem;
   letter-spacing: 0.14em;
   font-weight: 500;
   margin-top: 7px;
@@ -412,17 +412,17 @@ em {
   margin: 0 6px 39px;
 }
 .sidebar .brand > span {
-  font-size: 23px;
+  font-size: 1.4375rem;
 }
 .sidebar .brand svg {
   width: 38px;
   height: 38px;
 }
 .sidebar .brand small {
-  font-size: 6px;
+  font-size: 0.75rem;
 }
 .nav-caption {
-  font-size: 9px;
+  font-size: 0.875rem;
   letter-spacing: 0.16em;
   color: #909990;
   padding-left: 16px;
@@ -441,7 +441,7 @@ em {
   padding: 11px 15px;
   border-radius: 8px;
   color: var(--muted);
-  font-size: 12px;
+  font-size: 1rem;
 }
 .nav-link:hover {
   background: var(--background);
@@ -453,7 +453,7 @@ em {
   font-weight: 600;
 }
 .nav-new {
-  font-size: 7px;
+  font-size: 0.875rem;
   letter-spacing: 0.06em;
   padding: 2px 5px;
   background: var(--cream);
@@ -477,12 +477,12 @@ em {
   color: #7d9d7b;
 }
 .sidebar-quote p {
-  font-size: 11px;
+  font-size: 1rem;
   line-height: 1.8;
   margin: 9px 0;
 }
 .sidebar-quote > span {
-  font-size: 7px;
+  font-size: 1rem;
   letter-spacing: 0.1em;
   color: var(--muted);
 }
@@ -507,7 +507,7 @@ em {
   box-shadow: 0 0 0 1px var(--border);
   border-radius: 50%;
   font:
-    600 14px Georgia,
+    600 1rem Georgia,
     serif;
 }
 .sidebar-profile div {
@@ -516,14 +516,14 @@ em {
 }
 .sidebar-profile strong {
   display: block;
-  font-size: 11px;
+  font-size: 1rem;
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
 }
 .sidebar-profile small {
   display: block;
-  font-size: 9px;
+  font-size: 1rem;
   color: var(--muted);
   margin-top: 3px;
 }
@@ -547,7 +547,7 @@ em {
   display: flex;
   align-items: center;
   gap: 14px;
-  font-size: 11px;
+  font-size: 1rem;
 }
 .breadcrumb-home {
   color: var(--muted);
@@ -573,7 +573,7 @@ em {
   border: 1px solid var(--border);
   border-radius: 20px;
   color: var(--primary);
-  font-size: 8px;
+  font-size: 0.875rem;
   font-weight: 600;
   letter-spacing: 0.08em;
   padding: 5px 9px;
@@ -588,7 +588,7 @@ em {
 .avatar-small {
   height: 30px;
   width: 30px;
-  font-size: 12px;
+  font-size: 1rem;
 }
 .content {
   padding: 34px 38px 0;
@@ -600,7 +600,7 @@ em {
   align-items: center;
   justify-content: space-between;
   gap: 14px;
-  font-size: 9px;
+  font-size: 1rem;
   color: var(--muted);
   padding: 27px 0;
   margin-top: 25px;
@@ -638,7 +638,7 @@ em {
   margin-bottom: 26px;
 }
 .dashboard-heading h1 {
-  font-size: 29px;
+  font-size: 1.8125rem;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -650,7 +650,7 @@ em {
   transform: rotate(-12deg);
 }
 .dashboard-heading .eyebrow {
-  font-size: 9px;
+  font-size: 0.875rem;
   display: flex;
   align-items: center;
   gap: 7px;
@@ -661,7 +661,7 @@ em {
   background: var(--gold);
 }
 .date-label {
-  font-size: 10px;
+  font-size: 1rem;
   color: var(--muted);
   white-space: nowrap;
   padding-top: 25px;
@@ -711,27 +711,27 @@ em {
   min-width: 0;
 }
 .stat-label {
-  font-size: 8px;
+  font-size: 0.875rem;
   letter-spacing: 0.08em;
   color: var(--muted);
   white-space: nowrap;
 }
 .stat-card strong {
   display: block;
-  font-size: 26px;
+  font-size: 1.625rem;
   letter-spacing: -0.04em;
   line-height: 1.2;
   margin: 7px 0 10px;
   font-weight: 500;
 }
 .stat-card strong > small {
-  font-size: 11px;
+  font-size: 1rem;
   color: var(--muted);
   letter-spacing: 0;
   font-weight: 400;
 }
 .stat-card p {
-  font-size: 8px;
+  font-size: 1rem;
   color: var(--muted);
   margin-top: 7px;
   line-height: 1.5;
@@ -773,7 +773,7 @@ em {
   z-index: 1;
 }
 .mission-kicker {
-  font-size: 8px;
+  font-size: 0.875rem;
   font-weight: 600;
   letter-spacing: 0.09em;
   display: flex;
@@ -782,7 +782,7 @@ em {
   color: #65785a;
 }
 .mission-kicker > span:last-child {
-  font-size: 7px;
+  font-size: 0.875rem;
   letter-spacing: 0.03em;
   padding: 3px 6px;
   border-radius: 4px;
@@ -797,7 +797,7 @@ em {
 }
 .mission-copy h2 {
   font:
-    400 31px/1.2 Georgia,
+    400 1.9375rem/1.2 Georgia,
     serif;
   letter-spacing: -0.04em;
   white-space: pre-line;
@@ -805,12 +805,12 @@ em {
   max-width: 350px;
 }
 .mission-reference {
-  font-size: 14px;
+  font-size: 1rem;
   font-weight: 500;
   color: var(--primary);
 }
 .mission-description {
-  font-size: 11px;
+  font-size: 1rem;
   color: var(--muted);
   margin: 7px 0 13px;
 }
@@ -818,7 +818,7 @@ em {
   display: flex;
   align-items: center;
   gap: 7px;
-  font-size: 9px;
+  font-size: 1rem;
   color: var(--muted);
   margin-bottom: 18px;
 }
@@ -830,7 +830,7 @@ em {
   margin: 0 3px;
 }
 .mission-copy .button {
-  font-size: 11px;
+  font-size: 1rem;
   padding: 10px 16px;
   min-height: 40px;
 }
@@ -838,7 +838,7 @@ em {
   display: flex;
   align-items: center;
   gap: 5px;
-  font-size: 8px;
+  font-size: 1rem;
   margin-top: 11px;
   color: var(--muted);
 }
@@ -864,7 +864,7 @@ em {
   align-items: center;
   gap: 14px;
   padding: 14px 28px;
-  font-size: 8px;
+  font-size: 1rem;
   color: var(--muted);
   z-index: 2;
 }
@@ -884,10 +884,10 @@ em {
 }
 .daily-steps .eyebrow,
 .journey-preview .eyebrow {
-  font-size: 8px;
+  font-size: 0.875rem;
 }
 .daily-steps .soft-label {
-  font-size: 9px;
+  font-size: 1rem;
   background: transparent;
 }
 .rhythm-row {
@@ -926,12 +926,12 @@ em {
 }
 .rhythm-row strong {
   display: block;
-  font-size: 11px;
+  font-size: 1rem;
   font-weight: 600;
 }
 .rhythm-row small {
   display: block;
-  font-size: 9px;
+  font-size: 1rem;
   color: var(--muted);
   margin-top: 4px;
 }
@@ -939,7 +939,7 @@ em {
   color: #9eaa9e;
 }
 .rhythm-reward {
-  font-size: 9px;
+  font-size: 1rem;
   color: var(--gold);
   white-space: nowrap;
 }
@@ -983,15 +983,15 @@ em {
   box-shadow: 0 0 0 1px #9bb596;
 }
 .journey-book strong {
-  font-size: 10px;
+  font-size: 1rem;
 }
 .journey-book small {
-  font-size: 8px;
+  font-size: 1rem;
   color: var(--muted);
   margin: 3px 0 8px;
 }
 .book-count {
-  font-size: 7px;
+  font-size: 1rem;
   color: #899584;
 }
 .verse-card {
@@ -1007,7 +1007,7 @@ em {
   gap: 6px;
 }
 .verse-heading .eyebrow {
-  font-size: 8px;
+  font-size: 0.875rem;
   letter-spacing: 0.09em;
 }
 .verse-heading > svg {
@@ -1016,13 +1016,13 @@ em {
 }
 .verse-card blockquote {
   font:
-    400 24px/1.4 Georgia,
+    400 1.5rem/1.4 Georgia,
     serif;
   letter-spacing: -0.02em;
   margin: 23px 0 16px;
 }
 .verse-reference {
-  font-size: 8px;
+  font-size: 0.875rem;
   letter-spacing: 0.09em;
   color: #7b8d6c;
 }
@@ -1032,12 +1032,12 @@ em {
   margin: 19px 0 13px;
 }
 .verse-card > p {
-  font-size: 10px;
+  font-size: 1rem;
   color: var(--muted);
   margin-bottom: 10px;
 }
 .verse-card .text-link {
-  font-size: 10px;
+  font-size: 1rem;
 }
 .level-card,
 .activity-card {
@@ -1045,7 +1045,7 @@ em {
 }
 .level-card .section-heading h2,
 .activity-card .section-heading h2 {
-  font-size: 14px;
+  font-size: 1rem;
 }
 .level-card .section-heading > svg {
   color: #a5b39c;
@@ -1070,31 +1070,31 @@ em {
   box-shadow: inset 0 0 0 4px var(--card);
 }
 .level-summary small {
-  font-size: 8px;
+  font-size: 1rem;
   color: var(--muted);
   letter-spacing: 0.1em;
 }
 .level-summary strong {
   display: block;
-  font-size: 13px;
+  font-size: 1rem;
   margin-top: 4px;
 }
 .level-progress-label {
   display: flex;
   justify-content: space-between;
-  font-size: 8px;
+  font-size: 1rem;
   color: var(--muted);
   margin-bottom: 7px;
 }
 .level-card > p {
-  font-size: 9px;
+  font-size: 1rem;
   margin-top: 10px;
 }
 .activity-card .section-heading {
   margin-bottom: 5px;
 }
 .activity-card .soft-label {
-  font-size: 8px;
+  font-size: 1rem;
   background: transparent;
   padding: 0;
 }
@@ -1104,7 +1104,7 @@ em {
   min-width: 0;
 }
 .activity-card > p {
-  font-size: 9px;
+  font-size: 1rem;
   margin-top: 8px;
 }
 .gentle-reminder {
@@ -1114,7 +1114,7 @@ em {
   gap: 9px;
   margin: 25px 0 0;
   color: var(--muted);
-  font-size: 10px;
+  font-size: 1rem;
   text-align: center;
 }
 .gentle-reminder svg {
@@ -1144,12 +1144,12 @@ em {
 }
 .plan-overview h2 {
   font:
-    27px Georgia,
+    1.6875rem Georgia,
     serif;
   margin: 6px 0;
 }
 .plan-overview p {
-  font-size: 11px;
+  font-size: 1rem;
   color: var(--muted);
   margin-bottom: 15px;
 }
@@ -1226,7 +1226,7 @@ select {
 }
 .day-number {
   font:
-    22px Georgia,
+    1.375rem Georgia,
     serif;
   color: #95a38b;
   display: flex;
@@ -1251,24 +1251,24 @@ select {
   align-items: center;
   gap: 10px;
   color: var(--muted);
-  font-size: 9px;
+  font-size: 1rem;
 }
 .today-pill {
-  font-size: 7px;
+  font-size: 0.875rem;
   background: #d9e7cd;
   color: #567440;
   padding: 2px 5px;
   border-radius: 3px;
 }
 .plan-row h3 {
-  font-size: 14px;
+  font-size: 1.25rem;
   margin: 4px 0;
 }
 .plan-row .small {
-  font-size: 10px;
+  font-size: 1rem;
 }
 .plan-row-status {
-  font-size: 10px;
+  font-size: 1.125rem;
   color: var(--gold);
 }
 .plan-row > svg {
@@ -1282,7 +1282,7 @@ select {
   margin: 22px 0;
 }
 .pagination > span {
-  font-size: 11px;
+  font-size: 1rem;
   color: var(--muted);
 }
 .coming-plans {
@@ -1291,7 +1291,7 @@ select {
   margin-top: 30px;
 }
 .coming-plans > p {
-  font-size: 12px;
+  font-size: 1rem;
   color: var(--muted);
   margin-top: 9px;
 }
@@ -1319,7 +1319,7 @@ select {
   padding: 6px 9px;
   background: var(--card);
   border: 1px solid var(--border);
-  font-size: 10px;
+  font-size: 1rem;
   color: var(--muted);
 }
 .chapter-chip.selected {
@@ -1332,7 +1332,7 @@ select {
   border-color: var(--primary);
 }
 .mission-done {
-  font-size: 10px;
+  font-size: 1rem;
   display: flex;
   align-items: center;
   gap: 5px;
@@ -1350,7 +1350,7 @@ select {
   display: flex;
   flex-direction: column;
   gap: 5px;
-  font-size: 10px;
+  font-size: 1rem;
   color: var(--muted);
 }
 .reader-controls label:first-child {
@@ -1375,7 +1375,7 @@ select {
 }
 .reader-title h2 {
   font:
-    400 40px Georgia,
+    400 2.5rem Georgia,
     serif;
   margin: 15px 0;
 }
@@ -1384,11 +1384,11 @@ select {
 }
 .reader-ornament {
   color: var(--gold);
-  font-size: 15px;
+  font-size: 1rem;
 }
 .scripture-text {
   font:
-    19px/1.95 Georgia,
+    1.1875rem/1.95 Georgia,
     serif;
   color: var(--foreground);
 }
@@ -1399,7 +1399,7 @@ select {
 .scripture-text sup {
   display: inline-block;
   font:
-    10px Arial,
+    1rem Arial,
     sans-serif;
   color: var(--gold);
   padding: 0 8px 0 7px;
@@ -1419,15 +1419,15 @@ select {
   gap: 18px;
 }
 .reader-completion strong {
-  font-size: 13px;
+  font-size: 1rem;
 }
 .reader-completion p {
-  font-size: 10px;
+  font-size: 1rem;
   color: var(--muted);
   margin-top: 4px;
 }
 .reader-completion .button {
-  font-size: 11px;
+  font-size: 1rem;
 }
 .reader-pagination {
   max-width: 840px;
@@ -1441,7 +1441,7 @@ select {
   text-align: center;
   margin: 25px auto;
   color: var(--muted);
-  font-size: 10px;
+  font-size: 1rem;
 }
 .content-attribution a {
   text-decoration: underline;
@@ -1453,7 +1453,7 @@ select {
   margin-bottom: 25px;
 }
 .quiz-intro > label {
-  font-size: 10px;
+  font-size: 1rem;
   color: var(--muted);
   display: flex;
   flex-direction: column;
@@ -1476,10 +1476,10 @@ select {
 }
 .quiz-reward {
   color: var(--gold);
-  font-size: 8px;
+  font-size: 1rem;
 }
 .quiz-card h2 {
-  font-size: 20px;
+  font-size: 1.25rem;
   margin: 17px 0 22px;
   line-height: 1.45;
 }
@@ -1500,7 +1500,7 @@ select {
   border: 1px solid var(--border);
   cursor: pointer;
   position: relative;
-  font-size: 13px;
+  font-size: 1rem;
 }
 .answer-option > input {
   position: absolute;
@@ -1525,7 +1525,7 @@ select {
   height: 27px;
   border: 1px solid var(--border);
   border-radius: 5px;
-  font-size: 10px;
+  font-size: 1rem;
   color: var(--muted);
   background: var(--background);
 }
@@ -1547,7 +1547,7 @@ select {
   background: var(--soft);
   border-radius: 9px;
   padding: 18px;
-  font-size: 12px;
+  font-size: 1rem;
 }
 .answer-explanation strong {
   display: block;
@@ -1561,11 +1561,11 @@ select {
   align-items: center;
   gap: 7px;
   font-weight: 600;
-  font-size: 11px;
+  font-size: 1rem;
   margin-top: 10px;
 }
 .answer-explanation > span {
-  font-size: 9px;
+  font-size: 1rem;
   color: var(--gold);
   display: block;
   margin-top: 12px;
@@ -1584,21 +1584,21 @@ select {
 }
 .quiz-summary h2 {
   margin: 12px 0 8px;
-  font-size: 19px;
+  font-size: 1.1875rem;
 }
 .quiz-summary p {
-  font-size: 11px;
+  font-size: 1rem;
   color: var(--muted);
 }
 .xp-large {
   display: block;
-  font-size: 29px;
+  font-size: 1.8125rem;
   font-weight: 500;
   color: var(--primary);
   margin: 20px 0;
 }
 .xp-large small {
-  font-size: 11px;
+  font-size: 1rem;
   color: var(--muted);
 }
 .quiz-history h3 {
@@ -1607,7 +1607,7 @@ select {
 .quiz-history > div {
   display: flex;
   gap: 10px;
-  font-size: 11px;
+  font-size: 1rem;
   padding: 12px 0;
   border-bottom: 1px solid var(--border);
   color: var(--primary);
@@ -1618,7 +1618,7 @@ select {
 .quiz-history small {
   display: block;
   color: var(--muted);
-  font-size: 9px;
+  font-size: 1rem;
   margin-top: 4px;
 }
 .journal-layout,
@@ -1636,26 +1636,26 @@ select {
 }
 .reflection-prompts h2 {
   font:
-    400 25px/1.4 Georgia,
+    400 1.5625rem/1.4 Georgia,
     serif;
   margin: 12px 0 10px;
 }
 .reflection-prompts p {
-  font-size: 11px;
+  font-size: 1rem;
   color: var(--muted);
 }
 .journal-editor {
   padding: 28px;
 }
 .journal-editor h2 {
-  font-size: 22px;
+  font-size: 1.375rem;
   margin: 9px 0;
 }
 .journal-editor > p {
-  font-size: 12px;
+  font-size: 1rem;
 }
 .journal-editor label {
-  font-size: 11px;
+  font-size: 1rem;
   display: block;
   font-weight: 600;
   margin: 24px 0 10px;
@@ -1665,7 +1665,7 @@ select {
   resize: vertical;
   min-height: 220px;
   font:
-    17px/1.9 Georgia,
+    1.0625rem/1.9 Georgia,
     serif;
   background: var(--background);
   padding: 18px 20px;
@@ -1679,10 +1679,10 @@ select {
 }
 .editor-footer > span {
   color: var(--muted);
-  font-size: 9px;
+  font-size: 1rem;
 }
 .journal-editor > p:last-child {
-  font-size: 10px;
+  font-size: 1rem;
 }
 .journal-history {
   padding: 24px;
@@ -1691,10 +1691,10 @@ select {
   padding: 35px 0 10px;
 }
 .journal-history .empty-state h3 {
-  font-size: 14px;
+  font-size: 1rem;
 }
 .journal-history .empty-state p {
-  font-size: 11px;
+  font-size: 1rem;
 }
 .entry-list {
   margin-top: 20px;
@@ -1710,11 +1710,11 @@ select {
   color: var(--foreground);
 }
 .entry-preview strong {
-  font-size: 11px;
+  font-size: 1rem;
 }
 .entry-preview p {
   font:
-    13px/1.7 Georgia,
+    1rem/1.7 Georgia,
     serif;
   color: var(--muted);
   margin-top: 7px;
@@ -1736,7 +1736,7 @@ select {
   color: #93a58e;
 }
 .privacy-note p {
-  font-size: 10px;
+  font-size: 1rem;
   line-height: 1.8;
 }
 .achievement-level {
@@ -1757,11 +1757,11 @@ select {
 .achievement-level h2 {
   margin: 7px 0 14px;
   font:
-    400 25px Georgia,
+    400 1.5625rem Georgia,
     serif;
 }
 .achievement-level p {
-  font-size: 10px;
+  font-size: 1rem;
   color: var(--muted);
   margin-top: 9px;
 }
@@ -1779,7 +1779,7 @@ select {
   justify-content: center;
   background: var(--background);
   border: 1px solid var(--border);
-  font-size: 10px;
+  font-size: 1rem;
   color: var(--muted);
 }
 .level-ladder > span.reached {
@@ -1797,7 +1797,7 @@ select {
   text-align: center;
 }
 .badge-status {
-  font-size: 7px;
+  font-size: 0.875rem;
   letter-spacing: 0.06em;
   display: flex;
   align-items: center;
@@ -1827,11 +1827,11 @@ select {
   color: var(--primary);
 }
 .badge-card h2 {
-  font-size: 14px;
+  font-size: 1.25rem;
   margin-bottom: 9px;
 }
 .badge-card p {
-  font-size: 10px;
+  font-size: 1rem;
   color: var(--muted);
   max-width: 150px;
   margin: auto;
@@ -1844,7 +1844,7 @@ select {
 }
 .testament > h3 {
   font:
-    400 22px Georgia,
+    400 1.375rem Georgia,
     serif;
   margin-bottom: 17px;
 }
@@ -1878,11 +1878,11 @@ select {
   margin-bottom: 10px;
 }
 .map-book strong {
-  font-size: 11px;
+  font-size: 1rem;
 }
 .map-book small {
   color: var(--muted);
-  font-size: 9px;
+  font-size: 1rem;
   margin: 5px 0 10px;
 }
 .map-book .progress {
@@ -1904,13 +1904,13 @@ select {
 }
 .settings-card label:not(.theme-options label) {
   display: block;
-  font-size: 11px;
+  font-size: 1rem;
   font-weight: 600;
   margin: 22px 0 8px;
 }
 .settings-card input:not([type="radio"]) {
   width: 100%;
-  font-size: 12px;
+  font-size: 1rem;
 }
 .settings-card input:disabled {
   opacity: 0.65;
@@ -1921,7 +1921,7 @@ select {
   gap: 20px;
 }
 .settings-card .small {
-  font-size: 10px;
+  font-size: 1rem;
   margin-top: 10px;
 }
 .readonly-setting {
@@ -1932,12 +1932,12 @@ select {
   background: var(--background);
   border-radius: 8px;
   padding: 13px;
-  font-size: 11px;
+  font-size: 1rem;
 }
 .readonly-setting span {
   margin-left: auto;
   color: var(--muted);
-  font-size: 7px;
+  font-size: 0.875rem;
   letter-spacing: 0.08em;
 }
 .theme-options {
@@ -1955,7 +1955,7 @@ select {
   border: 1px solid var(--border);
   padding: 17px 12px;
   border-radius: 8px;
-  font-size: 11px;
+  font-size: 1rem;
   cursor: pointer;
   color: var(--muted);
 }
@@ -1981,11 +1981,11 @@ select {
 .avatar-large {
   width: 65px;
   height: 65px;
-  font-size: 30px;
+  font-size: 1.875rem;
   border-width: 5px;
 }
 .profile-card h2 {
-  font-size: 20px;
+  font-size: 1.25rem;
   margin: 18px 0 12px;
 }
 .profile-stats {
@@ -1999,12 +1999,12 @@ select {
 .profile-stats span {
   display: flex;
   flex-direction: column;
-  font-size: 8px;
+  font-size: 1rem;
   color: var(--muted);
 }
 .profile-stats strong {
   font-weight: 500;
-  font-size: 21px;
+  font-size: 1.3125rem;
   color: var(--foreground);
   margin-bottom: 4px;
 }
@@ -2016,17 +2016,17 @@ select {
   color: var(--primary);
 }
 .backup-card h2 {
-  font-size: 17px;
+  font-size: 1.0625rem;
   margin: 15px 0 10px;
 }
 .backup-card p {
-  font-size: 11px;
+  font-size: 1rem;
   color: var(--muted);
   margin-bottom: 18px;
 }
 .backup-card .button {
   width: 100%;
-  font-size: 11px;
+  font-size: 1rem;
 }
 .community-hero {
   text-align: center;
@@ -2047,7 +2047,7 @@ select {
 }
 .community-hero h2 {
   font:
-    400 36px/1.25 Georgia,
+    400 2.25rem/1.25 Georgia,
     serif;
   margin: 20px 0;
 }
@@ -2055,7 +2055,7 @@ select {
   max-width: 540px;
   margin: 0 auto 25px;
   color: var(--muted);
-  font-size: 13px;
+  font-size: 1rem;
 }
 .community-values {
   display: grid;
@@ -2073,7 +2073,7 @@ select {
   margin: 17px 0 10px;
 }
 .community-values p {
-  font-size: 12px;
+  font-size: 1rem;
   color: var(--muted);
 }
 .landing {
@@ -2093,10 +2093,10 @@ select {
   display: flex;
   align-items: center;
   gap: 29px;
-  font-size: 12px;
+  font-size: 1rem;
 }
 .landing-nav .brand > span {
-  font-size: 24px;
+  font-size: 1.5rem;
 }
 .landing-hero {
   display: grid;
@@ -2111,11 +2111,11 @@ select {
   gap: 7px;
   color: #7f9871;
   letter-spacing: 0.12em;
-  font-size: 9px;
+  font-size: 0.875rem;
 }
 .landing-hero h1 {
   font:
-    400 clamp(42px, 4.3vw, 64px)/1.12 Georgia,
+    400 clamp(2.625rem, 4.3vw, 4rem)/1.12 Georgia,
     serif;
   letter-spacing: -0.045em;
   margin: 26px 0;
@@ -2124,7 +2124,7 @@ select {
   color: #6f8d62;
 }
 .landing-hero > div > p {
-  font-size: 13px;
+  font-size: 1rem;
   color: var(--muted);
   max-width: 390px;
   line-height: 1.9;
@@ -2137,10 +2137,10 @@ select {
   flex-wrap: wrap;
 }
 .landing-actions .text-link {
-  font-size: 11px;
+  font-size: 1rem;
 }
 .landing-note {
-  font-size: 9px;
+  font-size: 1rem;
   color: var(--muted);
   display: flex;
   align-items: center;
@@ -2163,7 +2163,7 @@ select {
   align-items: center;
   justify-content: space-between;
   padding: 0 35px;
-  font-size: 8px;
+  font-size: 0.875rem;
   letter-spacing: 0.08em;
   color: #7b8a6b;
   position: absolute;
@@ -2195,17 +2195,17 @@ select {
   margin: -12px 5px 0;
 }
 .visual-card .eyebrow {
-  font-size: 7px;
+  font-size: 0.875rem;
 }
 .visual-card strong {
   display: block;
   font:
-    400 21px Georgia,
+    400 1.3125rem Georgia,
     serif;
   margin: 4px 0;
 }
 .visual-card small {
-  font-size: 9px;
+  font-size: 1rem;
   color: var(--muted);
 }
 .icon-tile {
@@ -2220,7 +2220,7 @@ select {
 }
 .visual-xp {
   margin-left: auto;
-  font-size: 9px;
+  font-size: 1rem;
   background: var(--cream);
   color: var(--gold);
   border-radius: 6px;
@@ -2238,19 +2238,19 @@ select {
 .landing-strip > span {
   display: flex;
   flex-direction: column;
-  font-size: 10px;
+  font-size: 1rem;
   color: var(--muted);
   text-align: center;
   gap: 7px;
 }
 .landing-strip strong {
   font:
-    400 33px/1 Georgia,
+    400 2.0625rem/1 Georgia,
     serif;
   color: var(--foreground);
 }
 .landing-strip > p {
-  font-size: 15px;
+  font-size: 1rem;
   line-height: 1.45;
   padding-left: 35px;
   border-left: 1px solid var(--border);
@@ -2263,7 +2263,7 @@ select {
 }
 .landing-features > h2 {
   font:
-    400 35px/1.25 Georgia,
+    400 2.1875rem/1.25 Georgia,
     serif;
   max-width: 500px;
   margin: 15px 0 35px;
@@ -2285,11 +2285,11 @@ select {
   margin-bottom: 20px;
 }
 .feature-grid h3 {
-  font-size: 17px;
+  font-size: 1.0625rem;
   margin: 0 0 12px;
 }
 .feature-grid p {
-  font-size: 12px;
+  font-size: 1rem;
   color: var(--muted);
   line-height: 1.9;
 }
@@ -2307,11 +2307,11 @@ select {
 }
 .landing-invite h2 {
   font:
-    400 35px/1.3 Georgia,
+    400 2.1875rem/1.3 Georgia,
     serif;
 }
 .landing-invite > p {
-  font-size: 12px;
+  font-size: 1rem;
   color: var(--muted);
   margin: 16px 0 23px;
 }
@@ -2324,21 +2324,21 @@ select {
   padding: 28px 0;
 }
 .landing-footer .brand > span {
-  font-size: 18px;
+  font-size: 1.125rem;
 }
 .landing-footer .brand svg {
   height: 32px;
   width: 32px;
 }
 .landing-footer .brand small {
-  font-size: 5px;
+  font-size: 0.75rem;
 }
 .landing-footer > span {
-  font-size: 10px;
+  font-size: 1rem;
   color: var(--muted);
 }
 .landing-footer > a:last-child {
-  font-size: 10px;
+  font-size: 1rem;
   display: flex;
   gap: 5px;
   align-items: center;
@@ -2364,13 +2364,13 @@ select {
 }
 .login-card h1 {
   font:
-    400 32px Georgia,
+    400 2rem Georgia,
     serif;
   margin: 20px 0;
 }
 .login-card > p:not(.eyebrow) {
   color: var(--muted);
-  font-size: 12px;
+  font-size: 0.875rem;
 }
 .login-card > .button {
   width: 100%;
@@ -2405,10 +2405,10 @@ select {
     padding-top: 42px;
   }
   .dashboard-heading h1 {
-    font-size: 33px;
+    font-size: 2.0625rem;
   }
   .mission-copy h2 {
-    font-size: 37px;
+    font-size: 2.3125rem;
   }
   .mission-art {
     right: -40px;
@@ -2424,22 +2424,22 @@ select {
     grid-template-columns: minmax(0, 1fr) 310px;
   }
   .stat-label {
-    font-size: 9px;
+    font-size: 0.875rem;
   }
   .stat-card p {
-    font-size: 10px;
+    font-size: 1rem;
   }
   .rhythm-row strong {
-    font-size: 13px;
+    font-size: 1rem;
   }
   .rhythm-row small {
-    font-size: 11px;
+    font-size: 1rem;
   }
   .rhythm-row {
     padding: 20px 0;
   }
   .verse-card blockquote {
-    font-size: 27px;
+    font-size: 1.6875rem;
   }
 }
 @media (max-width: 1250px) {
@@ -2448,7 +2448,7 @@ select {
     padding-inline: 13px;
   }
   .sidebar .brand > span {
-    font-size: 21px;
+    font-size: 1.3125rem;
   }
   .app-main {
     margin-left: 216px;
@@ -2460,7 +2460,7 @@ select {
     padding-inline: 25px;
   }
   .dashboard-heading h1 {
-    font-size: 25px;
+    font-size: 1.5625rem;
   }
   .stats-grid {
     gap: 10px;
@@ -2478,13 +2478,13 @@ select {
     width: 17px;
   }
   .stat-label {
-    font-size: 7px;
+    font-size: 0.875rem;
   }
   .stat-card strong {
-    font-size: 24px;
+    font-size: 1.5rem;
   }
   .stat-card p {
-    font-size: 7px;
+    font-size: 1rem;
   }
   .dashboard-columns {
     grid-template-columns: minmax(0, 1fr) 245px;
@@ -2498,7 +2498,7 @@ select {
     padding-left: 23px;
   }
   .mission-copy h2 {
-    font-size: 28px;
+    font-size: 1.75rem;
   }
   .mission-art {
     right: -110px;
@@ -2513,27 +2513,27 @@ select {
     gap: 10px;
   }
   .rhythm-row strong {
-    font-size: 10px;
+    font-size: 1rem;
   }
   .rhythm-row small,
   .rhythm-reward {
-    font-size: 8px;
+    font-size: 1rem;
   }
   .verse-card {
     padding: 22px 20px;
   }
   .verse-card blockquote {
-    font-size: 23px;
+    font-size: 1.4375rem;
   }
   .verse-heading .eyebrow {
-    font-size: 7px;
+    font-size: 0.875rem;
   }
   .level-card,
   .activity-card {
     padding: 20px;
   }
   .level-summary strong {
-    font-size: 12px;
+    font-size: 1rem;
   }
   .badge-grid {
     gap: 12px;
@@ -2565,10 +2565,10 @@ select {
     height: 80px;
   }
   .plan-overview h2 {
-    font-size: 24px;
+    font-size: 1.5rem;
   }
   .plan-overview .button {
-    font-size: 11px;
+    font-size: 1rem;
     padding-inline: 13px;
   }
   .landing {
@@ -2578,7 +2578,7 @@ select {
     gap: 30px;
   }
   .landing-hero h1 {
-    font-size: 50px;
+    font-size: 3.125rem;
   }
   .landing-actions {
     gap: 16px;
@@ -2588,7 +2588,7 @@ select {
     gap: 9px;
   }
   .visual-card strong {
-    font-size: 18px;
+    font-size: 1.125rem;
   }
 }
 @media (max-width: 1050px) {
@@ -2605,10 +2605,10 @@ select {
     height: 35px;
   }
   .stat-label {
-    font-size: 8px;
+    font-size: 0.875rem;
   }
   .stat-card p {
-    font-size: 9px;
+    font-size: 1rem;
   }
   .dashboard-columns {
     grid-template-columns: minmax(0, 1fr);
@@ -2631,14 +2631,14 @@ select {
     min-height: 360px;
   }
   .mission-copy h2 {
-    font-size: 32px;
+    font-size: 2rem;
   }
   .rhythm-row strong {
-    font-size: 12px;
+    font-size: 1rem;
   }
   .rhythm-row small,
   .rhythm-reward {
-    font-size: 10px;
+    font-size: 1rem;
   }
   .badge-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -2678,7 +2678,7 @@ select {
     margin-left: auto;
   }
   .page-heading h1 {
-    font-size: 28px;
+    font-size: 1.75rem;
   }
   .page-heading {
     align-items: start;
@@ -2693,13 +2693,13 @@ select {
     padding: 20px;
   }
   .community-values h3 {
-    font-size: 14px;
+    font-size: 1rem;
   }
   .community-values p {
-    font-size: 11px;
+    font-size: 1rem;
   }
   .landing-hero h1 {
-    font-size: 44px;
+    font-size: 2.75rem;
   }
   .landing-actions {
     align-items: start;
@@ -2707,7 +2707,7 @@ select {
   }
   .visual-top {
     padding-inline: 25px;
-    font-size: 7px;
+    font-size: 0.875rem;
   }
   .visual-top > span:last-child {
     display: none;
@@ -2724,7 +2724,7 @@ select {
 }
 @media (max-width: 760px) {
   h1 {
-    font-size: 28px;
+    font-size: 1.75rem;
   }
   .sidebar {
     transform: translateX(-100%);
@@ -2758,7 +2758,7 @@ select {
     margin-bottom: 30px;
   }
   .sidebar .brand > span {
-    font-size: 23px;
+    font-size: 1.4375rem;
   }
   .mobile-close {
     width: 25px;
@@ -2791,7 +2791,7 @@ select {
     margin-bottom: 22px;
   }
   .dashboard-heading h1 {
-    font-size: 25px;
+    font-size: 1.5625rem;
     line-height: 1.35;
     display: block;
   }
@@ -2799,14 +2799,14 @@ select {
     display: none;
   }
   .dashboard-heading .eyebrow {
-    font-size: 8px;
+    font-size: 0.875rem;
   }
   .date-label {
-    font-size: 8px;
+    font-size: 1rem;
     padding-top: 3px;
   }
   .dashboard-heading .page-description {
-    font-size: 11px;
+    font-size: 1rem;
     max-width: 280px;
   }
   .stat-card {
@@ -2814,17 +2814,17 @@ select {
     gap: 10px;
   }
   .stat-card strong {
-    font-size: 26px;
+    font-size: 1.625rem;
   }
   .stats-grid {
     gap: 12px;
     margin-bottom: 20px;
   }
   .stat-label {
-    font-size: 8px;
+    font-size: 0.875rem;
   }
   .stat-card p {
-    font-size: 8px;
+    font-size: 1rem;
   }
   .stat-icon {
     width: 32px;
@@ -2839,12 +2839,12 @@ select {
     bottom: 10px;
   }
   .mission-copy h2 {
-    font-size: 30px;
+    font-size: 1.875rem;
     max-width: 300px;
   }
   .mission-footer {
     padding-inline: 24px;
-    font-size: 8px;
+    font-size: 1rem;
   }
   .dashboard-primary,
   .dashboard-secondary,
@@ -2855,7 +2855,7 @@ select {
     padding: 24px;
   }
   .verse-card blockquote {
-    font-size: 26px;
+    font-size: 1.625rem;
   }
   .page-heading {
     flex-direction: column;
@@ -2863,13 +2863,13 @@ select {
     margin-bottom: 24px;
   }
   .page-heading h1 {
-    font-size: 28px;
+    font-size: 1.75rem;
   }
   .page-heading .page-description {
-    font-size: 12px;
+    font-size: 1rem;
   }
   .app-footer {
-    font-size: 8px;
+    font-size: 1rem;
     flex-direction: column;
     align-items: start;
     gap: 8px;
@@ -2881,7 +2881,7 @@ select {
     margin-left: 7px;
   }
   .gentle-reminder {
-    font-size: 9px;
+    font-size: 1rem;
     padding-inline: 8px;
   }
   .gentle-reminder svg {
@@ -2896,11 +2896,11 @@ select {
     height: 70px;
   }
   .plan-overview h2 {
-    font-size: 23px;
+    font-size: 1.4375rem;
   }
   .plan-overview p,
   .plan-overview .small {
-    font-size: 10px;
+    font-size: 1rem;
   }
   .plan-row {
     padding: 17px 20px;
@@ -2909,37 +2909,37 @@ select {
   .day-number {
     width: 43px;
     height: 46px;
-    font-size: 19px;
+    font-size: 1.1875rem;
   }
   .plan-row h3 {
-    font-size: 13px;
+    font-size: 1.25rem;
   }
   .list-controls {
     gap: 10px;
   }
   .filter-label select {
     max-width: 160px;
-    font-size: 11px;
+    font-size: 1rem;
   }
   .search-input input {
-    font-size: 11px;
+    font-size: 1rem;
   }
   .search-input {
     padding-inline: 10px;
     gap: 8px;
   }
   .pagination > span {
-    font-size: 9px;
+    font-size: 1rem;
   }
   .pagination .button {
     padding-inline: 11px;
-    font-size: 10px;
+    font-size: 1rem;
   }
   .reader-controls {
     gap: 12px;
   }
   .reader-controls .text-link {
-    font-size: 10px;
+    font-size: 1rem;
     padding-left: 0;
   }
   .reader-controls label:nth-child(2) {
@@ -2949,35 +2949,35 @@ select {
     padding: 30px 28px 0;
   }
   .reader-title h2 {
-    font-size: 36px;
+    font-size: 2.25rem;
   }
   .reader-title .eyebrow {
-    font-size: 9px;
+    font-size: 0.875rem;
   }
   .reader-completion {
     gap: 17px;
   }
   .reader-pagination .button {
-    font-size: 10px;
+    font-size: 1rem;
     padding-inline: 13px;
   }
   .quiz-card {
     padding: 24px;
   }
   .quiz-card h2 {
-    font-size: 19px;
+    font-size: 1.1875rem;
   }
   .quiz-card .eyebrow {
-    font-size: 8px;
+    font-size: 0.875rem;
   }
   .quiz-reward {
-    font-size: 7px;
+    font-size: 1rem;
   }
   .quiz-intro {
     gap: 15px;
   }
   .quiz-intro > p {
-    font-size: 10px;
+    font-size: 1rem;
   }
   .quiz-intro > label {
     min-width: 190px;
@@ -2987,13 +2987,13 @@ select {
     padding: 24px;
   }
   .reflection-prompts h2 {
-    font-size: 24px;
+    font-size: 1.5rem;
   }
   .editor-footer > span {
-    font-size: 8px;
+    font-size: 1rem;
   }
   .editor-footer .button {
-    font-size: 11px;
+    font-size: 1rem;
     padding-inline: 14px;
   }
   .settings-card {
@@ -3007,16 +3007,16 @@ select {
     padding: 23px 18px;
   }
   .backup-card h2 {
-    font-size: 16px;
+    font-size: 1rem;
   }
   .backup-card p {
-    font-size: 10px;
+    font-size: 1rem;
   }
   .community-hero {
     padding: 35px 24px;
   }
   .community-hero h2 {
-    font-size: 32px;
+    font-size: 2rem;
   }
   .community-values {
     grid-template-columns: 1fr;
@@ -3025,10 +3025,10 @@ select {
     padding: 24px;
   }
   .community-values h3 {
-    font-size: 16px;
+    font-size: 1rem;
   }
   .community-values p {
-    font-size: 12px;
+    font-size: 1rem;
   }
   .adventure-map .section-heading {
     align-items: start;
@@ -3038,21 +3038,21 @@ select {
     height: 85px;
   }
   .landing-nav .brand > span {
-    font-size: 21px;
+    font-size: 1.3125rem;
   }
   .landing-nav .brand svg {
     width: 36px;
     height: 36px;
   }
   .landing-nav .brand small {
-    font-size: 6px;
+    font-size: 0.75rem;
   }
   .landing-nav nav > a {
     display: none;
   }
   .landing-nav nav .button {
     display: flex;
-    font-size: 10px;
+    font-size: 1rem;
     min-height: 34px;
     padding: 7px 11px;
   }
@@ -3062,14 +3062,14 @@ select {
     padding: 42px 0;
   }
   .landing-hero h1 {
-    font-size: 51px;
+    font-size: 3.1875rem;
     margin: 22px 0;
   }
   .landing-hero h1 br:last-child {
     display: none;
   }
   .landing-hero > div > p {
-    font-size: 13px;
+    font-size: 1rem;
     max-width: 440px;
   }
   .landing-actions {
@@ -3078,10 +3078,10 @@ select {
     gap: 20px;
   }
   .landing-actions .button {
-    font-size: 12px;
+    font-size: 1rem;
   }
   .landing-actions .text-link {
-    font-size: 10px;
+    font-size: 1rem;
   }
   .landing-visual {
     max-width: 440px;
@@ -3097,7 +3097,7 @@ select {
   .visual-top {
     top: 31px;
     padding-inline: 30px;
-    font-size: 8px;
+    font-size: 0.875rem;
   }
   .visual-top > span:last-child {
     display: block;
@@ -3109,27 +3109,27 @@ select {
     display: flex;
   }
   .visual-card strong {
-    font-size: 20px;
+    font-size: 1.25rem;
   }
   .landing-strip {
     gap: 14px;
     padding: 25px 0;
   }
   .landing-strip strong {
-    font-size: 28px;
+    font-size: 1.75rem;
   }
   .landing-strip > span {
-    font-size: 9px;
+    font-size: 1rem;
   }
   .landing-strip > p {
-    font-size: 13px;
+    font-size: 1rem;
     padding-left: 18px;
   }
   .landing-features {
     padding: 45px 0;
   }
   .landing-features > h2 {
-    font-size: 30px;
+    font-size: 1.875rem;
   }
   .feature-grid {
     grid-template-columns: 1fr;
@@ -3154,10 +3154,10 @@ select {
     margin-bottom: 40px;
   }
   .landing-invite h2 {
-    font-size: 28px;
+    font-size: 1.75rem;
   }
   .landing-invite > p {
-    font-size: 11px;
+    font-size: 1rem;
   }
   .landing-footer {
     flex-wrap: wrap;
@@ -3168,7 +3168,7 @@ select {
     display: none;
   }
   .landing-footer .brand > span {
-    font-size: 17px;
+    font-size: 1.0625rem;
   }
 }
 @media (max-width: 460px) {
@@ -3182,11 +3182,11 @@ select {
     gap: 8px;
   }
   .demo-pill {
-    font-size: 7px;
+    font-size: 0.875rem;
     padding: 5px 7px;
   }
   .dashboard-heading h1 {
-    font-size: 24px;
+    font-size: 1.5rem;
     max-width: 255px;
   }
   .date-label {
@@ -3194,7 +3194,7 @@ select {
   }
   .dashboard-heading .page-description {
     max-width: 100%;
-    font-size: 11px;
+    font-size: 1rem;
   }
   .stat-card {
     padding: 15px 12px;
@@ -3209,23 +3209,23 @@ select {
     width: 16px;
   }
   .stat-label {
-    font-size: 6.5px;
+    font-size: 0.875rem;
   }
   .stat-card strong {
-    font-size: 24px;
+    font-size: 1.5rem;
     margin-bottom: 9px;
   }
   .stat-card strong > small {
-    font-size: 9px;
+    font-size: 1rem;
   }
   .stat-card p {
-    font-size: 7px;
+    font-size: 1rem;
   }
   .stats-grid {
     gap: 10px;
   }
   .mission-copy h2 {
-    font-size: 29px;
+    font-size: 1.8125rem;
   }
   .mission-art {
     width: 64%;
@@ -3234,11 +3234,11 @@ select {
     opacity: 0.43;
   }
   .mission-kicker {
-    font-size: 7px;
+    font-size: 0.875rem;
     gap: 6px;
   }
   .mission-kicker > span:last-child {
-    font-size: 6px;
+    font-size: 0.875rem;
   }
   .mission-copy {
     padding-inline: 21px;
@@ -3246,7 +3246,7 @@ select {
   .mission-footer {
     padding-inline: 20px;
     gap: 10px;
-    font-size: 7px;
+    font-size: 1rem;
   }
   .dashboard-secondary {
     grid-template-columns: 1fr 1fr;
@@ -3258,14 +3258,14 @@ select {
     padding: 24px;
   }
   .verse-card blockquote {
-    font-size: 27px;
+    font-size: 1.6875rem;
     max-width: 330px;
   }
   .verse-divider {
     margin: 16px 0 10px;
   }
   .verse-heading .eyebrow {
-    font-size: 8px;
+    font-size: 0.875rem;
   }
   .level-card,
   .activity-card {
@@ -3273,7 +3273,7 @@ select {
   }
   .level-card .section-heading h2,
   .activity-card .section-heading h2 {
-    font-size: 12px;
+    font-size: 1rem;
   }
   .level-card .section-heading > svg {
     display: none;
@@ -3285,10 +3285,10 @@ select {
     margin-bottom: 15px;
   }
   .level-summary strong {
-    font-size: 11px;
+    font-size: 1rem;
   }
   .level-summary small {
-    font-size: 7px;
+    font-size: 1rem;
   }
   .level-medallion {
     width: 40px;
@@ -3298,30 +3298,30 @@ select {
     width: 21px;
   }
   .level-card > p {
-    font-size: 8px;
+    font-size: 1rem;
   }
   .level-progress-label {
-    font-size: 7px;
+    font-size: 1rem;
   }
   .activity-card .section-heading {
     flex-wrap: wrap;
     gap: 5px;
   }
   .activity-card .soft-label {
-    font-size: 7px;
+    font-size: 1rem;
   }
   .activity-card .activity-chart {
     margin-top: 20px;
   }
   .activity-card > p {
-    font-size: 8px;
+    font-size: 1rem;
   }
   .daily-steps,
   .journey-preview {
     padding: 20px;
   }
   .section-heading h2 {
-    font-size: 16px;
+    font-size: 1rem;
   }
   .daily-steps .soft-label {
     display: none;
@@ -3330,10 +3330,10 @@ select {
     gap: 10px;
   }
   .rhythm-row strong {
-    font-size: 11px;
+    font-size: 1rem;
   }
   .rhythm-row small {
-    font-size: 8px;
+    font-size: 1rem;
   }
   .rhythm-icon {
     width: 32px;
@@ -3344,27 +3344,27 @@ select {
     width: 17px;
   }
   .rhythm-reward {
-    font-size: 8px;
+    font-size: 1rem;
   }
   .rhythm-row > svg {
     width: 13px;
   }
   .journey-preview .text-link {
-    font-size: 8px;
+    font-size: 1rem;
     gap: 4px;
   }
   .journey-preview .text-link > svg {
     width: 12px;
   }
   .journey-preview .eyebrow {
-    font-size: 7px;
+    font-size: 0.875rem;
   }
   .journey-book strong {
-    font-size: 9px;
+    font-size: 1rem;
   }
   .journey-book small,
   .book-count {
-    font-size: 7px;
+    font-size: 1rem;
   }
   .book-node {
     width: 36px;
@@ -3377,19 +3377,19 @@ select {
     top: 18px;
   }
   .page-heading h1 {
-    font-size: 26px;
+    font-size: 1.625rem;
   }
   .page-heading .eyebrow {
-    font-size: 9px;
+    font-size: 0.875rem;
   }
   .page-heading .page-description {
-    font-size: 11px;
+    font-size: 1rem;
   }
   .plan-symbol {
     display: none;
   }
   .plan-overview h2 {
-    font-size: 25px;
+    font-size: 1.5625rem;
   }
   .plan-overview .button {
     width: 100%;
@@ -3409,14 +3409,14 @@ select {
     gap: 13px;
   }
   .plan-row h3 {
-    font-size: 12px;
+    font-size: 1.25rem;
   }
   .plan-row-date,
   .plan-row-status {
-    font-size: 8px;
+    font-size: 1.125rem;
   }
   .plan-row .small {
-    font-size: 9px;
+    font-size: 1rem;
   }
   .plan-row > svg {
     width: 14px;
@@ -3424,13 +3424,13 @@ select {
   .day-number {
     width: 36px;
     height: 42px;
-    font-size: 17px;
+    font-size: 1.0625rem;
   }
   .pagination {
     gap: 5px;
   }
   .pagination .button {
-    font-size: 9px;
+    font-size: 1rem;
     padding-inline: 9px;
     gap: 5px;
   }
@@ -3438,7 +3438,7 @@ select {
     width: 12px;
   }
   .pagination > span {
-    font-size: 8px;
+    font-size: 1rem;
     text-align: center;
   }
   .reader-mission {
@@ -3446,14 +3446,14 @@ select {
     gap: 10px;
   }
   .chapter-chip {
-    font-size: 9px;
+    font-size: 1rem;
     padding: 6px 8px;
   }
   .reader-mission > .eyebrow {
-    font-size: 8px;
+    font-size: 0.875rem;
   }
   .mission-done {
-    font-size: 9px;
+    font-size: 1rem;
     margin-left: 0;
   }
   .reader-controls {
@@ -3462,12 +3462,12 @@ select {
   }
   .reader-controls .text-link {
     padding: 0;
-    font-size: 10px;
+    font-size: 1rem;
     flex-basis: 100%;
     justify-content: flex-end;
   }
   .reader-controls label {
-    font-size: 9px;
+    font-size: 1rem;
   }
   .reader-paper {
     padding: 28px 22px 0;
@@ -3476,10 +3476,10 @@ select {
     margin-bottom: 23px;
   }
   .scripture-text {
-    font-size: 18px;
+    font-size: 1.125rem;
   }
   .scripture-text sup {
-    font-size: 9px;
+    font-size: 1rem;
     padding-inline: 5px;
   }
   .reader-completion .button {
@@ -3487,7 +3487,7 @@ select {
   }
   .reader-pagination .button {
     padding-inline: 10px;
-    font-size: 9px;
+    font-size: 1rem;
     gap: 6px;
     min-height: 39px;
   }
@@ -3495,7 +3495,7 @@ select {
     width: 13px;
   }
   .content-attribution {
-    font-size: 9px;
+    font-size: 1rem;
   }
   .quiz-intro {
     flex-direction: column;
@@ -3513,11 +3513,11 @@ select {
     gap: 4px;
   }
   .quiz-card h2 {
-    font-size: 18px;
+    font-size: 1.125rem;
   }
   .answer-option {
     padding: 11px 12px;
-    font-size: 12px;
+    font-size: 1rem;
     gap: 10px;
   }
   .quiz-layout > aside {
@@ -3528,20 +3528,20 @@ select {
     padding: 21px;
   }
   .reflection-prompts .eyebrow {
-    font-size: 8px;
+    font-size: 0.875rem;
   }
   .reflection-prompts h2 {
-    font-size: 23px;
+    font-size: 1.4375rem;
   }
   .journal-editor h2 {
-    font-size: 20px;
+    font-size: 1.25rem;
   }
   .journal-editor > p {
-    font-size: 11px;
+    font-size: 1rem;
   }
   .journal-editor textarea {
     padding: 15px;
-    font-size: 16px;
+    font-size: 1rem;
   }
   .editor-footer {
     flex-direction: column;
@@ -3551,7 +3551,7 @@ select {
     width: 100%;
   }
   .editor-footer > span {
-    font-size: 9px;
+    font-size: 1rem;
   }
   .journal-layout > aside,
   .profile-layout > aside {
@@ -3571,10 +3571,10 @@ select {
     height: 56px;
   }
   .achievement-level h2 {
-    font-size: 21px;
+    font-size: 1.3125rem;
   }
   .achievement-level .eyebrow {
-    font-size: 8px;
+    font-size: 0.875rem;
   }
   .badge-grid {
     gap: 12px;
@@ -3583,7 +3583,7 @@ select {
     padding: 16px 12px 20px;
   }
   .badge-status {
-    font-size: 6px;
+    font-size: 0.875rem;
     gap: 4px;
   }
   .badge-status svg {
@@ -3595,10 +3595,10 @@ select {
     margin: 22px auto 18px;
   }
   .badge-card h2 {
-    font-size: 13px;
+    font-size: 1.25rem;
   }
   .badge-card p {
-    font-size: 9px;
+    font-size: 1rem;
   }
   .map-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -3608,10 +3608,10 @@ select {
     padding: 14px 8px;
   }
   .map-book strong {
-    font-size: 10px;
+    font-size: 1rem;
   }
   .map-book small {
-    font-size: 8px;
+    font-size: 1rem;
   }
   .form-columns {
     grid-template-columns: 1fr;
@@ -3621,47 +3621,47 @@ select {
     padding: 22px;
   }
   .settings-card .section-heading h2 {
-    font-size: 17px;
+    font-size: 1.0625rem;
   }
   .readonly-setting {
     padding: 12px;
-    font-size: 10px;
+    font-size: 1rem;
     gap: 6px;
   }
   .readonly-setting span {
-    font-size: 6px;
+    font-size: 0.875rem;
   }
   .theme-options {
     gap: 8px;
   }
   .theme-options > label {
-    font-size: 10px;
+    font-size: 1rem;
   }
   .settings-card > .button {
     width: 100%;
   }
   .community-hero h2 {
-    font-size: 29px;
+    font-size: 1.8125rem;
   }
   .community-hero > .button {
-    font-size: 10px;
+    font-size: 1rem;
     padding-inline: 15px;
   }
   .landing-nav {
     height: 80px;
   }
   .landing-nav .brand > span {
-    font-size: 19px;
+    font-size: 1.1875rem;
   }
   .landing-nav .brand svg {
     width: 32px;
     height: 32px;
   }
   .landing-nav .brand small {
-    font-size: 5px;
+    font-size: 0.75rem;
   }
   .landing-nav nav .button {
-    font-size: 9px;
+    font-size: 1rem;
     gap: 6px;
     padding-inline: 9px;
   }
@@ -3669,13 +3669,13 @@ select {
     padding: 35px 0;
   }
   .landing-hero h1 {
-    font-size: 45px;
+    font-size: 2.8125rem;
   }
   .landing-kicker {
-    font-size: 8px;
+    font-size: 0.875rem;
   }
   .landing-hero > div > p {
-    font-size: 12px;
+    font-size: 1rem;
   }
   .landing-actions {
     gap: 14px;
@@ -3683,10 +3683,10 @@ select {
     align-items: start;
   }
   .landing-actions .text-link {
-    font-size: 11px;
+    font-size: 1rem;
   }
   .landing-note {
-    font-size: 8px;
+    font-size: 1rem;
     margin-top: 18px;
   }
   .landing-strip {
@@ -3694,17 +3694,17 @@ select {
     flex-wrap: wrap;
   }
   .landing-strip > span {
-    font-size: 8px;
+    font-size: 1rem;
   }
   .landing-strip strong {
-    font-size: 27px;
+    font-size: 1.6875rem;
   }
   .landing-strip > p {
-    font-size: 11px;
+    font-size: 1rem;
     padding-left: 13px;
   }
   .landing-features > h2 {
-    font-size: 29px;
+    font-size: 1.8125rem;
   }
   .feature-grid article {
     padding-left: 64px;
@@ -3714,16 +3714,16 @@ select {
     height: 44px;
   }
   .feature-grid h3 {
-    font-size: 15px;
+    font-size: 1rem;
   }
   .feature-grid p {
-    font-size: 11px;
+    font-size: 1rem;
   }
   .landing-invite h2 {
-    font-size: 27px;
+    font-size: 1.6875rem;
   }
   .landing-footer > a:last-child {
-    font-size: 9px;
+    font-size: 1rem;
   }
   .landing-footer {
     gap: 10px;
@@ -3732,11 +3732,11 @@ select {
     padding: 30px 25px;
   }
   .login-card h1 {
-    font-size: 29px;
+    font-size: 1.8125rem;
   }
   .toast {
     padding: 13px 17px;
-    font-size: 11px;
+    font-size: 1rem;
     gap: 10px;
   }
 }
@@ -3753,7 +3753,7 @@ select {
 .scripture-text .verse-numbering-note {
   display: block;
   font:
-    11px/1.8 Arial,
+    1rem/1.8 Arial,
     sans-serif;
   color: var(--muted);
   margin-top: 24px;
@@ -3781,31 +3781,680 @@ h1,
 }
 @media (min-width: 761px) {
   .stat-label {
-    font-size: 9px;
+    font-size: 0.875rem;
   }
   .stat-card p {
-    font-size: 10px;
+    font-size: 1rem;
   }
   .stat-card strong > small {
-    font-size: 12px;
+    font-size: 1rem;
   }
   .mission-description {
-    font-size: 12px;
+    font-size: 1rem;
   }
   .mission-footer {
-    font-size: 10px;
+    font-size: 1rem;
   }
   .rhythm-row strong {
-    font-size: 13px;
+    font-size: 1rem;
   }
   .rhythm-row small {
-    font-size: 11px;
+    font-size: 1rem;
   }
   .journey-book strong {
-    font-size: 11px;
+    font-size: 1rem;
   }
   .journey-book small,
   .book-count {
-    font-size: 9px;
+    font-size: 1rem;
+  }
+}
+
+/* Comfortable reading sizes stay consistent across desktop and mobile. */
+:root {
+  --muted: #596b60;
+  --gold: #8b641e;
+}
+:root[data-theme="dark"] {
+  --muted: #b7c4ba;
+  --gold: #dfc17a;
+}
+body {
+  font-size: 1.125rem;
+  line-height: 1.65;
+}
+.button {
+  min-height: 48px;
+  white-space: normal;
+  line-height: 1.5;
+}
+.button-sm {
+  min-height: 44px;
+}
+.icon-control {
+  width: 44px;
+  height: 44px;
+}
+.sidebar {
+  width: 264px;
+  overflow-y: auto;
+}
+.app-main {
+  margin-left: 264px;
+}
+.sidebar-brand {
+  margin-bottom: 26px;
+}
+.brand small {
+  white-space: normal;
+  line-height: 1.4;
+  letter-spacing: 0.04em;
+  max-width: 15em;
+}
+.nav-link {
+  min-height: 48px;
+}
+.nav-caption,
+.eyebrow,
+.stat-label,
+.mission-kicker,
+.badge-status {
+  letter-spacing: 0.06em;
+}
+.nav-new,
+.demo-pill {
+  letter-spacing: 0.03em;
+}
+.nav-new {
+  margin-left: auto;
+}
+.sidebar-quote > span {
+  line-height: 1.7;
+  display: block;
+}
+.sidebar-profile {
+  align-items: center;
+}
+.sidebar-profile strong {
+  line-height: 1.5;
+}
+.stat-label {
+  white-space: normal;
+}
+.stat-card {
+  align-items: flex-start;
+}
+.stat-card strong {
+  line-height: 1.4;
+}
+.stat-card p {
+  line-height: 1.7;
+}
+.stat-card .progress {
+  height: 6px;
+}
+.dashboard-heading {
+  align-items: flex-start;
+}
+.dashboard-heading h1 {
+  flex-wrap: wrap;
+}
+.dashboard-heading .eyebrow {
+  flex-wrap: wrap;
+}
+.date-label {
+  white-space: normal;
+  text-align: right;
+}
+.mission-copy {
+  padding-bottom: 118px;
+}
+.mission-kicker {
+  flex-wrap: wrap;
+  line-height: 1.7;
+}
+.mission-meta {
+  flex-wrap: wrap;
+  max-width: 430px;
+}
+.mission-reference {
+  font-size: 1.25rem;
+}
+.mission-reward {
+  line-height: 1.7;
+  max-width: 350px;
+  align-items: flex-start;
+}
+.mission-reward svg {
+  margin-top: 5px;
+}
+.mission-art {
+  pointer-events: none;
+}
+.mission-footer {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px 14px;
+  padding: 16px 24px;
+}
+.mission-footer > span:first-child {
+  grid-column: 1/-1;
+  white-space: normal;
+}
+.mission-footer > .progress {
+  height: 6px;
+}
+.section-heading {
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+.section-heading h2 {
+  font-size: 1.25rem;
+}
+.soft-label {
+  white-space: normal;
+  line-height: 1.6;
+}
+.rhythm-row strong {
+  font-size: 1.125rem;
+  line-height: 1.5;
+}
+.rhythm-row small {
+  line-height: 1.7;
+}
+.rhythm-reward {
+  font-size: 1.125rem;
+  font-weight: 500;
+}
+.journey-books {
+  gap: 14px;
+}
+.journey-book {
+  min-width: 0;
+}
+.journey-book strong,
+.journey-book small,
+.book-count {
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+.journey-book strong {
+  font-size: 1.125rem;
+}
+.verse-reference,
+.verse-heading .eyebrow {
+  color: var(--muted);
+}
+.level-summary strong {
+  font-size: 1.125rem;
+  line-height: 1.5;
+}
+.level-progress-label {
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.level-card > p,
+.activity-card > p {
+  line-height: 1.7;
+}
+.gentle-reminder {
+  line-height: 1.8;
+}
+.app-footer {
+  flex-wrap: wrap;
+  line-height: 1.8;
+}
+.app-footer > span:last-child {
+  flex-wrap: wrap;
+}
+.plan-row {
+  padding-block: 24px;
+}
+.plan-row > div {
+  min-width: 0;
+}
+.plan-row-date {
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  line-height: 1.6;
+}
+.plan-row h3 {
+  margin: 8px 0;
+  line-height: 1.5;
+}
+.plan-row-status {
+  flex-shrink: 0;
+  font-weight: 500;
+  line-height: 1.6;
+}
+.plan-row .small {
+  display: block;
+  line-height: 1.7;
+}
+.plan-overview {
+  flex-wrap: wrap;
+}
+.plan-overview > div {
+  min-width: 0;
+}
+.plan-overview p {
+  line-height: 1.7;
+}
+.today-pill {
+  padding: 3px 9px;
+}
+.reader-controls {
+  flex-wrap: wrap;
+}
+.reader-controls label {
+  min-width: 0;
+}
+.reader-controls label:first-child {
+  min-width: 150px;
+}
+.reader-mission > .eyebrow {
+  flex-basis: 100%;
+}
+.chapter-chip {
+  padding: 9px 12px;
+}
+.scripture-text {
+  font-size: 1.375rem;
+  line-height: 1.95;
+}
+.scripture-text sup {
+  font-size: 0.875rem;
+  padding-inline: 6px;
+}
+.reader-completion {
+  flex-wrap: wrap;
+}
+.reader-completion strong {
+  font-size: 1.125rem;
+}
+.reader-pagination {
+  flex-wrap: wrap;
+}
+.badge-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+  gap: 22px;
+}
+.badge-card {
+  padding: 26px 22px 30px;
+}
+.badge-status {
+  flex-wrap: wrap;
+  line-height: 1.7;
+}
+.badge-card h2 {
+  font-size: 1.25rem;
+  line-height: 1.5;
+  margin-bottom: 12px;
+}
+.badge-card p {
+  max-width: 26ch;
+  line-height: 1.8;
+}
+.badge-medallion {
+  margin-block: 28px 24px;
+}
+.map-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
+}
+.map-book {
+  min-width: 0;
+}
+.map-book strong {
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+.level-ladder {
+  display: none;
+}
+.achievement-level {
+  align-items: flex-start;
+}
+.quiz-intro {
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+.quiz-card .eyebrow {
+  flex-wrap: wrap;
+}
+.quiz-layout {
+  grid-template-columns: minmax(0, 1fr) 300px;
+}
+.quiz-card h2 {
+  font-size: 1.375rem;
+}
+.option-letter {
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+}
+.answer-option {
+  line-height: 1.6;
+}
+.answer-explanation strong {
+  font-size: 1.125rem;
+}
+.editor-footer {
+  flex-wrap: wrap;
+}
+.entry-preview strong {
+  font-size: 1.125rem;
+}
+.settings-card label:not(.theme-options label) {
+  line-height: 1.6;
+}
+.readonly-setting {
+  flex-wrap: wrap;
+  line-height: 1.6;
+}
+.readonly-setting span {
+  margin-left: 0;
+}
+.profile-stats {
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.profile-stats strong {
+  font-size: 1.5rem;
+}
+.privacy-note {
+  line-height: 1.8;
+}
+.landing-nav nav {
+  flex-wrap: wrap;
+  gap: 24px;
+}
+.visual-top {
+  position: static;
+  padding: 24px 22px 0;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.visual-top > span:first-child {
+  flex-wrap: wrap;
+}
+.landing-visual > svg {
+  margin-top: 12px;
+}
+.visual-card {
+  flex-wrap: wrap;
+}
+.landing-footer {
+  flex-wrap: wrap;
+}
+@media (max-width: 1250px) {
+  .sidebar {
+    width: 248px;
+  }
+  .app-main {
+    margin-left: 248px;
+  }
+  .dashboard-columns {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .dashboard-secondary {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .verse-card {
+    grid-row: span 2;
+  }
+  .mission-art {
+    width: 45%;
+    right: -30px;
+    opacity: 0.6;
+  }
+  .quiz-layout {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 1050px) {
+  .quiz-layout > aside {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .form-columns {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  .journal-layout > aside,
+  .profile-layout > aside {
+    grid-template-columns: 1fr;
+  }
+  .journal-history,
+  .journal-layout .privacy-note,
+  .profile-layout .privacy-note {
+    grid-column: auto;
+  }
+  .landing-nav {
+    height: auto;
+    min-height: 110px;
+    padding-block: 22px;
+    flex-wrap: wrap;
+  }
+}
+@media (max-width: 760px) {
+  .sidebar {
+    width: min(320px, 90vw);
+  }
+  .app-main {
+    margin-left: 0;
+  }
+  .sidebar .brand > span {
+    font-size: 1.4375rem;
+  }
+  .topbar {
+    padding-inline: 12px;
+    gap: 8px;
+    min-height: 76px;
+    height: auto;
+  }
+  .topbar-actions {
+    gap: 8px;
+  }
+  .topbar-actions .icon-control {
+    width: 40px;
+  }
+  .topbar .avatar-small {
+    display: none;
+  }
+  .breadcrumb {
+    gap: 7px;
+    min-width: 0;
+  }
+  .breadcrumb > strong {
+    line-height: 1.5;
+  }
+  .topbar .demo-pill {
+    font-size: 0.75rem;
+    flex-shrink: 0;
+  }
+  .dashboard-secondary {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .verse-card {
+    grid-row: auto;
+    grid-column: auto;
+  }
+  .level-summary {
+    flex-direction: row;
+    align-items: center;
+    gap: 14px;
+  }
+  .activity-card .activity-chart {
+    margin-top: 12px;
+  }
+  .mission-copy {
+    padding-bottom: 118px;
+  }
+  .mission-copy h2 {
+    max-width: 100%;
+  }
+  .mission-art {
+    width: 60%;
+    right: -65px;
+    bottom: 85px;
+    opacity: 0.25;
+  }
+  .mission-meta {
+    max-width: 100%;
+  }
+  .mission-footer {
+    padding-inline: 20px;
+  }
+  .journey-books {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 26px 18px;
+  }
+  .journey-books:before {
+    display: none;
+  }
+  .journey-preview .section-heading {
+    flex-direction: column;
+  }
+  .journey-preview .text-link > svg {
+    width: 16px;
+  }
+  .reader-controls .text-link {
+    padding: 0;
+    flex-basis: 100%;
+    justify-content: flex-start;
+  }
+  .reader-pagination .button {
+    flex: 1;
+  }
+  .quiz-layout > aside {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .landing-nav nav {
+    gap: 16px;
+  }
+  .landing-nav .brand > span {
+    font-size: 1.3125rem;
+  }
+  .landing-nav .brand small {
+    font-size: 0.75rem;
+  }
+  .landing-strip {
+    flex-wrap: wrap;
+    gap: 22px;
+  }
+  .landing-strip > p {
+    flex-basis: 100%;
+    text-align: center;
+    border-left: 0;
+    padding-left: 0;
+  }
+  .feature-grid article {
+    padding-left: 0;
+  }
+  .feature-icon {
+    position: static;
+  }
+}
+@media (max-width: 600px) {
+  .stats-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .stat-card {
+    padding: 22px;
+    gap: 16px;
+  }
+  .stat-icon {
+    width: 40px;
+    height: 40px;
+  }
+  .stat-icon > svg {
+    width: 22px;
+  }
+  .stat-card strong {
+    font-size: 2rem;
+  }
+  .stat-card p {
+    margin-top: 10px;
+  }
+  .plan-row {
+    display: grid;
+    grid-template-columns: 48px minmax(0, 1fr) 20px;
+    grid-template-areas: "day reading arrow" "day status arrow";
+    gap: 8px 14px;
+    padding: 22px 16px;
+  }
+  .day-number {
+    grid-area: day;
+    width: 48px;
+    height: 54px;
+  }
+  .plan-row > div {
+    grid-area: reading;
+  }
+  .plan-row-status {
+    grid-area: status;
+  }
+  .plan-row > svg {
+    grid-area: arrow;
+  }
+  .rhythm-row {
+    display: grid;
+    grid-template-columns: 38px minmax(0, 1fr) 18px;
+    grid-template-areas: "icon copy arrow" "icon reward arrow";
+    gap: 8px 12px;
+    padding-block: 22px;
+  }
+  .rhythm-icon {
+    grid-area: icon;
+    width: 38px;
+    height: 40px;
+  }
+  .rhythm-row > div {
+    grid-area: copy;
+  }
+  .rhythm-reward {
+    grid-area: reward;
+  }
+  .rhythm-row > svg {
+    grid-area: arrow;
+  }
+  .pagination {
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+  .pagination > span {
+    order: 3;
+    flex-basis: 100%;
+    text-align: center;
+  }
+  .list-controls {
+    flex-wrap: wrap;
+  }
+  .search-input {
+    flex-basis: 100%;
+  }
+  .filter-label,
+  .filter-label select {
+    width: 100%;
+    max-width: none;
+  }
+  .plan-overview > div {
+    flex-basis: 100%;
+  }
+  .editor-footer .button {
+    width: 100%;
+  }
+  .achievement-level {
+    flex-wrap: wrap;
+  }
+  .achievement-level > div:nth-child(2) {
+    min-width: 0;
+  }
+  .page-heading .soft-label {
+    max-width: 100%;
+  }
+  .login-card {
+    padding-inline: 22px;
   }
 }

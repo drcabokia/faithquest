@@ -380,13 +380,13 @@ export function Dashboard() {
                     dataKey="label"
                     tickLine={false}
                     axisLine={false}
-                    tick={{ fontSize: 10, fill: "#7b887f" }}
+                    tick={{ fontSize: 14, fill: "var(--muted)" }}
                   />
                   <Tooltip
                     cursor={{ fill: "#8ba88920" }}
                     contentStyle={{
                       borderRadius: 10,
-                      fontSize: 12,
+                      fontSize: 16,
                       background: "var(--card)",
                       borderColor: "var(--border)",
                       color: "var(--foreground)",

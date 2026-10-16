@@ -35,3 +35,9 @@ Local lint, strict TypeScript, and all 20 unit/content tests passed again on 16 
 The first GitHub Actions run passed on Ubuntu for application commit `e4d1c377c6b59023a4e2db9f8116124e1bcf7b02`: clean npm install, lint, TypeScript, 20 unit/content tests, production build, Chromium installation, and all five browser acceptance tests. The current local landing page and dashboard also returned HTTP 200 without restarting the user's development server.
 
 GitHub emitted non-blocking runner maintenance annotations: the v4 checkout/setup-node actions target deprecated Node.js 20 and were run under Node.js 24, and `ubuntu-latest` is scheduled to change runner images. Updating those workflow dependencies/pinning the runner should be included in deployment maintenance; the verified run itself succeeded.
+
+## Readability adjustment — 16 October 2026
+
+Supporting text now uses a default 16 px equivalent in relative `rem` units; reading completion/XP labels use 18 px, achievement titles 20 px, and body text 18 px. Compact section/status captions use 14 px and the brand tagline uses 12 px. Mobile rules no longer shrink important supporting text to 6–10 px. Spacing, wrapping, reading rows, card columns, navigation, and chart labels were adjusted together, with stronger secondary-text contrast in light/dark themes.
+
+Lint and TypeScript checks passed. All five existing browser acceptance scenarios passed against the running development server using fresh, isolated Edge contexts. A visual/reflow review covered ten screens at 390, 768, and 1440 px in both themes (60 combinations), with no page errors or horizontal page overflow. Focused reading-plan, achievement, and dashboard checks also passed at 320 px. Computed chapter/status/achievement text sizes were checked and desktop/mobile screenshots were visually inspected. No personal browser state was modified, and the user's development server remained running.
