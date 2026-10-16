@@ -26,9 +26,9 @@ import {
   readingDates,
   streak,
   totalXp,
-} from "@/services/gamification";
+} from "@/services/gamification-display";
 import { addDays, displayDate } from "@/lib/dates";
-import { QUESTIONS } from "@/data/quizzes";
+import { QUIZ_PROMPTS } from "@/data/quiz-prompts";
 import psalm from "../../../public/bible/PSA/119.json";
 export function Dashboard() {
   const { state, today } = useJourney();
@@ -46,7 +46,7 @@ export function Dashboard() {
   ).length;
   const resume =
     mission.chapters.find((c) => !state.chapters[c.key]) ?? mission.chapters[0];
-  const quiz = QUESTIONS.filter((q) => q.day === day);
+  const quiz = QUIZ_PROMPTS.filter((q) => q.day === day);
   const quizDone = quiz.length > 0 && quiz.every((q) => state.attempts[q.id]);
   const activity = Array.from({ length: 7 }, (_, i) => {
     const date = addDays(today, i - 6);

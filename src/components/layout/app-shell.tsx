@@ -33,7 +33,7 @@ const navigation = [
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const { state, error, profile } = useJourney();
+  const { state, error, profile, mode } = useJourney();
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
       if (event.key === "Escape" && open) {
@@ -108,7 +108,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             </span>
             <div>
               <strong>{state?.profile.name ?? "Faith Explorer"}</strong>
-              <small>Local demo account</small>
+              <small>
+                {mode === "demo" ? "Local demo account" : "Private account"}
+              </small>
             </div>
             <Link href="/profile" aria-label="Open profile">
               <ArrowUpRight size={17} />
@@ -134,7 +136,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <div className="topbar-actions">
             <span className="demo-pill">
               <span />
-              DEMO MODE
+              {mode === "demo" ? "DEMO MODE" : "MY ACCOUNT"}
             </span>
             <button
               className="icon-control"
@@ -165,14 +167,19 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <main id="main-content" className="content">
           {error && (
             <div className="error-banner" role="alert">
-              {error} Changes that could not be saved have not been applied.
+              {error}{" "}
+              {mode === "demo"
+                ? "Changes that could not be saved have not been applied."
+                : "Please retry or refresh to check the latest saved progress."}
             </div>
           )}
           {children}
           <footer className="app-footer">
             <span>Read. Discover. Grow in Faith.</span>
             <span>
-              Demo progress is saved in this browser only.{" "}
+              {mode === "demo"
+                ? "Demo progress is saved in this browser only."
+                : "Your progress is saved to your private account."}{" "}
               <Link href="/profile">
                 Your preferences <ArrowUpRight size={12} />
               </Link>

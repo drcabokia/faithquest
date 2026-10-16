@@ -1,3 +1,4 @@
+import { storageMode } from "@/lib/supabase/config";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -13,6 +14,7 @@ import { Logo } from "@/components/brand";
 import { JourneyArt } from "@/components/journey-art";
 import { Button } from "@/components/ui/button";
 export default function Home() {
+  const account = storageMode() === "supabase";
   return (
     <div className="landing">
       <a href="#main-content" className="skip-link">
@@ -62,7 +64,9 @@ export default function Home() {
             </div>
             <span className="landing-note">
               <Check size={14} />
-              Free local demo · No account required
+              {account
+                ? "Your private journey · Progress across devices"
+                : "Free local demo · No account required"}
             </span>
           </div>
           <div className="landing-visual">
@@ -156,7 +160,8 @@ export default function Home() {
         <Logo />
         <span>Made for a daily walk, at your own pace.</span>
         <Link href="/login">
-          About this demo <ArrowRight size={14} />
+          {account ? "About your account" : "About this demo"}{" "}
+          <ArrowRight size={14} />
         </Link>
       </footer>
     </div>

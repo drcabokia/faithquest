@@ -4458,3 +4458,10 @@ body {
     padding-inline: 22px;
   }
 }
+
+.login-card > form {
+  margin: 24px 0;
+}
+.login-card > form .button {
+  width: 100%;
+}

@@ -14,9 +14,9 @@
 
 ## Security
 
-Enable RLS on every exposed table. Public read access is only for reviewed/published reference data. Personal reads/writes require `auth.uid() = user_id`. Reflections remain private, including to fellow group members. Group membership must not permit users to join arbitrary private groups or promote themselves.
+Enable RLS on every exposed table. Public read access is only for reviewed/published reference data. Personal reads require owner identity via `auth.uid()`; writes use restricted authenticated commands rather than direct client table writes. Reflections remain private, including to fellow group members. Group membership must not permit users to join arbitrary private groups or promote themselves.
 
-Reading, quiz results, rewards, and achievement writes need trusted atomic database functions or server transactions. Revoke client ledger writes. A unique reward key is a final concurrency guard, not a substitute for verifying activity. Production quiz answer keys need a private schema or protected server access. See migrations for the concrete preparation schema; live auth/RPC integration and database execution tests are a separate release gate.
+Reading, quiz results, rewards, and achievement writes use trusted atomic database functions in migration 003. Revoke client ledger writes. A unique reward key is a final concurrency guard, not a substitute for verifying activity. Reviewed answer keys are seeded in the private schema by migration 004; feedback is exposed only for a user's submitted attempt. Embedded PostgreSQL tests execute the schema and commands; hosted migration/auth/privacy acceptance remains a separate release gate.
 
 ## Persistence migration
 

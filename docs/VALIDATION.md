@@ -21,7 +21,7 @@ Desktop and mobile dark-mode dashboard screenshots were captured and visually in
 
 ## Known verification limits
 
-- Supabase migrations are prepared, with reference-data consistency checks, but have **not been applied to PostgreSQL** or tested against live Supabase roles/RLS. No OAuth, production persistence, RPC, backup, or account-deletion implementation is claimed.
+- The later authenticated integration executes migrations and RLS in embedded PostgreSQL, as recorded below. Hosted Supabase migrations, real Google OAuth/session renewal and cross-device persistence remain unverified; backup/account deletion are not implemented.
 - Vercel deployment has not been performed. GitHub write access is now verified, the initial five commits have been published, and [the first CI run](https://github.com/drcabokia/faithquest/actions/runs/38897044834) passed.
 - Browser execution used Edge only. GitHub CI is configured for Chromium on Linux; Firefox/Safari and assistive-technology testing remain future validation.
 - Full `npm audit` reports five affected **development-tool packages** in a single `braces` stack-exhaustion advisory chain under Next’s ESLint tooling. The runtime-only audit is clean. The available npm automatic fix would downgrade the Next lint configuration across major versions, so it was not forced. Recheck the advisory/upstream patch before expanding untrusted development-tool inputs. No assertion of a fully clean development dependency audit is made.
@@ -41,3 +41,13 @@ GitHub emitted non-blocking runner maintenance annotations: the v4 checkout/setu
 Supporting text now uses a default 16 px equivalent in relative `rem` units; reading completion/XP labels use 18 px, achievement titles 20 px, and body text 18 px. Compact section/status captions use 14 px and the brand tagline uses 12 px. Mobile rules no longer shrink important supporting text to 6–10 px. Spacing, wrapping, reading rows, card columns, navigation, and chart labels were adjusted together, with stronger secondary-text contrast in light/dark themes.
 
 Lint and TypeScript checks passed. All five existing browser acceptance scenarios passed against the running development server using fresh, isolated Edge contexts. A visual/reflow review covered ten screens at 390, 768, and 1440 px in both themes (60 combinations), with no page errors or horizontal page overflow. Focused reading-plan, achievement, and dashboard checks also passed at 320 px. Computed chapter/status/achievement text sizes were checked and desktop/mobile screenshots were visually inspected. No personal browser state was modified, and the user's development server remained running.
+
+## Authenticated integration — 16 October 2026
+
+The expanded suite passes **52 tests**: the original 20 business/content tests; 12 embedded PostgreSQL tests; three command-validation tests; 13 mocked API/OAuth/proxy tests; and four environment-gate tests. PGlite executes all four migrations and real PostgreSQL functions/RLS against a minimal synthetic `auth.users`/`auth.uid()` setup. Tests cover full-mission rewards, retries, wrong-answer immutability, private solutions, reflection edits, direct-write restrictions, timezone locks, server-earned achievements and two-user/group isolation. PGlite is single-connection; it does not establish real concurrent transaction behavior.
+
+HTTP/session tests verify server identity lookup, rejected forged XP/user IDs, exact Origin, request-size limits, sanitized errors, fixed OAuth redirects, code exchange, refreshed cookie propagation and current-device sign-out. They use mocked SDK responses and do not prove real Google consent, JWT verification or expired-session renewal.
+
+Lint and strict TypeScript pass. All five existing demo browser acceptance scenarios pass against the user's running development server, preserved without restarting it. The earlier senior-readability changes remain intact. Production build and Linux browser results for the new integration will be recorded after CI completes.
+
+The supplied publishable key reaches the selected Supabase project's public auth settings. The readiness check reports Google disabled, the expected reference-book catalogue unavailable, and application accounts disabled. No migration-capable connection is present. **No hosted migration, real account, journal/device synchronization or session-expiry acceptance pass is claimed.** The guarded migration runner and rollback-only live isolation script are prepared for connected development access.

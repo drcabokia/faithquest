@@ -1,6 +1,6 @@
 import type { BookId } from "../data/books";
 import type { JourneyState, Profile } from "../lib/state";
-/** Future authenticated command adapter. Never accept a browser-minted XP ledger.
+/** Authenticated command contract. Never accept a browser-minted XP ledger.
  * Each command verifies auth and ownership server-side, then returns server-derived state.
  * Quiz responses expose explanations only after the protected submission transaction.
  */

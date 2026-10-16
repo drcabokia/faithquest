@@ -1,28 +1,29 @@
-# Production authentication and security plan
+# Authentication and security
 
-## Honest release boundary
+## Release boundary
 
-The working application is a browser-local demo. Supabase/Google sign-in is not connected. Migrations and TypeScript contracts prepare the next phase; they do not constitute an audited production authentication service. Adding environment variables alone changes nothing.
+The default running application remains a labelled browser-local demo. Authenticated Supabase integration is implemented behind explicit storage/account flags. A reachable project and publishable key alone do not activate accounts. Hosted migrations, real OAuth, renewal and cross-device privacy remain unverified; production accounts stay disabled until those acceptance gates pass. See [the development runbook](SUPABASE_INTEGRATION.md).
 
-## Integrate in order
+## Verified identity and commands
 
-1. Create a development Supabase project under the user’s account. Configure Google OAuth with an owned Google Cloud client, exact callback URLs, and appropriate consent settings. Gmail users sign in through Google OAuth; the app must never collect Google passwords.
-2. Install compatible Supabase client/SSR packages when implementing the live adapter. Use request-scoped server clients, verified server sessions, secure cookie handling, and validated OAuth callback redirects.
-3. Apply `202610160001_initial_schema.sql`, then `202610160002_reference_data.sql`, in development. The second migration seeds all books, chapters, 365 reading days, 1,189 assignments, and eight achievement definitions. Production quiz seeds and private answer keys still require a reviewed release process.
-4. Implement `ProductionJourneyRepository` with async server commands. Never accept a user-supplied reward amount, correct-answer flag, achievement unlock, completion date, or arbitrary snapshot as authoritative state.
-5. Implement transactional activity functions with a fixed search path. Verify `auth.uid()` inside each function; confirm all assigned chapters before completing a day, validate quiz answers against `private.quiz_answers`, validate reflection ownership/content, derive activity dates in the stored timezone, then insert the ledger and unlock milestones in the same transaction. Unique user/activity keys handle retries/concurrency. Add row/advisory locking where needed. Revoke PUBLIC execution and grant only the specific authenticated commands after review.
-6. Enforce IANA timezone validity and immutability after activity in a database trigger or trusted preference command; update RLS/grants to prevent bypass through direct profile updates. Never rely only on the demo UI’s timezone lock. Only allow published plans.
-7. Add database tests using two independent users and anonymous access. Verify private reflections, progress, attempts, XP, answer keys, group data, writes, deduplication, concurrent submissions, account deletion, and every RPC ownership check.
-8. Configure backup/export/delete flows, environment-specific OAuth allowlists, rate limits, sanitized operational errors, and monitoring. Release production mode only after these gates pass.
+Separate browser/server Supabase clients use cookie-based SSR. Next.js `proxy.ts` refreshes sessions with `getClaims()` and carries refreshed cookies through redirects. The journey API independently calls `getUser()` before every read/write. OAuth callback code exchange is followed by verified user lookup; redirects use the configured canonical origin rather than caller-supplied targets. Sign-out affects the current device. Mutation endpoints require the exact configured Origin and bounded, strictly validated JSON.
 
-## Prepared schema controls
+Database commands derive their actor from `auth.uid()`, lock the profile row and execute atomically with a fixed search path. Clients supply an activity, not an authoritative snapshot, user ID, XP amount, completion date or achievement list. Reading rewards require all assigned chapters; book, quiz and reflection rewards have stable unique keys. A wrong first quiz attempt cannot become a correct rewarded retry. Activity dates use PostgreSQL's saved IANA timezone. Timezone/plan changes are prohibited after activity.
 
-RLS is enabled on all public tables; only published plan data/reviewed questions and reference catalogues have public read access. Profiles and reflections use owner-only policies. Progress, attempts, XP, and unlock tables have owner reads and no authenticated client writes. Quiz answers live in a private schema with client access revoked. Groups have owner/member reads but no open join/promote operation. Reflections have no group-sharing policy.
+The first two migrations create schema/RLS and complete reference data. Migration 003 adds trusted commands and revokes direct profile/reflection writes. Migration 004 seeds six reviewed quiz prompts and private solutions. Personal tables expose owner-only reads. Client roles cannot execute private helpers or read answer keys; submitted attempts expose their own feedback. Group membership does not grant journal access.
 
-The migration intentionally grants direct owner-only reflection CRUD as a persistence preparation option. Awarding reflection XP must still happen through the later trusted command, which verifies a qualifying persisted entry and handles duplicates. Revisit grants when the final RPC approach is implemented.
+## Persistence and errors
 
-## Demo privacy and persistence
+Authenticated progress and journals are database-backed. The account provider neither writes personal snapshots to localStorage nor silently falls back to demo storage. It does not automatically upload existing demo journals. Requests and OAuth responses use private/no-store cache controls; account data is fetched per verified session. Database error details are sanitized. After a lost response, refresh or an idempotent retry resolves whether an activity committed.
 
-Demo content belongs to a browser profile/origin, not a signed-in person. It is not encrypted, synced, or protected from someone with access to that browser. Version/schema validation catches malformed data but is not tamper resistance. Local quiz keys are inspectable. Export is explicit; no automatic upload/import or journal sharing occurs. Storage errors do not claim that a write succeeded. Multi-tab writes use Web Locks where available, with a latest-snapshot fallback for browsers without them; that fallback is not transactional.
+A Supabase publishable/legacy anon key is suitable for the client. A database password or secret/service-role key must never be placed in `NEXT_PUBLIC_*`, committed, or shared in chat. Google client secrets belong in Supabase provider configuration. The runtime does not need privileged database credentials. CLI migrations/live tests require a separate explicitly confirmed development connection and verify its project reference.
 
-A live authenticated repository must never silently save to localStorage when a Supabase operation fails. Never use Vercel temporary files for journals or progress. No service-role key belongs in a browser bundle or a `NEXT_PUBLIC_*` variable. All paid AI integration remains absent until explicitly designed and enabled.
+## Validation and remaining gates
+
+Embedded PostgreSQL tests execute all migrations and test two identities, anonymous access, direct-write restrictions, rewards, quiz secrecy, achievements and group/journal isolation. HTTP/session tests mock the SDK to exercise verification, Origin checks, command validation, redirects, refresh-cookie propagation and sign-out. Neither test layer proves hosted Google login, token expiration or device synchronization.
+
+Before production accounts: apply/test migrations on the selected development project; verify Google consent/callback settings; complete real login/logout and session-renewal checks; verify independent-user journal isolation and cross-device persistence; review account deletion, backup, rate limits and operational monitoring. The live database script uses synthetic fixtures inside a rolled-back transaction, without deleting existing users.
+
+## Demo privacy
+
+Demo data belongs to a browser profile/origin, not a signed-in person. It is not encrypted or synchronized and is accessible to someone with access to that browser. State validation is not tamper resistance; demo quiz solutions are inspectable. Multi-tab writes use Web Locks where available, with a latest-snapshot fallback elsewhere. Export is explicit and no automatic import or sharing occurs. Paid AI remains absent.

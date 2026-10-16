@@ -20,7 +20,7 @@ import {
   levelInfo,
   totalXp,
   LEVELS,
-} from "@/services/gamification";
+} from "@/services/gamification-display";
 import { PageHeading, Progress } from "@/components/ui/shared";
 const icons = {
   footsteps: Footprints,

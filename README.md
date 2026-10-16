@@ -14,7 +14,7 @@ npm install
 npm run dev
 ```
 
-Open **http://localhost:3000**. Choose **Begin your journey** to enter the labelled demo. The dev server binds to the local computer. Stop it with Ctrl+C. Use `npm ci` for an exact install from the committed lockfile.
+Open **http://127.0.0.1:3000**. Choose **Begin your journey** to enter the labelled demo. The dev server binds to the local computer. Stop it with Ctrl+C. Use `npm ci` for an exact install from the committed lockfile.
 
 ## What works
 
@@ -28,7 +28,7 @@ Open **http://localhost:3000**. Choose **Begin your journey** to enter the label
 - Eight achievements, seven participation levels, and an interactive map of all 66 books.
 - Display name, start date, fixed journey timezone after the first activity, appearance, and JSON backup export.
 - Versioned/Zod-validated browser persistence, clear save failures, and cross-tab updates. Web Locks coordinate concurrent writes in supporting browsers.
-- Supabase schema and complete canonical reference-data migrations, production command contract, auth/security plan, and GitHub CI configuration.
+- Supabase migrations, transactional reward commands, Google/SSR session handling and an authenticated account adapter, gated pending hosted acceptance; GitHub CI configuration.
 
 ## Try the main flow
 
@@ -43,9 +43,11 @@ Open **http://localhost:3000**. Choose **Begin your journey** to enter the label
 
 This is a functional demo, **not an authenticated production service**. All personal data is localStorage in the current browser profile and origin. Different ports, `localhost` versus `127.0.0.1`, devices, or browsers have separate data. Clearing site data removes it. Entries are not encrypted or backed up automatically. Export a private copy in Profile & Settings; import/restore is not implemented.
 
-Demo rewards are protected against duplicate UI claims, but browser data and quiz answer keys can be inspected/modified. Production must verify activities and mint XP on the server. Never treat demo records as authoritative account data.
+Demo rewards are protected against duplicate UI claims, but browser data and quiz answer keys can be inspected/modified. The gated account implementation verifies activities and mints XP in PostgreSQL; hosted acceptance remains pending. Never treat demo records as authoritative account data.
 
-Canonical is the complete plan. Chronological and balanced plans, Google sign-in, Supabase persistence, groups, memory verses, challenges, grace days, highlights, prayer categories, multilingual text, PWA, push, and AI are future work. Community explains the future scope and has no simulated live groups. AI is absent/disabled and has no paid dependency.
+Canonical is the complete plan. Chronological and balanced plans, groups, memory verses, challenges, grace days, highlights, prayer categories, multilingual text, PWA, push, and AI are future work. Community explains the future scope and has no simulated live groups. AI is absent/disabled and has no paid dependency.
+
+Authenticated integration is implemented but disabled until development migrations, real Google sign-in, session renewal, cross-device progress and privacy checks pass. See [Supabase setup and acceptance](docs/SUPABASE_INTEGRATION.md). Demo mode still needs no credentials.
 
 Streaks use distinct dates of **completed daily missions** in the saved IANA timezone. Reading multiple missions on one date counts as one streak day; yesterday’s streak remains until today passes. Reading a partial mission does not count yet. Missing days never removes XP. New reflections are for today; older saved entries can be edited. Chapter completion is self-reported, not proof of comprehension.
 
@@ -58,11 +60,11 @@ src/app/              Route shells, landing page, global theme styles
 src/components/       Layout, dashboard, reader, journal, quiz, achievements, settings
 src/data/             Bible metadata and reviewed demo quiz questions
 src/lib/              Dates, validated state, browser persistence, utilities
-src/services/         Reading-plan/gamification logic, content provider, future production contract
+src/services/         Reading-plan/gamification logic, content provider, authenticated Supabase command adapter
 public/bible/         1,189 verified WEB chapter JSON files and provenance record
-supabase/migrations/  Schema/RLS preparation and canonical reference seeds
-scripts/              Reproducible public-domain Scripture importer
-tests/                Business-rule/content tests and browser acceptance tests
+supabase/migrations/  Schema/RLS, reference/quiz seeds and transactional commands
+scripts/              Scripture importer, guarded migrations and live isolation checks
+tests/                Business/content, PostgreSQL isolation, auth-boundary and browser tests
 docs/                 Plan, architecture, database, content, deployment, validation
 ```
 

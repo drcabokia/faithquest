@@ -3,7 +3,7 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useState } from "react";
 import { Check, X, Sparkles, BookOpen } from "lucide-react";
-import { QUESTIONS, type QuizQuestion } from "@/data/quizzes";
+import { QUIZ_PROMPTS, type QuizPrompt } from "@/data/quiz-prompts";
 import { useJourney, JourneyLoading } from "@/components/journey-provider";
 import { PageHeading, EmptyState } from "@/components/ui/shared";
 import { Button } from "@/components/ui/button";
@@ -13,7 +13,7 @@ function Question({
   question,
   index,
 }: {
-  question: QuizQuestion;
+  question: QuizPrompt;
   index: number;
 }) {
   const { state, busy, answer } = useJourney();
@@ -34,7 +34,7 @@ function Question({
             className={cn(
               "answer-option",
               choice === i && "chosen",
-              attempt && question.correct === i && "correct",
+              attempt && attempt?.correctOption === i && "correct",
               attempt &&
                 !attempt.correct &&
                 attempt.answer === i &&
@@ -50,7 +50,7 @@ function Question({
             />
             <span className="option-letter">{String.fromCharCode(65 + i)}</span>
             <span>{option}</span>
-            {attempt && question.correct === i ? (
+            {attempt && attempt?.correctOption === i ? (
               <Check size={19} />
             ) : attempt && attempt.answer === i ? (
               <X size={19} />
@@ -71,7 +71,10 @@ function Question({
               ? "That’s right. A little discovery!"
               : "A moment to learn something new."}
           </strong>
-          <p>{question.explanation}</p>
+          <p>
+            {attempt.explanation ??
+              "Read the referenced passage to review this answer."}
+          </p>
           <Link href={`/bible?day=${question.day}`}>
             <BookOpen size={14} />
             {question.reference} · Read in context
@@ -107,8 +110,8 @@ export function Quiz() {
     (Number.isInteger(requested) && requested >= 1 && requested <= 365
       ? requested
       : currentDay(state.profile.startDate, today));
-  const questions = QUESTIONS.filter((q) => q.day === day);
-  const history = QUESTIONS.filter((q) => state.attempts[q.id]);
+  const questions = QUIZ_PROMPTS.filter((q) => q.day === day);
+  const history = QUIZ_PROMPTS.filter((q) => state.attempts[q.id]);
   return (
     <>
       <PageHeading
@@ -160,7 +163,7 @@ export function Quiz() {
               correct answers
             </h2>
             <p>
-              {history.length} of {QUESTIONS.length} questions explored
+              {history.length} of {QUIZ_PROMPTS.length} questions explored
             </p>
             <strong className="xp-large">
               {history.filter((q) => state.attempts[q.id].correct).length * 10}

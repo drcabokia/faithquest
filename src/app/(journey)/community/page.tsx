@@ -27,8 +27,8 @@ export default function Community() {
           One faithful step at a time.
         </h2>
         <p>
-          Fellowship groups are planned for a future release. The current demo
-          is a personal reading space. There are no live groups, shared
+          Fellowship groups are planned for a future release. The current
+          release is a personal reading space. There are no live groups, shared
           activity, or leaderboards.
         </p>
         <Button asChild>

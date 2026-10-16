@@ -34,9 +34,9 @@ Supabase is optional for this demo. A later production integration can start on 
 
 The USD 0/month target is conditional on personal/non-commercial eligibility and staying within quotas. Do not enable paid add-ons or AI APIs by default.
 
-## 4. Future Supabase integration
+## 4. Gated Supabase integration
 
-Read AUTH_AND_SECURITY.md before activating production mode. Creating a project and configuring Google OAuth require your accounts and credentials. Apply and test migrations in a development project first. Environment variables belong in local `.env.local` and Vercel project settings, never in Git. The example keys are documentation only; adding them does not enable live authentication.
+The account implementation is present but disabled. Read [the integration runbook](SUPABASE_INTEGRATION.md) and AUTH_AND_SECURITY.md before activating production mode. Creating a project and configuring Google OAuth require your accounts and credentials. Apply and test migrations in a development project first. Environment variables belong in local `.env.local` and Vercel project settings, never in Git. The selected development project URL and publishable key are configured locally; migrations and real OAuth/session/device checks are still pending. Adding keys does not enable accounts.
 
 Only Supabase URL and publishable key may be exposed through `NEXT_PUBLIC_*`. Privileged server credentials must remain server-only. Set exact localhost, preview (only where needed), and production redirect allowlists. Authenticated production writes must go to Supabase; never fall back silently to demo storage or temporary Vercel files.
 

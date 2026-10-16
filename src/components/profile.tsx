@@ -14,7 +14,7 @@ import { useJourney, JourneyLoading } from "@/components/journey-provider";
 import { profileSchema, type Profile } from "@/lib/state";
 import { PageHeading } from "@/components/ui/shared";
 import { Button } from "@/components/ui/button";
-import { totalXp } from "@/services/gamification";
+import { totalXp } from "@/services/gamification-display";
 function ProfileForm({ initial }: { initial: Profile }) {
   const { profile, busy, state, today } = useJourney();
   const [draft, setDraft] = useState(initial),
@@ -131,7 +131,7 @@ function ProfileForm({ initial }: { initial: Profile }) {
   );
 }
 export function ProfileScreen() {
-  const { state } = useJourney();
+  const { state, mode } = useJourney();
   if (!state) return <JourneyLoading />;
   function exportDemo() {
     const blob = new Blob([JSON.stringify(state, null, 2)], {
@@ -140,7 +140,10 @@ export function ProfileScreen() {
     const url = URL.createObjectURL(blob),
       link = document.createElement("a");
     link.href = url;
-    link.download = "faithquest365-demo-backup.json";
+    link.download =
+      mode === "demo"
+        ? "faithquest365-demo-backup.json"
+        : "faithquest365-account-export.json";
     link.click();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
@@ -164,7 +167,7 @@ export function ProfileScreen() {
             <h2>{state.profile.name}</h2>
             <span className="demo-pill">
               <span />
-              LOCAL DEMO PROFILE
+              {mode === "demo" ? "LOCAL DEMO PROFILE" : "PRIVATE ACCOUNT"}
             </span>
             <div className="profile-stats">
               <span>
@@ -183,25 +186,32 @@ export function ProfileScreen() {
             <Download size={23} />
             <h2>Keep a copy of your journey</h2>
             <p>
-              Download your demo progress and reflections as JSON. Store the
-              file somewhere private. Restore/import is planned; this export is
-              for safekeeping.
+              Download your progress and reflections as JSON. Store the file
+              somewhere private. Restore/import is planned; this export is for
+              safekeeping.
             </p>
             <Button variant="secondary" onClick={exportDemo}>
               <Download size={16} />
-              Export demo backup
+              {mode === "demo" ? "Export demo backup" : "Export account data"}
             </Button>
           </section>
           <div className="privacy-note">
             <LockKeyhole size={20} />
             <p>
-              This demo uses browser storage only. Clearing site data removes
-              your demo progress. Entries are not encrypted or synced. Google
-              sign-in and Supabase persistence are future production work.
+              {mode === "demo"
+                ? "This demo uses browser storage only. Clearing site data removes your demo progress. Entries are not encrypted or synced."
+                : "Your progress and reflections are saved to your private account. Signing out clears the app session on this device."}
             </p>
           </div>
         </aside>
       </div>
+      {mode === "supabase" && (
+        <form action="/auth/signout" method="post">
+          <Button variant="secondary" type="submit">
+            Sign out of this device
+          </Button>
+        </form>
+      )}
     </>
   );
 }

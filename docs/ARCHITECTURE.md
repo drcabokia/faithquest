@@ -8,26 +8,28 @@ Next.js App Router renders route shells and the landing page. Interactive client
 
 `src/data` holds Bible metadata and editorial quiz content. `src/services` holds pure reading-plan/gamification functions and a `BibleContentProvider`. `src/lib` holds dates, validation, and persistence adapters. `src/components` contains the application shell, UI primitives, and feature screens. `src/app` owns route composition and metadata. Business rules do not depend on React or browser APIs.
 
-Demo state is versioned and validated before use. All demo writes go through a synchronous snapshot repository contract; save errors remain visible. Production has a separate async command contract (`ProductionJourneyRepository`) so clients never submit authoritative XP snapshots. Local demo content is private to a browser profile, not encrypted or synchronized, and must not be confused with production privacy guarantees. Multiple tabs should receive storage updates.
+Demo state is versioned and validated before use. All demo writes go through a synchronous snapshot repository contract; save errors remain visible. Account mode implements a separate async command contract (`ProductionJourneyRepository`) through an authenticated API and Supabase RPCs, so clients never submit authoritative XP snapshots. Local demo content is private to a browser profile, not encrypted or synchronized, and must not be confused with production privacy guarantees. Multiple tabs should receive storage updates.
 
 ## Routes
 
 | Route           | Purpose                                                        |
 | --------------- | -------------------------------------------------------------- |
 | `/`             | Brand, mission, demo entry                                     |
-| `/login`        | Honest demo entry and future Google-auth explanation           |
+| `/login`        | Mode-aware demo entry or gated Google sign-in                  |
 | `/dashboard`    | Today's mission, XP, streak, activity, journey summary         |
 | `/reading-plan` | Searchable/paged 365-day canonical schedule                    |
 | `/bible`        | Book/chapter navigation, verified WEB text, chapter completion |
 | `/quiz`         | Curated questions, explanations, one answer per question       |
-| `/journal`      | Private demo reflections with edit/history                     |
+| `/journal`      | Reflections with edit/history in the selected storage mode     |
 | `/achievements` | Earned/locked milestones and book adventure map                |
 | `/community`    | Future fellowship design, no fake membership or ranking        |
 | `/profile`      | Display name, start date, timezone, theme, summary             |
 
 ## Production boundary
 
-The demo adapter must never become a fallback for authenticated production writes. Introduce Supabase SSR clients and Google OAuth; verify sessions on the server. Apply migrations and reviewed seeds, then implement atomic activity RPCs. RLS isolates every personal record by `auth.uid()`. Clients must not mint XP or write achievement unlocks. Never expose a service-role key. Do not silently import browser journals into an account.
+The root layout selects separate dynamically imported demo/account providers from a server environment setting. Account mode uses request-scoped Supabase SSR clients, Google OAuth handlers, a Next.js session-refresh proxy and a verified journey API. The API submits strict commands to PostgreSQL functions, which derive identity from `auth.uid()`, lock per-user state and write activity/rewards/achievements atomically. RLS isolates personal reads and private quiz solutions remain outside the public schema.
+
+The account adapter never falls back to localStorage, imports demo journals or accepts client-minted XP. Public quiz prompts are separated from demo solutions; account feedback comes from a submitted attempt. Account progress is fetched without shared caching and refreshed on focus. Production accounts are disabled until hosted migrations, OAuth, session renewal and cross-device/privacy acceptance pass. See [integration details](SUPABASE_INTEGRATION.md).
 
 ## Reading and rewards
 

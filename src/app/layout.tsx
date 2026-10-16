@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { storageMode } from "@/lib/supabase/config";
 import { JourneyProvider } from "@/components/journey-provider";
 export const metadata: Metadata = {
   icons: { icon: "/icon.svg" },
@@ -16,7 +17,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
-        <JourneyProvider>{children}</JourneyProvider>
+        <JourneyProvider mode={storageMode()}>{children}</JourneyProvider>
       </body>
     </html>
   );

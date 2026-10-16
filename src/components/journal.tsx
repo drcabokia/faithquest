@@ -57,7 +57,7 @@ function Editor({ date, initial }: { date: string; initial: string }) {
   );
 }
 export function Journal() {
-  const { state, today } = useJourney();
+  const { state, today, mode } = useJourney();
   const [selected, setSelected] = useState<string | null>(null);
   if (!state) return <JourneyLoading />;
   const date = selected ?? today;
@@ -73,7 +73,9 @@ export function Journal() {
         action={
           <span className="soft-label">
             <LockKeyhole size={14} />
-            Private in this browser
+            {mode === "demo"
+              ? "Private in this browser"
+              : "Private to your account"}
           </span>
         }
       />
@@ -137,9 +139,9 @@ export function Journal() {
           <div className="privacy-note">
             <LockKeyhole size={19} />
             <p>
-              Demo entries stay on this device. They are not encrypted or backed
-              up. Avoid sensitive details on shared browsers. Export a copy from
-              your profile to keep a backup.
+              {mode === "demo"
+                ? "Demo entries stay on this device. They are not encrypted or backed up. Avoid sensitive details on shared browsers. Export a copy from your profile to keep a backup."
+                : "Your journal belongs to your signed-in account. It is never shared with fellow readers or groups. Sign out when using a shared device."}
             </p>
           </div>
         </aside>
