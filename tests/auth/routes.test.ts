@@ -117,6 +117,64 @@ beforeEach(() => {
 });
 afterEach(() => vi.unstubAllEnvs());
 describe("authenticated request boundary", () => {
+  it("protects the prayer page with the same live-session boundary", async () => {
+    mocks.session.mockResolvedValueOnce({ data: false, error: null });
+    const denied = await proxy(
+      new NextRequest("https://faithquest.test/prayers"),
+    );
+    expect(denied.headers.get("location")).toBe(
+      "https://faithquest.test/login",
+    );
+    expect(denied.headers.get("cache-control")).toContain("no-store");
+  });
+
+  it("validates private prayer commands and returns only allowlisted conflict messages", async () => {
+    const id = crypto.randomUUID(),
+      revision = crypto.randomUUID();
+    const command = {
+      type: "prayer",
+      id,
+      change: {
+        action: "save",
+        value: {
+          title: "Synthetic",
+          text: "A private request",
+          status: "ongoing",
+        },
+      },
+      expectedRevision: revision,
+    };
+    const response = await POST(request(command));
+    expect(response.status).toBe(200);
+    expect(mocks.rpc).toHaveBeenCalledWith("mutate_prayer", {
+      p_id: id,
+      p_action: "save",
+      p_value: command.change.value,
+      p_expected_revision: revision,
+    });
+    for (const error of [
+      "prayer_conflict",
+      "prayer_missing",
+      "prayer_limit",
+      "follow_up_limit",
+    ]) {
+      mocks.rpc.mockResolvedValueOnce({
+        data: { error, privateText: "must never leak" },
+        error: null,
+      });
+      const denied = await POST(request(command));
+      expect(denied.status).toBe(409);
+      expect(JSON.stringify(await denied.json())).not.toContain(
+        "must never leak",
+      );
+      expect(denied.headers.get("cache-control")).toContain("no-store");
+    }
+    mocks.rpc.mockClear();
+    const forged = await POST(request({ ...command, user_id: "victim" }));
+    expect(forged.status).toBe(400);
+    expect(mocks.rpc).not.toHaveBeenCalled();
+  });
+
   it("accepts only available plan IDs and returns a safe conflict when another device has activity", async () => {
     for (const plan of ["chronological-v1", "chronological-draft-v1"]) {
       const invalid = await POST(request({ type: "selectPlan", plan }));

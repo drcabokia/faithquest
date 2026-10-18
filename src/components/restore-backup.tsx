@@ -37,13 +37,13 @@ export function RestoreBackup() {
       <h2>Restore a backup</h2>
       <p>
         Choose a FaithQuest JSON export, up to 5 MB. Preview it before adding
-        missing chapters, quiz answers, reflections, saved verses and challenge
-        history. Existing entries and your reading preferences stay in place. XP
-        is calculated from activity.
+        missing chapters, quiz answers, reflections, saved verses, challenge
+        history, private verse notes and prayer requests. Existing entries and
+        your reading preferences stay in place. XP is calculated from activity.
       </p>
       <p className="small muted">
         {mode === "supabase"
-          ? "After confirmation, your backup’s activity and private reflections will be uploaded to the account you are signed into."
+          ? "After confirmation, your backup’s saved activity, reflections, verse notes and prayer requests will be uploaded to the account you are signed into."
           : "The merge is saved in this browser."}{" "}
         Keep a fresh export before restoring. Backups must use the same journey
         timezone and reading plan.
@@ -101,13 +101,15 @@ export function RestoreBackup() {
             {preview.chapters} missing chapters · {preview.attempts} missing
             quiz answers · {preview.reflections} missing reflections ·{" "}
             {preview.savedVerses} missing saved verses · {preview.challenges}{" "}
-            missing challenges · {preview.verseNotes} missing verse notes
+            missing challenges · {preview.verseNotes} missing verse notes ·{" "}
+            {preview.prayers} missing prayer requests
           </p>
           <p>
-            {preview.noteConflicts} conflicting verse notes keep their current
-            text. {preview.conflicts} conflicting reflections will keep their
-            current text and category. Saved quiz answers cannot be replaced.
-            Imported answers are checked again.
+            {preview.prayerConflicts} conflicting prayer requests keep their
+            current details and follow-ups. {preview.noteConflicts} conflicting
+            verse notes keep their current text. {preview.conflicts} conflicting
+            reflections will keep their current text and category. Saved quiz
+            answers cannot be replaced. Imported answers are checked again.
           </p>
           <p className="small muted">
             These counts reflect currently loaded progress. The merge also
@@ -138,6 +140,7 @@ export function RestoreBackup() {
                 preview.reflections +
                 preview.savedVerses +
                 preview.verseNotes +
+                preview.prayers +
                 preview.challenges
               )
             }
@@ -170,6 +173,7 @@ export function RestoreBackup() {
             preview.reflections +
             preview.savedVerses +
             preview.verseNotes +
+            preview.prayers +
             preview.challenges
           ) && <p role="status">There are no missing entries to restore.</p>}
         </div>

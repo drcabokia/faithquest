@@ -1,4 +1,5 @@
 "use client";
+import { changePrayer } from "@/services/prayers";
 import { setVerseNote } from "@/services/verse-notes";
 import type { JournalCategory } from "@/lib/journal";
 import { joinChallenge } from "@/services/challenges";
@@ -237,6 +238,11 @@ export function DemoJourneyProvider({
                 expectedText,
               ),
             text === null ? "Private note deleted." : "Private note saved.",
+          ),
+        changePrayer: (id, change, expectedRevision) =>
+          mutate(
+            (s) => changePrayer(s, id, change, expectedRevision),
+            "Prayer changes saved.",
           ),
         saveVerse: (book, chapter, verse, saved) =>
           mutate(

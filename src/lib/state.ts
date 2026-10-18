@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { prayersSchema } from "./prayers";
 import { verseNotesSchema } from "./verse-notes";
 import { dateInZone } from "./dates";
 import { CHAPTER_KEYS, PLAN_IDS } from "../services/reading-plan";
@@ -58,6 +59,7 @@ export const stateSchema = z
     fellowshipMemberships: fellowshipMembershipsSchema.optional(),
     challengeStarts: challengeStartsSchema.optional(),
     earnedAchievements: z.array(z.string()).optional(),
+    prayers: prayersSchema.optional(),
     verseNotes: verseNotesSchema.optional(),
     savedVerses: z
       .record(verseKeySchema, z.iso.datetime())

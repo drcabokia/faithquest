@@ -3,6 +3,511 @@ import { test, expect } from "@playwright/test";
 import { addDays, dateInZone } from "../../src/lib/dates";
 
 const control = "http://127.0.0.1:43191/__control";
+async function createPrayer(
+  page: import("@playwright/test").Page,
+  title = "Synthetic prayer",
+) {
+  await page.goto("/prayers");
+  await page
+    .getByRole("button", { name: "New prayer request", exact: true })
+    .click();
+  await page.getByLabel("Prayer title", { exact: true }).fill(title);
+  await page
+    .getByLabel("Your prayer request", { exact: true })
+    .fill("A synthetic private concern for browser verification.");
+  await page
+    .getByRole("button", { name: "Save prayer request", exact: true })
+    .click();
+  await expect(
+    page.getByRole("button", { name: "Edit prayer request", exact: true }),
+  ).toBeEnabled();
+}
+test("prayer requests support statuses, dated follow-ups, export, deletion and request-only restore", async ({
+  page,
+  request,
+}) => {
+  await createPrayer(page);
+  const editor = page.getByRole("region", {
+    name: "Prayer editor",
+    exact: true,
+  });
+  await editor
+    .getByRole("button", { name: "Add follow-up", exact: true })
+    .click();
+  await page
+    .getByLabel("Your follow-up", { exact: true })
+    .fill("Synthetic progress recorded in a private follow-up.");
+  await page
+    .getByRole("button", { name: "Save follow-up", exact: true })
+    .click();
+  await expect(
+    editor.getByText("Synthetic progress recorded in a private follow-up.", {
+      exact: true,
+    }),
+  ).toBeVisible();
+  await editor
+    .getByRole("button", { name: "Edit prayer request", exact: true })
+    .click();
+  await page
+    .getByLabel("Prayer status", { exact: true })
+    .selectOption("answered");
+  await page
+    .getByRole("button", { name: "Save prayer request", exact: true })
+    .click();
+  await expect(
+    page
+      .getByRole("article", { name: "Synthetic prayer", exact: true })
+      .getByText("Answered", { exact: true }),
+  ).toBeVisible();
+  await page
+    .getByLabel("Filter by prayer status", { exact: true })
+    .selectOption("ongoing");
+  await expect(page.getByRole("article")).toHaveCount(0);
+  await page
+    .getByLabel("Filter by prayer status", { exact: true })
+    .selectOption("all");
+  await page
+    .getByLabel("Search prayer requests", { exact: true })
+    .fill("PRIVATE FOLLOW-UP");
+  await expect(page.getByRole("article")).toHaveCount(1);
+  await page.reload();
+  await expect(
+    page.getByRole("article", { name: "Synthetic prayer", exact: true }),
+  ).toBeVisible();
+  const actual = (await (await request.post(control, { data: {} })).json())
+    .state;
+  expect(actual.rewards).toEqual({});
+  expect(actual.reflections).toEqual({});
+  await page.goto("/profile");
+  const download = page.waitForEvent("download");
+  await page
+    .getByRole("button", { name: "Export account data", exact: true })
+    .click();
+  const buffer = await readFile((await (await download).path())!);
+  expect(JSON.parse(buffer.toString()).prayers).toEqual(actual.prayers);
+  await page.goto("/prayers");
+  await page.getByRole("button", { name: "Open prayer", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Delete prayer request", exact: true })
+    .click();
+  await page.getByRole("button", { name: "Keep prayer", exact: true }).click();
+  await expect(page.getByRole("article")).toHaveCount(1);
+  await page
+    .getByRole("button", { name: "Delete prayer request", exact: true })
+    .click();
+  await page
+    .getByRole("button", { name: "Delete prayer permanently", exact: true })
+    .click();
+  await expect(page.getByRole("article")).toHaveCount(0);
+  await page.goto("/profile");
+  await page.getByLabel("Backup file", { exact: true }).setInputFiles({
+    name: "prayers.json",
+    mimeType: "application/json",
+    buffer,
+  });
+  await expect(page.getByText(/1 missing prayer requests/)).toBeVisible();
+  await page
+    .getByRole("checkbox", { name: /This backup belongs to me/ })
+    .check();
+  await page
+    .getByRole("button", { name: "Confirm merge", exact: true })
+    .click();
+  await expect(
+    page.getByText("Backup merged. Existing entries were kept.", {
+      exact: true,
+    }),
+  ).toBeVisible();
+  await page.goto("/prayers");
+  await page.getByRole("button", { name: "Open prayer", exact: true }).click();
+  await expect(
+    editor.getByText("Synthetic progress recorded in a private follow-up.", {
+      exact: true,
+    }),
+  ).toBeVisible();
+  expect(
+    (await (await request.post(control, { data: {} })).json()).state.rewards,
+  ).toEqual({});
+});
+test("prayer drafts survive navigation, reject stale edits, and recover a remotely deleted request", async ({
+  page,
+  request,
+}) => {
+  await createPrayer(page);
+  await page
+    .getByRole("button", { name: "Edit prayer request", exact: true })
+    .click();
+  await page
+    .getByLabel("Your prayer request", { exact: true })
+    .fill("An unsaved synthetic prayer draft.");
+  await page
+    .getByRole("link", { name: "Reflection Journal", exact: true })
+    .click();
+  await expect(
+    page.getByRole("heading", { name: "Pause. Reflect. Grow.", exact: true }),
+  ).toBeVisible();
+  await page
+    .getByRole("link", { name: "Return to Prayer Requests", exact: true })
+    .click();
+  await page
+    .getByRole("button", { name: "Continue Synthetic prayer", exact: true })
+    .click();
+  await expect(
+    page.getByLabel("Your prayer request", { exact: true }),
+  ).toHaveValue("An unsaved synthetic prayer draft.");
+  const { state } = await (await request.post(control, { data: {} })).json();
+  const [id] = Object.keys(state.prayers);
+  const newer = {
+    ...state.prayers,
+    [id]: {
+      ...state.prayers[id],
+      text: "A newer synthetic saved version.",
+      revision: crypto.randomUUID(),
+    },
+  };
+  await request.post(control, { data: { prayers: newer } });
+  await page.evaluate(() => window.dispatchEvent(new Event("focus")));
+  await expect(
+    page.getByRole("button", { name: "Save prayer request", exact: true }),
+  ).toBeDisabled();
+  await page.getByText("Review saved prayer", { exact: true }).click();
+  await expect(
+    page
+      .getByRole("region", { name: "Prayer editor", exact: true })
+      .getByText("A newer synthetic saved version.", { exact: true }),
+  ).toBeVisible();
+  await page
+    .getByRole("button", {
+      name: "Keep my draft against this version",
+      exact: true,
+    })
+    .click();
+  await page
+    .getByRole("button", { name: "Save prayer request", exact: true })
+    .click();
+  await expect(
+    page.getByRole("button", { name: "Edit prayer request", exact: true }),
+  ).toBeEnabled();
+  await page
+    .getByRole("button", { name: "Edit prayer request", exact: true })
+    .click();
+  await page
+    .getByLabel("Your prayer request", { exact: true })
+    .fill("Recover this synthetic draft after remote deletion.");
+  await request.post(control, { data: { prayers: {} } });
+  await page.evaluate(() => window.dispatchEvent(new Event("focus")));
+  await expect(
+    page.getByText(
+      "This prayer was deleted elsewhere. Your draft is still here.",
+      { exact: true },
+    ),
+  ).toBeVisible();
+  await page
+    .getByRole("button", { name: "Save as a new prayer", exact: true })
+    .click();
+  await page
+    .getByRole("button", { name: "Save prayer request", exact: true })
+    .click();
+  await expect(
+    page.getByRole("button", { name: "Edit prayer request", exact: true }),
+  ).toBeEnabled();
+  const restored = (await (await request.post(control, { data: {} })).json())
+    .state.prayers;
+  expect(Object.keys(restored)).toHaveLength(1);
+  expect(Object.keys(restored)[0]).not.toBe(id);
+  await page.setViewportSize({ width: 390, height: 844 });
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= window.innerWidth,
+    ),
+  ).toBe(true);
+  await page.screenshot({ path: ".cache/prayer-mobile.png", fullPage: true });
+});
+test("an uncertain prayer save retains newer typing and recovers the committed request without replay", async ({
+  page,
+  request,
+}) => {
+  await page.goto("/prayers");
+  await page
+    .getByRole("button", { name: "New prayer request", exact: true })
+    .click();
+  await page
+    .getByLabel("Prayer title", { exact: true })
+    .fill("Uncertain synthetic prayer");
+  await page
+    .getByLabel("Your prayer request", { exact: true })
+    .fill("The first synthetic saved prayer.");
+  let commits = 0,
+    release!: () => void,
+    signal!: () => void;
+  const gate = new Promise<void>((r) => (release = r)),
+    committed = new Promise<void>((r) => (signal = r));
+  await page.route("**/api/journey", async (route) => {
+    if (
+      route.request().method() === "POST" &&
+      route.request().postDataJSON().type === "prayer"
+    ) {
+      commits++;
+      await route.fetch();
+      signal();
+      await gate;
+      await route.abort("failed");
+    } else await route.continue();
+  });
+  try {
+    await page
+      .getByRole("button", { name: "Save prayer request", exact: true })
+      .click();
+    await committed;
+    await page
+      .getByLabel("Your prayer request", { exact: true })
+      .fill("Newer synthetic typing must survive the old response.");
+  } finally {
+    release();
+  }
+  await expect(page.locator(".error-banner")).toBeVisible();
+  await page
+    .getByRole("button", { name: "Check saved progress", exact: true })
+    .click();
+  await expect(
+    page.getByLabel("Your prayer request", { exact: true }),
+  ).toHaveValue("Newer synthetic typing must survive the old response.");
+  expect(commits).toBe(1);
+  const stored = (await (await request.post(control, { data: {} })).json())
+    .state.prayers;
+  expect(
+    Object.values(stored).map((p) => (p as { text: string }).text),
+  ).toEqual(["The first synthetic saved prayer."]);
+  const storage = await page.evaluate(() => ({
+    local: { ...localStorage },
+    session: { ...sessionStorage },
+  }));
+  expect(JSON.stringify(storage)).not.toContain("Newer synthetic typing");
+  await page.unroute("**/api/journey");
+  await page
+    .getByRole("button", {
+      name: "Keep my draft against this version",
+      exact: true,
+    })
+    .click();
+  await page
+    .getByRole("button", { name: "Save prayer request", exact: true })
+    .click();
+  await expect(
+    page.getByRole("button", { name: "Edit prayer request", exact: true }),
+  ).toBeEnabled();
+  expect(
+    Object.keys(
+      (await (await request.post(control, { data: {} })).json()).state.prayers,
+    ),
+  ).toHaveLength(1);
+});
+test("a late successful prayer reply preserves newer edits and discard requires confirmation", async ({
+  page,
+}) => {
+  await page.goto("/prayers");
+  await page
+    .getByRole("button", { name: "New prayer request", exact: true })
+    .click();
+  await page
+    .getByLabel("Prayer title", { exact: true })
+    .fill("Delayed synthetic prayer");
+  await page
+    .getByLabel("Your prayer request", { exact: true })
+    .fill("The submitted synthetic request.");
+  let release!: () => void, signal!: () => void;
+  const gate = new Promise<void>((r) => (release = r)),
+    committed = new Promise<void>((r) => (signal = r));
+  await page.route("**/api/journey", async (route) => {
+    if (
+      route.request().method() === "POST" &&
+      route.request().postDataJSON().type === "prayer"
+    ) {
+      const response = await route.fetch();
+      signal();
+      await gate;
+      await route.fulfill({ response });
+    } else await route.continue();
+  });
+  try {
+    await page
+      .getByRole("button", { name: "Save prayer request", exact: true })
+      .click();
+    await committed;
+    await page.getByLabel("Your prayer request", { exact: true }).fill("");
+  } finally {
+    release();
+  }
+  await expect(
+    page.getByRole("button", {
+      name: "Keep my draft against this version",
+      exact: true,
+    }),
+  ).toBeEnabled();
+  await expect(
+    page.getByLabel("Your prayer request", { exact: true }),
+  ).toHaveValue("");
+  await page
+    .getByRole("button", { name: "Discard prayer draft", exact: true })
+    .click();
+  await page.getByRole("button", { name: "Keep writing", exact: true }).click();
+  await expect(
+    page.getByLabel("Your prayer request", { exact: true }),
+  ).toHaveValue("");
+  await page
+    .getByRole("button", { name: "Discard prayer draft", exact: true })
+    .click();
+  await page
+    .getByRole("button", { name: "Discard prayer changes", exact: true })
+    .click();
+  await expect(
+    page
+      .getByRole("region", { name: "Prayer editor", exact: true })
+      .getByText("The submitted synthetic request.", { exact: true }),
+  ).toBeVisible();
+});
+test("follow-up drafts warn before reload, survive navigation, and recover after remote deletion", async ({
+  page,
+  request,
+}) => {
+  await createPrayer(page, "Follow-up synthetic prayer");
+  await page
+    .getByRole("button", { name: "Add follow-up", exact: true })
+    .click();
+  const text = "A synthetic follow-up draft retained in this tab.";
+  await page.getByLabel("Your follow-up", { exact: true }).fill(text);
+  const warning = page.waitForEvent("dialog");
+  await page.evaluate(() => {
+    setTimeout(() => window.location.reload(), 0);
+  });
+  await (await warning).dismiss();
+  await expect(page.getByLabel("Your follow-up", { exact: true })).toHaveValue(
+    text,
+  );
+  await page.getByRole("link", { name: "Study Tools", exact: true }).click();
+  await page
+    .getByRole("link", { name: "Return to Prayer Requests", exact: true })
+    .click();
+  await page
+    .getByRole("button", {
+      name: "Continue follow-up for Follow-up synthetic prayer",
+      exact: true,
+    })
+    .click();
+  await expect(page.getByLabel("Your follow-up", { exact: true })).toHaveValue(
+    text,
+  );
+  const { state } = await (await request.post(control, { data: {} })).json();
+  const [id] = Object.keys(state.prayers);
+  await request.post(control, {
+    data: {
+      prayers: {
+        [id]: {
+          ...state.prayers[id],
+          status: "answered",
+          revision: crypto.randomUUID(),
+        },
+      },
+    },
+  });
+  await page.evaluate(() => window.dispatchEvent(new Event("focus")));
+  await expect(
+    page.getByRole("button", { name: "Save follow-up", exact: true }),
+  ).toBeDisabled();
+  await page
+    .getByRole("button", {
+      name: "Keep my draft against this version",
+      exact: true,
+    })
+    .click();
+  await page
+    .getByRole("button", { name: "Save follow-up", exact: true })
+    .click();
+  await expect(
+    page.getByRole("button", { name: "Add follow-up", exact: true }),
+  ).toBeEnabled();
+  const saved = (await (await request.post(control, { data: {} })).json()).state
+    .prayers[id];
+  expect(saved.status).toBe("answered");
+  expect(Object.keys(saved.followUps)).toHaveLength(1);
+  await page
+    .getByRole("button", { name: "Add follow-up", exact: true })
+    .click();
+  await page
+    .getByLabel("Your follow-up", { exact: true })
+    .fill("Recover this orphaned follow-up as a new request.");
+  await request.post(control, { data: { prayers: {} } });
+  await page.evaluate(() => window.dispatchEvent(new Event("focus")));
+  await page
+    .getByRole("button", { name: "Recover as a new prayer", exact: true })
+    .click();
+  await expect(
+    page.getByLabel("Your prayer request", { exact: true }),
+  ).toHaveValue("Recover this orphaned follow-up as a new request.");
+  await page
+    .getByRole("button", { name: "Save prayer request", exact: true })
+    .click();
+  await expect(
+    page.getByRole("button", { name: "Edit prayer request", exact: true }),
+  ).toBeEnabled();
+});
+test("a lost follow-up response is recovered with the same note identity and no duplicate", async ({
+  page,
+  request,
+}) => {
+  await createPrayer(page, "Synthetic retry prayer");
+  await page
+    .getByRole("button", { name: "Add follow-up", exact: true })
+    .click();
+  await page
+    .getByLabel("Your follow-up", { exact: true })
+    .fill("A synthetic note with an uncertain reply.");
+  let writes = 0;
+  await page.route("**/api/journey", async (route) => {
+    if (
+      route.request().method() === "POST" &&
+      route.request().postDataJSON().type === "prayer"
+    ) {
+      writes++;
+      await route.fetch();
+      await route.abort("failed");
+    } else await route.continue();
+  });
+  await page
+    .getByRole("button", { name: "Save follow-up", exact: true })
+    .click();
+  await expect(page.locator(".error-banner")).toBeVisible();
+  await page
+    .getByRole("button", { name: "Check saved progress", exact: true })
+    .click();
+  await expect(
+    page.getByRole("button", {
+      name: "Keep my draft against this version",
+      exact: true,
+    }),
+  ).toBeEnabled();
+  const stored = (await (await request.post(control, { data: {} })).json())
+    .state.prayers;
+  const [id] = Object.keys(stored);
+  const noteIds = Object.keys(stored[id].followUps);
+  expect(noteIds).toHaveLength(1);
+  expect(writes).toBe(1);
+  await page.unroute("**/api/journey");
+  await page
+    .getByRole("button", {
+      name: "Keep my draft against this version",
+      exact: true,
+    })
+    .click();
+  await page
+    .getByRole("button", { name: "Save follow-up", exact: true })
+    .click();
+  await expect(
+    page.getByRole("button", { name: "Add follow-up", exact: true }),
+  ).toBeEnabled();
+  const recovered = (await (await request.post(control, { data: {} })).json())
+    .state.prayers;
+  expect(Object.keys(recovered[id].followUps)).toEqual(noteIds);
+});
 test("private verse notes save, export, delete and restore without changing Scripture or XP", async ({
   page,
   request,

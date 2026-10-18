@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { prayerChangeSchema, prayerIdSchema } from "./prayers";
 import { noteTextSchema } from "./verse-notes";
 import { profileSchema } from "./state";
 import { CHAPTER_KEYS } from "../services/reading-plan";
@@ -11,6 +12,14 @@ const reference = z
   .refine((r) => CHAPTER_KEYS.has(`${r.book}.${r.chapter}`));
 export const commandSchema = z
   .discriminatedUnion("type", [
+    z
+      .object({
+        type: z.literal("prayer"),
+        id: prayerIdSchema,
+        change: prayerChangeSchema,
+        expectedRevision: prayerIdSchema.nullable(),
+      })
+      .strict(),
     z
       .object({ type: z.literal("selectPlan"), plan: z.enum(PLAN_IDS) })
       .strict(),

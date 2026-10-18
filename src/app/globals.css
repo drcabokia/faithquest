@@ -4998,3 +4998,72 @@ body {
 .verse-note-draft-list > .button {
   justify-self: start;
 }
+
+.prayer-toolbar,
+.prayer-drafts,
+.prayer-editor {
+  margin-bottom: 1.5rem;
+}
+.prayer-editor input,
+.prayer-editor select,
+.prayer-editor textarea,
+.prayer-toolbar input,
+.prayer-toolbar select {
+  width: 100%;
+  min-width: 0;
+  margin-bottom: 1rem;
+}
+.prayer-editor label,
+.prayer-toolbar label {
+  display: block;
+  margin-top: 0.75rem;
+  margin-bottom: 0.4rem;
+  font-weight: 600;
+}
+.prayer-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+.prayer-list .card,
+.prayer-editor,
+.prayer-drafts {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.prayer-excerpt {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.prayer-follow-up {
+  border-top: 1px solid var(--border);
+  padding-top: 1rem;
+  margin-top: 1rem;
+}
+.prayer-drafts button {
+  margin: 0.3rem;
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 700px) {
+  .prayer-list {
+    grid-template-columns: 1fr;
+  }
+}
+
+.prayer-toolbar,
+.prayer-drafts,
+.prayer-editor,
+.prayer-list .card {
+  padding: 24px;
+}
+.prayer-editor h2,
+.prayer-list h3 {
+  margin-top: 0;
+}
+.prayer-editor .saved-verse-actions {
+  flex-wrap: wrap;
+}

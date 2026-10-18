@@ -1,4 +1,5 @@
 "use client";
+import type { PrayerChange } from "@/lib/prayers";
 import type { JournalCategory } from "@/lib/journal";
 import { createContext, useContext } from "react";
 import type { JourneyState, Profile } from "@/lib/state";
@@ -31,6 +32,11 @@ export type JourneyContextValue = {
     verse: number,
     text: string | null,
     expectedText: string | null,
+  ) => Promise<boolean>;
+  changePrayer: (
+    id: string,
+    change: PrayerChange,
+    expectedRevision: string | null,
   ) => Promise<boolean>;
   saveVerse: (
     book: BookId,

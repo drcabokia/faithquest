@@ -78,6 +78,9 @@ try {
         "utf8",
       ),
     );
+    await tx.unsafe(
+      await readFile(new URL("./verify-prayers.sql", import.meta.url), "utf8"),
+    );
     throw new VerifiedRollback();
   });
 } catch (error) {

@@ -1,5 +1,6 @@
 import type { JournalCategory } from "@/lib/journal";
 import "server-only";
+import { isPrayerError, PrayerError, type PrayerChange } from "../lib/prayers";
 import { isNoteError, VerseNoteError } from "../lib/verse-notes";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { stateSchema, type Profile } from "@/lib/state";
@@ -26,7 +27,21 @@ export class SupabaseJourneyRepository implements ProductionJourneyRepository {
       isNoteError(data?.error)
     )
       throw new VerseNoteError(data.error);
+    if (name === "mutate_prayer" && isPrayerError(data?.error))
+      throw new PrayerError(data.error);
     return stateSchema.parse(data);
+  }
+  changePrayer(
+    id: string,
+    change: PrayerChange,
+    expectedRevision: string | null,
+  ) {
+    return this.call("mutate_prayer", {
+      p_id: id,
+      p_action: change.action,
+      p_value: change.value,
+      p_expected_revision: expectedRevision,
+    });
   }
   joinChallenge() {
     return this.call("join_reading_challenge");

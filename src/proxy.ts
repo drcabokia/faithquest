@@ -17,6 +17,7 @@ const journeyRoutes = [
   "/achievements",
   "/community",
   "/profile",
+  "/prayers",
   "/study",
   "/challenges",
 ];
@@ -87,6 +88,7 @@ export const config = {
     "/achievements",
     "/community",
     "/profile",
+    "/prayers",
     "/study",
     "/challenges",
     "/login",

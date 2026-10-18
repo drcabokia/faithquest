@@ -1,3 +1,4 @@
+import { PrayerError } from "@/lib/prayers";
 import { VerseNoteError } from "@/lib/verse-notes";
 import type { NextRequest } from "next/server";
 import { accountsEnabled, appOrigin } from "@/lib/supabase/config";
@@ -58,6 +59,13 @@ async function handle(request: NextRequest, write: boolean) {
     const command = result.data;
     let state;
     switch (command.type) {
+      case "prayer":
+        state = await repository.changePrayer(
+          command.id,
+          command.change,
+          command.expectedRevision,
+        );
+        break;
       case "selectPlan":
         state = await repository.selectPlan(command.plan);
         break;
@@ -119,6 +127,8 @@ async function handle(request: NextRequest, write: boolean) {
     }
     return reply({ state });
   } catch (error) {
+    if (error instanceof PrayerError)
+      return reply({ error: error.message }, 409);
     if (error instanceof VerseNoteError)
       return reply({ error: error.message }, 409);
     if (error instanceof ReadingPlanSelectionError)

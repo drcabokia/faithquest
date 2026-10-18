@@ -19,6 +19,7 @@ import {
   Moon,
   Bookmark,
   Flag,
+  Heart,
 } from "lucide-react";
 import { Logo } from "@/components/brand";
 import { useJourney } from "@/components/journey-provider";
@@ -31,6 +32,7 @@ const navigation = [
   { href: "/challenges", label: "Reading Challenges", icon: Flag },
   { href: "/study", label: "Study Tools", icon: Bookmark },
   { href: "/quiz", label: "Daily Quiz", icon: CircleHelp },
+  { href: "/prayers", label: "Prayer Requests", icon: Heart },
   { href: "/journal", label: "Reflection Journal", icon: NotebookPen },
   { href: "/achievements", label: "Achievements", icon: Award },
   { href: "/community", label: "Community", icon: Users },

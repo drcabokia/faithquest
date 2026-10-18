@@ -1,4 +1,10 @@
 import { z } from "zod";
+import {
+  restoredPrayersSchema,
+  prayerContent,
+  samePrayerContent,
+  PRAYER_LIMIT,
+} from "./prayers";
 import { restoredVerseNotesSchema } from "./verse-notes";
 import { stateSchema, type JourneyState } from "./state";
 import { QUIZ_PROMPTS } from "../data/quiz-prompts";
@@ -20,6 +26,7 @@ export const restoreSchema = z
     readingPlan: z.enum(PLAN_IDS).optional(),
     timeZone: stateSchema.shape.profile.shape.timeZone,
     challengeStarts: challengeStartsSchema.optional(),
+    prayers: restoredPrayersSchema.optional(),
     verseNotes: restoredVerseNotesSchema.optional(),
     savedVerses: z.array(verseKeySchema).max(SAVED_VERSE_LIMIT).optional(),
     chapters: stateSchema.shape.chapters,
@@ -78,6 +85,9 @@ export function validateRestore(
       ...Object.values(backup.attempts).map((a) => a.date),
       ...Object.keys(backup.reflections),
       ...(backup.challengeStarts ?? []),
+      ...Object.values(backup.prayers ?? {}).flatMap((p) =>
+        Object.values(p.followUps).map((n) => n.date),
+      ),
     ].some((d) => d > today)
   )
     throw new Error("A backup cannot contain activity dated after today.");
@@ -110,6 +120,16 @@ export function parseBackup(
       chapters: state.chapters,
       ...(state.challengeStarts
         ? { challengeStarts: state.challengeStarts }
+        : {}),
+      ...(state.prayers
+        ? {
+            prayers: Object.fromEntries(
+              Object.entries(state.prayers).map(([id, p]) => [
+                id,
+                prayerContent(p),
+              ]),
+            ),
+          }
         : {}),
       ...(state.savedVerses
         ? { savedVerses: Object.keys(state.savedVerses) }
@@ -150,6 +170,15 @@ export function previewRestore(current: JourneyState, backup: RestoreData) {
       throw new Error(
         "The backup reading plan must match your current journey. Choose another backup.",
       );
+    if (
+      new Set([
+        ...Object.keys(current.prayers ?? {}),
+        ...Object.keys(backup.prayers ?? {}),
+      ]).size > PRAYER_LIMIT
+    )
+      throw new Error(
+        "The merged backup exceeds the 200 prayer request limit.",
+      );
     mergeChallengeStarts(
       current.challengeStarts ?? [],
       backup.challengeStarts ?? [],
@@ -170,6 +199,11 @@ export function previewRestore(current: JourneyState, backup: RestoreData) {
     ).length,
     savedVerses: (backup.savedVerses ?? []).filter(
       (key) => !Object.hasOwn(current.savedVerses ?? {}, key),
+    ).length,
+    prayers: missing(backup.prayers ?? {}, current.prayers ?? {}),
+    prayerConflicts: Object.entries(backup.prayers ?? {}).filter(
+      ([id, p]) =>
+        current.prayers?.[id] && !samePrayerContent(current.prayers[id], p),
     ).length,
     verseNotes: missing(backup.verseNotes ?? {}, current.verseNotes ?? {}),
     noteConflicts: Object.entries(backup.verseNotes ?? {}).filter(

@@ -3,6 +3,202 @@ import { readFile } from "node:fs/promises";
 import { addDays, dateInZone } from "../../src/lib/dates";
 import { PLAN } from "../../src/services/reading-plan";
 const KEY = "faithquest365.demo.v1";
+test("demo prayers keep drafts private and persist explicit requests, statuses and follow-ups", async ({
+  page,
+}) => {
+  await page.goto("/prayers");
+  await page
+    .getByRole("button", { name: "New prayer request", exact: true })
+    .click();
+  await page
+    .getByLabel("Prayer title", { exact: true })
+    .fill("Synthetic demo prayer");
+  await page
+    .getByLabel("Your prayer request", { exact: true })
+    .fill("Private demo concern for testing.");
+  expect(
+    await page.evaluate(() => localStorage.getItem("faithquest365.demo.v1")),
+  ).toBeNull();
+  await page.getByRole("link", { name: "Study Tools", exact: true }).click();
+  await page
+    .getByRole("link", { name: "Return to Prayer Requests", exact: true })
+    .click();
+  await page
+    .getByRole("button", {
+      name: "Continue Synthetic demo prayer",
+      exact: true,
+    })
+    .click();
+  await expect(
+    page.getByLabel("Your prayer request", { exact: true }),
+  ).toHaveValue("Private demo concern for testing.");
+  await page
+    .getByRole("button", { name: "Save prayer request", exact: true })
+    .click();
+  await expect(
+    page.getByRole("button", { name: "Add follow-up", exact: true }),
+  ).toBeEnabled();
+  await page
+    .getByRole("button", { name: "Add follow-up", exact: true })
+    .click();
+  await page
+    .getByLabel("Your follow-up", { exact: true })
+    .fill("A synthetic demo follow-up.");
+  await page
+    .getByRole("button", { name: "Save follow-up", exact: true })
+    .click();
+  await expect(
+    page.getByRole("button", { name: "Edit prayer request", exact: true }),
+  ).toBeEnabled();
+  await page
+    .getByRole("button", { name: "Edit prayer request", exact: true })
+    .click();
+  await page
+    .getByLabel("Prayer status", { exact: true })
+    .selectOption("archived");
+  await page
+    .getByRole("button", { name: "Save prayer request", exact: true })
+    .click();
+  await expect(
+    page.getByRole("article").getByText("Archived", { exact: true }),
+  ).toBeVisible();
+  await page.reload();
+  await page.getByRole("button", { name: "Open prayer", exact: true }).click();
+  await expect(
+    page
+      .getByRole("region", { name: "Prayer editor", exact: true })
+      .getByText("A synthetic demo follow-up.", { exact: true }),
+  ).toBeVisible();
+  const state = await page.evaluate(() =>
+    JSON.parse(localStorage.getItem("faithquest365.demo.v1")!),
+  );
+  expect(state.rewards).toEqual({});
+  expect(state.reflections).toEqual({});
+});
+test("parallel demo prayer editors preserve drafts until the latest version is explicitly reviewed", async ({
+  page,
+  context,
+}) => {
+  await page.goto("/prayers");
+  await page
+    .getByRole("button", { name: "New prayer request", exact: true })
+    .click();
+  await page
+    .getByLabel("Prayer title", { exact: true })
+    .fill("Parallel synthetic prayer");
+  await page
+    .getByLabel("Your prayer request", { exact: true })
+    .fill("The initial synthetic prayer.");
+  await page
+    .getByRole("button", { name: "Save prayer request", exact: true })
+    .click();
+  await expect(
+    page.getByRole("button", { name: "Edit prayer request", exact: true }),
+  ).toBeEnabled();
+  const other = await context.newPage();
+  await other.goto("/prayers");
+  await other.getByRole("button", { name: "Open prayer", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Edit prayer request", exact: true })
+    .click();
+  await other
+    .getByRole("button", { name: "Edit prayer request", exact: true })
+    .click();
+  await page
+    .getByLabel("Your prayer request", { exact: true })
+    .fill("The first tab's newer synthetic text.");
+  await other
+    .getByLabel("Your prayer request", { exact: true })
+    .fill("The other tab's retained synthetic draft.");
+  await page
+    .getByRole("button", { name: "Save prayer request", exact: true })
+    .click();
+  await expect(
+    page.getByRole("button", { name: "Edit prayer request", exact: true }),
+  ).toBeEnabled();
+  await expect(
+    other.getByRole("button", { name: "Save prayer request", exact: true }),
+  ).toBeDisabled();
+  await expect(
+    other.getByLabel("Your prayer request", { exact: true }),
+  ).toHaveValue("The other tab's retained synthetic draft.");
+  await other
+    .getByRole("button", {
+      name: "Keep my draft against this version",
+      exact: true,
+    })
+    .click();
+  await other
+    .getByRole("button", { name: "Save prayer request", exact: true })
+    .click();
+  await expect(
+    other.getByRole("button", { name: "Edit prayer request", exact: true }),
+  ).toBeEnabled();
+  const s = await page.evaluate(() =>
+    JSON.parse(localStorage.getItem("faithquest365.demo.v1")!),
+  );
+  expect(
+    Object.values(s.prayers).map((p) => (p as { text: string }).text),
+  ).toEqual(["The other tab's retained synthetic draft."]);
+  expect(s.rewards).toEqual({});
+});
+test("demo prayer search and status filters use bounded pages and fit a phone", async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    localStorage.setItem(
+      "faithquest365.demo.v1",
+      JSON.stringify({
+        version: 1,
+        profile: {
+          name: "Synthetic",
+          startDate: "2026-10-18",
+          timeZone: "UTC",
+          theme: "light",
+        },
+        chapters: {},
+        days: {},
+        rewards: {},
+        attempts: {},
+        reflections: {},
+        prayers: Object.fromEntries(
+          Array.from({ length: 12 }, (_, i) => [
+            crypto.randomUUID(),
+            {
+              title: "Request " + (i + 1),
+              text: "Synthetic concern",
+              status: i === 11 ? "answered" : "ongoing",
+              revision: crypto.randomUUID(),
+              createdAt: "2026-10-18T01:00:00.000Z",
+              updatedAt: "2026-10-18T01:00:00.000Z",
+              followUps: {},
+            },
+          ]),
+        ),
+      }),
+    );
+  });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/prayers");
+  await expect(page.getByRole("article")).toHaveCount(10);
+  await page
+    .getByRole("button", { name: "Next prayer page", exact: true })
+    .click();
+  await expect(page.getByRole("article")).toHaveCount(2);
+  await page
+    .getByLabel("Filter by prayer status", { exact: true })
+    .selectOption("answered");
+  await expect(page.getByRole("article")).toHaveCount(1);
+  await page
+    .getByLabel("Search prayer requests", { exact: true })
+    .fill("NO MATCH");
+  await expect(page.getByRole("article")).toHaveCount(0);
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= innerWidth,
+    ),
+  ).toBe(true);
+});
 test("demo verse notes keep drafts private and persist only explicit saves", async ({
   page,
 }) => {

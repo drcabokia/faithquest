@@ -1,3 +1,4 @@
+import { PRAYER_LIMIT } from "../lib/prayers";
 import { awardChallenges } from "./challenges";
 import { mergeChallengeStarts } from "../lib/challenges";
 import { dateInZone } from "../lib/dates";
@@ -23,7 +24,26 @@ export function restoreDemo(
     current.challengeStarts ?? [],
     backup.challengeStarts ?? [],
   );
+  if (
+    new Set([
+      ...Object.keys(current.prayers ?? {}),
+      ...Object.keys(backup.prayers ?? {}),
+    ]).size > PRAYER_LIMIT
+  )
+    throw new Error("The merged backup exceeds the 200 prayer request limit.");
   let next = structuredClone(current);
+  for (const [id, p] of Object.entries(backup.prayers ?? {})) {
+    if (!Object.hasOwn(next.prayers ?? {}, id))
+      next.prayers = {
+        ...next.prayers,
+        [id]: {
+          ...p,
+          revision: crypto.randomUUID(),
+          createdAt: now.toISOString(),
+          updatedAt: now.toISOString(),
+        },
+      };
+  }
   if (current.challengeStarts || backup.challengeStarts)
     next.challengeStarts = starts;
   for (const key of backup.savedVerses ?? [])

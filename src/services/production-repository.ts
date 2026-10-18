@@ -1,3 +1,4 @@
+import type { PrayerChange } from "@/lib/prayers";
 import type { JournalCategory } from "@/lib/journal";
 import type { BookId } from "../data/books";
 import type { JourneyState, Profile } from "../lib/state";
@@ -7,6 +8,11 @@ import type { PlanId } from "./reading-plan";
  * Quiz responses expose explanations only after the protected submission transaction.
  */
 export interface ProductionJourneyRepository {
+  changePrayer(
+    id: string,
+    change: PrayerChange,
+    expectedRevision: string | null,
+  ): Promise<JourneyState>;
   selectPlan(plan: PlanId): Promise<JourneyState>;
   joinChallenge(): Promise<JourneyState>;
   getJourney(): Promise<JourneyState>;

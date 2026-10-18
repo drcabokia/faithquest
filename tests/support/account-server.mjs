@@ -107,6 +107,7 @@ function initialSnapshot() {
     reflections: {},
     savedVerses: {},
     verseNotes: {},
+    prayers: {},
     challengeStarts: [],
     fellowshipMemberships: [],
     earnedAchievements: [],
@@ -253,6 +254,8 @@ const server = createServer(async (request, response) => {
       if (body.days && typeof body.days === "object") state.days = body.days;
       if (body.rewards && typeof body.rewards === "object")
         state.rewards = body.rewards;
+      if (body.prayers && typeof body.prayers === "object")
+        state.prayers = body.prayers;
       if (body.verseNotes && typeof body.verseNotes === "object")
         state.verseNotes = body.verseNotes;
       if (body.savedVerses && typeof body.savedVerses === "object")
@@ -499,6 +502,13 @@ const server = createServer(async (request, response) => {
             text,
             updatedAt: new Date().toISOString(),
           };
+        for (const [id, p] of Object.entries(body.p_backup.prayers ?? {}))
+          state.prayers[id] ??= {
+            ...p,
+            revision: randomUUID(),
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          };
         awardFixtureChallenges();
       }
       if (path.endsWith("/join_reading_challenge")) {
@@ -550,6 +560,58 @@ const server = createServer(async (request, response) => {
               text: desired,
               updatedAt: new Date().toISOString(),
             };
+        }
+      }
+      if (path.endsWith("/mutate_prayer")) {
+        const id = body.p_id,
+          action = body.p_action,
+          v = body.p_value,
+          current = state.prayers[id];
+        const same =
+          action === "save" &&
+          current &&
+          current.title === v.title.trim() &&
+          current.text === v.text.trim() &&
+          current.status === v.status;
+        const repeated =
+          action === "followUp" &&
+          current?.followUps[v.id]?.text === v.text.trim() &&
+          current.followUps[v.id].date === v.date;
+        if (!same && !repeated && !(action === "delete" && !current)) {
+          if (
+            !current &&
+            (action !== "save" || body.p_expected_revision !== null)
+          )
+            return send(200, { error: "prayer_missing" });
+          if ((current?.revision ?? null) !== body.p_expected_revision)
+            return send(200, { error: "prayer_conflict" });
+          if (action === "delete") delete state.prayers[id];
+          else if (action === "save") {
+            if (!current && Object.keys(state.prayers).length >= 200)
+              return send(200, { error: "prayer_limit" });
+            state.prayers[id] = {
+              title: v.title.trim(),
+              text: v.text.trim(),
+              status: v.status,
+              followUps: current?.followUps ?? {},
+              revision: randomUUID(),
+              createdAt: current?.createdAt ?? new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
+            };
+          } else {
+            if (current.followUps[v.id])
+              return send(200, { error: "prayer_conflict" });
+            if (Object.keys(current.followUps).length >= 50)
+              return send(200, { error: "follow_up_limit" });
+            if (v.date > today())
+              return send(400, {
+                code: "22023",
+                message: "Future fixture note",
+              });
+            current.followUps[v.id] = { text: v.text.trim(), date: v.date };
+            current.revision = randomUUID();
+            current.updatedAt = new Date().toISOString();
+          }
         }
       }
       if (path.endsWith("/submit_quiz"))

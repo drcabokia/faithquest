@@ -67,6 +67,8 @@ describe("explicit backup merges", () => {
     };
     const b = parseBackup(JSON.stringify(imported), "UTC", now);
     expect(previewRestore(current, b)).toEqual({
+      prayers: 0,
+      prayerConflicts: 0,
       verseNotes: 0,
       noteConflicts: 0,
       chapters: 2,

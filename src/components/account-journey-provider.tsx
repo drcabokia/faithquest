@@ -21,6 +21,7 @@ const paths = new Set([
   "/achievements",
   "/community",
   "/profile",
+  "/prayers",
   "/study",
   "/challenges",
 ]);
@@ -233,6 +234,11 @@ export function AccountJourneyProvider({
           mutate(
             { type: "verseNote", book, chapter, verse, text, expectedText },
             text === null ? "Private note deleted." : "Private note saved.",
+          ),
+        changePrayer: (id, change, expectedRevision) =>
+          mutate(
+            { type: "prayer", id, change, expectedRevision },
+            "Prayer changes saved.",
           ),
         saveVerse: (book, chapter, verse, saved) =>
           mutate(
