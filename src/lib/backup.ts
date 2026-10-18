@@ -1,4 +1,6 @@
 import { z } from "zod";
+import { graceDatesSchema } from "./grace-days";
+import { mergedGraceHistory } from "../services/reading-consistency";
 import {
   restoredPrayersSchema,
   prayerContent,
@@ -25,6 +27,7 @@ export const restoreSchema = z
     version: z.literal(1),
     readingPlan: z.enum(PLAN_IDS).optional(),
     timeZone: stateSchema.shape.profile.shape.timeZone,
+    graceDates: graceDatesSchema.optional(),
     challengeStarts: challengeStartsSchema.optional(),
     prayers: restoredPrayersSchema.optional(),
     verseNotes: restoredVerseNotesSchema.optional(),
@@ -79,6 +82,10 @@ export function validateRestore(
       "The backup timezone must match your journey timezone. Check your reading preferences.",
     );
   const today = dateInZone(timeZone, now);
+  if ((backup.graceDates ?? []).some((d) => d >= today))
+    throw new Error(
+      "Restored grace dates must be before today in your journey timezone.",
+    );
   if (
     [
       ...Object.values(backup.chapters),
@@ -118,6 +125,7 @@ export function parseBackup(
       ...(state.readingPlan ? { readingPlan: state.readingPlan } : {}),
       timeZone: state.profile.timeZone,
       chapters: state.chapters,
+      ...(state.graceDates ? { graceDates: state.graceDates } : {}),
       ...(state.challengeStarts
         ? { challengeStarts: state.challengeStarts }
         : {}),
@@ -179,6 +187,7 @@ export function previewRestore(current: JourneyState, backup: RestoreData) {
       throw new Error(
         "The merged backup exceeds the 200 prayer request limit.",
       );
+    mergedGraceHistory(current, backup);
     mergeChallengeStarts(
       current.challengeStarts ?? [],
       backup.challengeStarts ?? [],
@@ -199,6 +208,9 @@ export function previewRestore(current: JourneyState, backup: RestoreData) {
     ).length,
     savedVerses: (backup.savedVerses ?? []).filter(
       (key) => !Object.hasOwn(current.savedVerses ?? {}, key),
+    ).length,
+    graceDates: (backup.graceDates ?? []).filter(
+      (d) => !(current.graceDates ?? []).includes(d),
     ).length,
     prayers: missing(backup.prayers ?? {}, current.prayers ?? {}),
     prayerConflicts: Object.entries(backup.prayers ?? {}).filter(

@@ -1,5 +1,6 @@
 import type { JournalCategory } from "@/lib/journal";
 import "server-only";
+import { isGraceError, GraceDayError } from "../lib/grace-days";
 import { isPrayerError, PrayerError, type PrayerChange } from "../lib/prayers";
 import { isNoteError, VerseNoteError } from "../lib/verse-notes";
 import type { SupabaseClient } from "@supabase/supabase-js";
@@ -29,6 +30,8 @@ export class SupabaseJourneyRepository implements ProductionJourneyRepository {
       throw new VerseNoteError(data.error);
     if (name === "mutate_prayer" && isPrayerError(data?.error))
       throw new PrayerError(data.error);
+    if (name === "claim_grace_day" && isGraceError(data?.error))
+      throw new GraceDayError(data.error);
     return stateSchema.parse(data);
   }
   changePrayer(
@@ -42,6 +45,9 @@ export class SupabaseJourneyRepository implements ProductionJourneyRepository {
       p_value: change.value,
       p_expected_revision: expectedRevision,
     });
+  }
+  claimGrace(date: string) {
+    return this.call("claim_grace_day", { p_date: date });
   }
   joinChallenge() {
     return this.call("join_reading_challenge");

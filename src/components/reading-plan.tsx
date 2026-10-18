@@ -1,4 +1,6 @@
 "use client";
+import { ReadingConsistency } from "./reading-consistency";
+import { nextUnfinishedMission } from "@/services/reading-consistency";
 import Link from "next/link";
 import { useState } from "react";
 import {
@@ -28,6 +30,10 @@ export function ReadingPlan() {
     [page, setPage] = useState(0);
   if (!state) return <JourneyLoading />;
   const PLAN = getPlan(planId(state));
+  const { next: nextMission, chapter: nextChapter } = nextUnfinishedMission(
+    state,
+    today,
+  );
   const day = currentDay(state.profile.startDate, today),
     completed = Object.keys(state.days).length,
     missed = PLAN.filter((m) => m.day < day && !state.days[m.day]);
@@ -72,8 +78,18 @@ export function ReadingPlan() {
           </span>
         </div>
         <Button asChild>
-          <Link href={`/bible?day=${missed[0]?.day ?? day}`}>
-            {missed.length ? "Catch up gently" : "Open today’s mission"}
+          <Link
+            href={
+              nextMission && nextChapter
+                ? `/bible?day=${nextMission.day}&book=${nextChapter.book}&chapter=${nextChapter.chapter}`
+                : `/bible?day=${day}`
+            }
+          >
+            {nextMission
+              ? missed.length
+                ? "Catch up gently"
+                : "Open next mission"
+              : "Review reading"}
             <ArrowRight size={16} />
           </Link>
         </Button>
@@ -85,6 +101,7 @@ export function ReadingPlan() {
           penalty for returning to the path.
         </p>
       )}
+      <ReadingConsistency />
       <div className="list-controls">
         <div className="search-input">
           <Search size={17} />

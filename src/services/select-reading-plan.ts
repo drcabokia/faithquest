@@ -17,7 +17,9 @@ export function hasPlanActivity(state: JourneyState): boolean {
       state.rewards,
       state.attempts,
       state.reflections,
-    ].some((v) => Object.keys(v).length > 0) || !!state.challengeStarts?.length
+    ].some((v) => Object.keys(v).length > 0) ||
+    !!state.challengeStarts?.length ||
+    !!state.graceDates?.length
   );
 }
 export function selectReadingPlan(

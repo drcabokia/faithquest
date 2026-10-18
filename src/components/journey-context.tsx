@@ -23,6 +23,7 @@ export type JourneyContextValue = {
   ) => Promise<boolean>;
   profile: (profile: Profile) => Promise<boolean>;
   refresh?: () => Promise<void>;
+  claimGrace: (date: string) => Promise<boolean>;
   joinChallenge: () => Promise<boolean>;
   selectPlan: (plan: PlanId) => Promise<boolean>;
   restore: (backup: RestoreData) => Promise<boolean>;

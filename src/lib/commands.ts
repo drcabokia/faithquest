@@ -12,6 +12,7 @@ const reference = z
   .refine((r) => CHAPTER_KEYS.has(`${r.book}.${r.chapter}`));
 export const commandSchema = z
   .discriminatedUnion("type", [
+    z.object({ type: z.literal("grace"), date: z.iso.date() }).strict(),
     z
       .object({
         type: z.literal("prayer"),

@@ -5067,3 +5067,54 @@ body {
 .prayer-editor .saved-verse-actions {
   flex-wrap: wrap;
 }
+
+.consistency-card {
+  padding: 24px;
+  margin: 24px 0;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.consistency-card h2 {
+  margin-top: 0;
+}
+.consistency-card h3 {
+  margin-top: 24px;
+}
+.consistency-card .button {
+  white-space: normal;
+}
+.rhythm-calendar {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 8px;
+  list-style: none;
+  padding: 0;
+  margin: 16px 0;
+}
+.rhythm-calendar li {
+  padding: 12px 8px;
+  background: var(--soft);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.8rem;
+}
+.rhythm-calendar time {
+  font-weight: 700;
+}
+.rhythm-calendar .rhythm-read {
+  border-color: var(--green);
+}
+.rhythm-calendar .rhythm-grace {
+  border: 2px dashed var(--muted);
+}
+.grace-history {
+  padding-left: 20px;
+}
+@media (max-width: 700px) {
+  .rhythm-calendar {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

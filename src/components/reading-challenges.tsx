@@ -65,8 +65,8 @@ export function ReadingChallenges() {
         </p>
         <p className="muted">
           Missed dates stay visible. You can continue reading and start another
-          challenge after this period ends. There are no grace days, resets,
-          shared results or rankings.
+          challenge after this period ends. Streak grace days add no challenge
+          credit. There are no resets, shared results or rankings.
         </p>
         {!current && (
           <>

@@ -108,6 +108,7 @@ function initialSnapshot() {
     savedVerses: {},
     verseNotes: {},
     prayers: {},
+    graceDates: [],
     challengeStarts: [],
     fellowshipMemberships: [],
     earnedAchievements: [],
@@ -248,12 +249,17 @@ const server = createServer(async (request, response) => {
         fellowshipState = body.fellowshipState;
         updateMembershipExport();
       }
+      if (typeof body.startDate === "string")
+        state.profile.startDate = body.startDate;
       if (typeof body.name === "string") state.profile.name = body.name;
       if (Array.isArray(body.challengeStarts))
         state.challengeStarts = body.challengeStarts;
       if (body.days && typeof body.days === "object") state.days = body.days;
       if (body.rewards && typeof body.rewards === "object")
         state.rewards = body.rewards;
+      if (Array.isArray(body.graceDates)) state.graceDates = body.graceDates;
+      if (body.chapters && typeof body.chapters === "object")
+        state.chapters = body.chapters;
       if (body.prayers && typeof body.prayers === "object")
         state.prayers = body.prayers;
       if (body.verseNotes && typeof body.verseNotes === "object")
@@ -482,6 +488,25 @@ const server = createServer(async (request, response) => {
         )
           return send(400, { message: "Overlapping fixture challenges" });
         state.challengeStarts = merged;
+        const mergedGrace = [
+          ...new Set([
+            ...state.graceDates,
+            ...(body.p_backup.graceDates ?? []),
+          ]),
+        ].sort();
+        if (
+          mergedGrace.some(
+            (d, i) => i > 0 && d < plusDays(mergedGrace[i - 1], 30),
+          )
+        )
+          return send(400, { code: "22023", message: "Fixture grace overlap" });
+        for (const d of body.p_backup.graceDates ?? [])
+          if (!Object.values(state.days).includes(plusDays(d, -1)))
+            return send(400, {
+              code: "22023",
+              message: "Missing fixture preceding mission",
+            });
+        state.graceDates = mergedGrace;
         for (const [day, r] of Object.entries(body.p_backup.reflections)) {
           state.reflections[day] ??= {
             ...r,
@@ -510,6 +535,25 @@ const server = createServer(async (request, response) => {
             updatedAt: new Date().toISOString(),
           };
         awardFixtureChallenges();
+      }
+      if (path.endsWith("/claim_grace_day")) {
+        const d = body.p_date;
+        if (!state.graceDates.includes(d)) {
+          if (d !== plusDays(today(), -1))
+            return send(200, { error: "grace_invalid_day" });
+          if (Object.values(state.days).includes(d))
+            return send(200, { error: "grace_reading_exists" });
+          if (!Object.values(state.days).includes(plusDays(d, -1)))
+            return send(200, { error: "grace_no_prior_reading" });
+          if (
+            state.graceDates.some(
+              (g) => Math.abs(Date.parse(g) - Date.parse(d)) < 30 * 86400000,
+            )
+          )
+            return send(200, { error: "grace_cooldown" });
+          state.graceDates.push(d);
+          state.graceDates.sort();
+        }
       }
       if (path.endsWith("/join_reading_challenge")) {
         if (

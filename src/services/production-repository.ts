@@ -14,6 +14,7 @@ export interface ProductionJourneyRepository {
     expectedRevision: string | null,
   ): Promise<JourneyState>;
   selectPlan(plan: PlanId): Promise<JourneyState>;
+  claimGrace(date: string): Promise<JourneyState>;
   joinChallenge(): Promise<JourneyState>;
   getJourney(): Promise<JourneyState>;
   completeChapter(book: BookId, chapter: number): Promise<JourneyState>;

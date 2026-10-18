@@ -1,3 +1,4 @@
+import { mergedGraceHistory } from "./reading-consistency";
 import { PRAYER_LIMIT } from "../lib/prayers";
 import { awardChallenges } from "./challenges";
 import { mergeChallengeStarts } from "../lib/challenges";
@@ -31,7 +32,9 @@ export function restoreDemo(
     ]).size > PRAYER_LIMIT
   )
     throw new Error("The merged backup exceeds the 200 prayer request limit.");
+  const graceDates = mergedGraceHistory(current, backup);
   let next = structuredClone(current);
+  if (current.graceDates || backup.graceDates) next.graceDates = graceDates;
   for (const [id, p] of Object.entries(backup.prayers ?? {})) {
     if (!Object.hasOwn(next.prayers ?? {}, id))
       next.prayers = {

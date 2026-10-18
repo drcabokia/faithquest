@@ -32,7 +32,8 @@ function ProfileForm({ initial }: { initial: Profile }) {
     (Object.keys(state.chapters).length > 0 ||
       Object.keys(state.rewards).length > 0 ||
       Object.keys(state.attempts).length > 0 ||
-      (state.challengeStarts?.length ?? 0) > 0);
+      (state.challengeStarts?.length ?? 0) > 0 ||
+      (state.graceDates?.length ?? 0) > 0);
   const edit = (change: Partial<Profile>) => {
     setDraft((p) => ({ ...p, ...change }));
     setSaved(false);

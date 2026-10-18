@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { graceDatesSchema } from "./grace-days";
 import { prayersSchema } from "./prayers";
 import { verseNotesSchema } from "./verse-notes";
 import { dateInZone } from "./dates";
@@ -59,6 +60,7 @@ export const stateSchema = z
     fellowshipMemberships: fellowshipMembershipsSchema.optional(),
     challengeStarts: challengeStartsSchema.optional(),
     earnedAchievements: z.array(z.string()).optional(),
+    graceDates: graceDatesSchema.optional(),
     prayers: prayersSchema.optional(),
     verseNotes: verseNotesSchema.optional(),
     savedVerses: z

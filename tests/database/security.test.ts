@@ -78,6 +78,7 @@ describe("authenticated PostgreSQL commands and RLS", () => {
           "verify-quiz-expansion",
           "verify-verse-notes",
           "verify-prayers",
+          "verify-grace-days",
         ]) {
           await tx.exec(readFileSync(`scripts/${name}.sql`, "utf8"));
         }

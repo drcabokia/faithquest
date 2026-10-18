@@ -1,3 +1,4 @@
+import { GraceDayError } from "@/lib/grace-days";
 import { PrayerError } from "@/lib/prayers";
 import { VerseNoteError } from "@/lib/verse-notes";
 import type { NextRequest } from "next/server";
@@ -59,6 +60,9 @@ async function handle(request: NextRequest, write: boolean) {
     const command = result.data;
     let state;
     switch (command.type) {
+      case "grace":
+        state = await repository.claimGrace(command.date);
+        break;
       case "prayer":
         state = await repository.changePrayer(
           command.id,
@@ -127,6 +131,8 @@ async function handle(request: NextRequest, write: boolean) {
     }
     return reply({ state });
   } catch (error) {
+    if (error instanceof GraceDayError)
+      return reply({ error: error.message }, 409);
     if (error instanceof PrayerError)
       return reply({ error: error.message }, 409);
     if (error instanceof VerseNoteError)

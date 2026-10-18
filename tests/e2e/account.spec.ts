@@ -3,6 +3,228 @@ import { test, expect } from "@playwright/test";
 import { addDays, dateInZone } from "../../src/lib/dates";
 
 const control = "http://127.0.0.1:43191/__control";
+async function graceFixture(
+  request: import("@playwright/test").APIRequestContext,
+) {
+  const today = dateInZone("Asia/Kuala_Lumpur"),
+    prior = addDays(today, -2),
+    date = addDays(today, -1);
+  const { state } = await (
+    await request.post(control, {
+      data: {
+        startDate: addDays(today, -8),
+        days: { "1": prior },
+        chapters: { "GEN.1": prior, "GEN.2": prior, "GEN.3": prior },
+        rewards: { "reading:1": { amount: 50, date: prior } },
+      },
+    })
+  ).json();
+  return { state, date, today };
+}
+test("grace confirmation persists, exports and restores without XP or challenge credit", async ({
+  page,
+  request,
+}) => {
+  const { state, date, today } = await graceFixture(request);
+  await page.goto("/dashboard");
+  const rhythm = page.getByRole("region", {
+    name: "Reading rhythm and catch-up",
+    exact: true,
+  });
+  await rhythm
+    .getByRole("button", { name: "Use grace for yesterday", exact: true })
+    .click();
+  await rhythm
+    .getByRole("button", { name: "Cancel grace", exact: true })
+    .click();
+  expect(
+    (await (await request.post(control, { data: {} })).json()).state.graceDates,
+  ).toEqual([]);
+  // Another device may earn XP after the loaded snapshot. A grace claim must
+  // display its own outcome without attributing that unrelated XP to grace.
+  state.rewards["reflection:" + today] = { amount: 20, date: today };
+  state.reflections[today] = {
+    text: "A synthetic reflection saved on another device.",
+    category: "reflection",
+    updatedAt: new Date().toISOString(),
+  };
+  await request.post(control, {
+    data: { rewards: state.rewards, reflections: state.reflections },
+  });
+
+  await rhythm
+    .getByRole("button", { name: "Use grace for yesterday", exact: true })
+    .click();
+  await rhythm
+    .getByRole("button", { name: "Confirm grace day", exact: true })
+    .click();
+  await expect(rhythm.locator(".grace-history li")).toHaveCount(1);
+  await expect(page.locator(".toast")).toHaveText("Grace day saved.");
+
+  const saved = (await (await request.post(control, { data: {} })).json())
+    .state;
+  expect(saved.graceDates).toEqual([date]);
+  expect(saved.rewards).toEqual(state.rewards);
+  expect(saved.days).toEqual(state.days);
+  expect(saved.earnedAchievements).toEqual(state.earnedAchievements);
+  await page.reload();
+  await expect(rhythm.locator(".grace-history li")).toHaveCount(1);
+  await page.goto("/profile");
+  const download = page.waitForEvent("download");
+  await page
+    .getByRole("button", { name: "Export account data", exact: true })
+    .click();
+  const buffer = await readFile((await (await download).path())!);
+  expect(JSON.parse(buffer.toString()).graceDates).toEqual([date]);
+  await request.post(control, { data: { graceDates: [] } });
+  await page.reload();
+  await page.getByLabel("Backup file", { exact: true }).setInputFiles({
+    name: "grace.json",
+    mimeType: "application/json",
+    buffer,
+  });
+  await expect(page.getByText(/1 missing grace dates/)).toBeVisible();
+  await page
+    .getByRole("checkbox", { name: /This backup belongs to me/ })
+    .check();
+  await page
+    .getByRole("button", { name: "Confirm merge", exact: true })
+    .click();
+  await expect(
+    page.getByText("Backup merged. Existing entries were kept.", {
+      exact: true,
+    }),
+  ).toBeVisible();
+  await page.goto("/dashboard");
+  await expect(rhythm.locator(".grace-history li")).toHaveCount(1);
+  expect(
+    (await (await request.post(control, { data: {} })).json()).state.rewards,
+  ).toEqual(state.rewards);
+  await page.setViewportSize({ width: 390, height: 844 });
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= innerWidth,
+    ),
+  ).toBe(true);
+  await rhythm.screenshot({ path: ".cache/reading-rhythm-mobile.png" });
+});
+test("an uncertain grace claim recovers by reading and never replays its write", async ({
+  page,
+  request,
+}) => {
+  const { date } = await graceFixture(request);
+  await page.goto("/dashboard");
+  let writes = 0;
+  await page.route("**/api/journey", async (route) => {
+    if (
+      route.request().method() === "POST" &&
+      route.request().postDataJSON().type === "grace"
+    ) {
+      writes++;
+      await route.fetch();
+      await route.abort("failed");
+    } else await route.continue();
+  });
+  await page
+    .getByRole("button", { name: "Use grace for yesterday", exact: true })
+    .click();
+  await page
+    .getByRole("button", { name: "Confirm grace day", exact: true })
+    .click();
+  await expect(page.locator(".error-banner")).toBeVisible();
+  await page
+    .getByRole("button", { name: "Check saved progress", exact: true })
+    .click();
+  await expect(page.locator(".grace-history li")).toHaveCount(1);
+  expect(writes).toBe(1);
+  expect(
+    (await (await request.post(control, { data: {} })).json()).state.graceDates,
+  ).toEqual([date]);
+  await expect(
+    page.getByRole("button", { name: "Confirm grace day", exact: true }),
+  ).toBeDisabled();
+});
+test("stale grace eligibility and overlapping backup histories preserve current progress", async ({
+  page,
+  request,
+}) => {
+  const { state, date } = await graceFixture(request);
+  await page.goto("/dashboard");
+  await page
+    .getByRole("button", { name: "Use grace for yesterday", exact: true })
+    .click();
+  const existing = addDays(date, -15);
+  await request.post(control, { data: { graceDates: [existing] } });
+  await page.evaluate(() => window.dispatchEvent(new Event("focus")));
+  await expect(
+    page.getByRole("button", { name: "Confirm grace day", exact: true }),
+  ).toBeDisabled();
+  await page.getByRole("button", { name: "Cancel grace", exact: true }).click();
+  const stale = await page.request.post("/api/journey", {
+    headers: { origin: "http://127.0.0.1:3191" },
+    data: { type: "grace", date },
+  });
+  expect(stale.status()).toBe(409);
+  await page.goto("/profile");
+  await page.getByLabel("Backup file", { exact: true }).setInputFiles({
+    name: "overlap.json",
+    mimeType: "application/json",
+    buffer: Buffer.from(JSON.stringify({ ...state, graceDates: [date] })),
+  });
+  await expect(
+    page.getByRole("alert").filter({ hasText: /30 calendar/ }),
+  ).toBeVisible();
+  await page
+    .getByRole("checkbox", { name: /This backup belongs to me/ })
+    .check();
+  await expect(
+    page.getByRole("button", { name: "Confirm merge", exact: true }),
+  ).toBeDisabled();
+  const saved = await (await request.post(control, { data: {} })).json();
+  expect(saved.restoreCalls).toBe(0);
+  expect(saved.state.graceDates).toEqual([existing]);
+  expect(saved.state.rewards).toEqual(state.rewards);
+});
+test("catch-up links resume the first unread chapter in Canonical and Balanced", async ({
+  page,
+  request,
+}) => {
+  for (const balanced of [false, true]) {
+    await request.post(control, { data: { reset: true } });
+    if (balanced) {
+      const selected = await page.request.post("/api/journey", {
+        headers: { origin: "http://127.0.0.1:3191" },
+        data: { type: "selectPlan", plan: "balanced-v1" },
+      });
+      expect(selected.ok()).toBe(true);
+    }
+    const today = dateInZone("Asia/Kuala_Lumpur");
+    await request.post(control, {
+      data: {
+        startDate: addDays(today, -8),
+        chapters: { "GEN.1": addDays(today, -2) },
+      },
+    });
+    await page.goto("/dashboard");
+    const rhythm = page.getByRole("region", {
+      name: "Reading rhythm and catch-up",
+      exact: true,
+    });
+    await expect(
+      rhythm.getByText(/8 earlier unfinished missions/),
+    ).toBeVisible();
+    await rhythm
+      .getByRole("link", {
+        name: "Continue next unfinished mission",
+        exact: true,
+      })
+      .click();
+    await expect(page).toHaveURL(/day=1&book=GEN&chapter=2/);
+    await expect(
+      page.getByRole("heading", { name: "Genesis 2", exact: true }),
+    ).toBeVisible();
+  }
+});
 async function createPrayer(
   page: import("@playwright/test").Page,
   title = "Synthetic prayer",

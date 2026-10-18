@@ -164,7 +164,12 @@ export function AccountJourneyProvider({
                 : await restoreAccount(command);
             apply(next);
             if (message) {
-              const gained = before ? totalXp(next) - totalXp(before) : 0;
+              const gained =
+                "type" in command && command.type === "grace"
+                  ? 0
+                  : before
+                    ? totalXp(next) - totalXp(before)
+                    : 0;
               setNotice(gained > 0 ? `${message} +${gained} XP` : message);
             }
             return true;
@@ -222,6 +227,8 @@ export function AccountJourneyProvider({
         complete,
         answer,
         reflect,
+        claimGrace: (date) =>
+          mutate({ type: "grace", date }, "Grace day saved."),
         joinChallenge: () =>
           mutate({ type: "joinChallenge" }, "Seven-day challenge started."),
         profile,

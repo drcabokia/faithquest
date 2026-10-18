@@ -117,6 +117,37 @@ beforeEach(() => {
 });
 afterEach(() => vi.unstubAllEnvs());
 describe("authenticated request boundary", () => {
+  it("passes a captured grace date without ownership or reward fields and returns private conflicts", async () => {
+    const command = { type: "grace", date: "2026-10-17" };
+    expect((await POST(request(command))).status).toBe(200);
+    expect(mocks.rpc).toHaveBeenCalledWith("claim_grace_day", {
+      p_date: command.date,
+    });
+    for (const error of [
+      "grace_invalid_day",
+      "grace_reading_exists",
+      "grace_no_prior_reading",
+      "grace_cooldown",
+      "grace_limit",
+    ]) {
+      mocks.rpc.mockResolvedValueOnce({
+        data: { error, privateText: "never expose" },
+        error: null,
+      });
+      const response = await POST(request(command));
+      expect(response.status).toBe(409);
+      expect(JSON.stringify(await response.json())).not.toContain(
+        "never expose",
+      );
+      expect(response.headers.get("cache-control")).toContain("no-store");
+    }
+    mocks.rpc.mockClear();
+    expect(
+      (await POST(request({ ...command, user_id: "victim", xp: 50 }))).status,
+    ).toBe(400);
+    expect(mocks.rpc).not.toHaveBeenCalled();
+  });
+
   it("protects the prayer page with the same live-session boundary", async () => {
     mocks.session.mockResolvedValueOnce({ data: false, error: null });
     const denied = await proxy(

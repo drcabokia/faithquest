@@ -3,6 +3,127 @@ import { readFile } from "node:fs/promises";
 import { addDays, dateInZone } from "../../src/lib/dates";
 import { PLAN } from "../../src/services/reading-plan";
 const KEY = "faithquest365.demo.v1";
+test("parallel demo grace claims preserve only one explicit date and no reading credit", async ({
+  page,
+  context,
+}) => {
+  const today = dateInZone("Asia/Kuala_Lumpur"),
+    date = addDays(today, -1),
+    prior = addDays(today, -2);
+  await page.addInitScript(
+    ({ prior }) => {
+      localStorage.setItem(
+        "faithquest365.demo.v1",
+        JSON.stringify({
+          version: 1,
+          profile: {
+            name: "Synthetic grace",
+            startDate: prior,
+            timeZone: "Asia/Kuala_Lumpur",
+            theme: "light",
+          },
+          chapters: { "GEN.1": prior, "GEN.2": prior, "GEN.3": prior },
+          days: { "1": prior },
+          rewards: { "reading:1": { amount: 50, date: prior } },
+          attempts: {},
+          reflections: {},
+        }),
+      );
+    },
+    { prior },
+  );
+  await page.goto("/dashboard");
+  const other = await context.newPage();
+  await other.goto("/dashboard");
+  await page
+    .getByRole("button", { name: "Use grace for yesterday", exact: true })
+    .click();
+  await other
+    .getByRole("button", { name: "Use grace for yesterday", exact: true })
+    .click();
+  const releaseWriteLock = await other.evaluateHandle(async () => {
+    let release!: () => void;
+    const held = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    await new Promise<void>((acquired) => {
+      void navigator.locks.request("faithquest365-demo-write", async () => {
+        acquired();
+        await held;
+      });
+    });
+    return release;
+  });
+  try {
+    await Promise.all([
+      page
+        .getByRole("button", { name: "Confirm grace day", exact: true })
+        .click(),
+      other
+        .getByRole("button", { name: "Confirm grace day", exact: true })
+        .click(),
+    ]);
+  } finally {
+    await releaseWriteLock.evaluate((release) => release());
+    await releaseWriteLock.dispose();
+  }
+  await expect(page.locator(".grace-history li")).toHaveCount(1);
+  await expect(other.locator(".grace-history li")).toHaveCount(1);
+  const stored = await page.evaluate(() =>
+    JSON.parse(localStorage.getItem("faithquest365.demo.v1")!),
+  );
+  expect(stored.graceDates).toEqual([date]);
+  expect(stored.days).toEqual({ "1": prior });
+  expect(stored.rewards).toEqual({ "reading:1": { amount: 50, date: prior } });
+  await other.reload();
+  await expect(other.locator(".grace-history li")).toHaveCount(1);
+});
+test("grace history uses bounded pages and actual reading remains separate on a phone", async ({
+  page,
+}) => {
+  const today = dateInZone("Asia/Kuala_Lumpur"),
+    dates = Array.from({ length: 12 }, (_, i) =>
+      addDays(today, -1 - i * 30),
+    ).sort();
+  await page.addInitScript(
+    ({ dates, today }) => {
+      localStorage.setItem(
+        "faithquest365.demo.v1",
+        JSON.stringify({
+          version: 1,
+          profile: {
+            name: "Synthetic",
+            startDate: today,
+            timeZone: "Asia/Kuala_Lumpur",
+            theme: "light",
+          },
+          chapters: {},
+          days: {},
+          rewards: {},
+          attempts: {},
+          reflections: {},
+          graceDates: dates,
+        }),
+      );
+    },
+    { dates, today },
+  );
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/dashboard");
+  await expect(page.locator(".grace-history li")).toHaveCount(10);
+  await page
+    .getByRole("button", { name: "Next grace page", exact: true })
+    .click();
+  await expect(page.locator(".grace-history li")).toHaveCount(2);
+  await expect(
+    page.getByRole("button", { name: "Use grace for yesterday", exact: true }),
+  ).toHaveCount(0);
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= innerWidth,
+    ),
+  ).toBe(true);
+});
 test("demo prayers keep drafts private and persist explicit requests, statuses and follow-ups", async ({
   page,
 }) => {

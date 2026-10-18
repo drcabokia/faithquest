@@ -1,4 +1,6 @@
 "use client";
+import { ReadingConsistency } from "../reading-consistency";
+import { readingRhythm } from "@/lib/grace-days";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -29,8 +31,6 @@ import {
 import {
   achievements,
   levelInfo,
-  readingDates,
-  streak,
   totalXp,
 } from "@/services/gamification-display";
 import { addDays, displayDate } from "@/lib/dates";
@@ -44,7 +44,8 @@ export function Dashboard() {
     completed = Object.keys(state.days).length,
     xp = totalXp(state),
     level = levelInfo(xp),
-    streakDays = streak(readingDates(state), today);
+    rhythm = readingRhythm(state.days, state.graceDates ?? [], today),
+    streakDays = rhythm.readingDays;
   const badges = achievements(state),
     earned = badges.filter((b) => b.earned);
   const chapterCount = mission.chapters.filter(
@@ -141,12 +142,17 @@ export function Dashboard() {
             <span className="stat-label">READING STREAK</span>
             <strong>
               {streakDays}
-              <small> {streakDays === 1 ? "day" : "days"}</small>
+              <small>
+                {" "}
+                {streakDays === 1 ? "reading day" : "reading days"}
+              </small>
             </strong>
             <p>
-              {streakDays
-                ? "A lovely rhythm. Keep it growing!"
-                : "A fresh start is always welcome."}
+              {rhythm.graceDays
+                ? `Continuity protected by ${rhythm.graceDays} grace ${rhythm.graceDays === 1 ? "date" : "dates"}.`
+                : streakDays
+                  ? "A lovely rhythm. Keep it growing!"
+                  : "A fresh start is always welcome."}
             </p>
           </div>
         </article>
@@ -164,6 +170,7 @@ export function Dashboard() {
           </div>
         </article>
       </div>
+      <ReadingConsistency />
       <div className="dashboard-columns">
         <div className="dashboard-primary">
           <section className="mission-card">

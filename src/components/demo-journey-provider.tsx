@@ -1,4 +1,5 @@
 "use client";
+import { claimGraceDay } from "@/services/reading-consistency";
 import { changePrayer } from "@/services/prayers";
 import { setVerseNote } from "@/services/verse-notes";
 import type { JournalCategory } from "@/lib/journal";
@@ -201,6 +202,7 @@ export function DemoJourneyProvider({
         Object.keys(s.rewards).length ||
         Object.keys(s.chapters).length ||
         Object.keys(s.attempts).length ||
+        (s.graceDates?.length ?? 0) ||
         (s.challengeStarts?.length ?? 0)
       ) {
         if (parsed.timeZone !== s.profile.timeZone)
@@ -223,6 +225,8 @@ export function DemoJourneyProvider({
         complete,
         answer,
         reflect,
+        claimGrace: (date) =>
+          mutate((s) => claimGraceDay(s, date), "Grace day saved."),
         joinChallenge: () =>
           mutate((s) => joinChallenge(s), "Seven-day challenge started."),
         profile,

@@ -41,3 +41,5 @@ Failed/uncertain enrollment or restore leaves a retry path without inventing suc
 Migration `20261017153359_seven_day_reading_challenges.sql` adds the owner/session-scoped enrollment table, live-caller metered join command, private reward reconciliation, snapshot/restore support and timezone guard. Reading completion and restore run under the existing profile lock, with unique `challenge:<start-date>` XP keys. Direct client writes and private-helper calls remain denied. Auth/profile deletion cascades remove enrollments.
 
 For the synthetic database drill, run `scripts/verify-challenges.sql` only inside a transaction that is always rolled back. It never targets real enrollments or progress. See [VALIDATION.md](VALIDATION.md) for evidence and [BACKUP_AND_RESTORE.md](BACKUP_AND_RESTORE.md) for broader recovery limits.
+
+Optional [reading-streak grace](READING_CONSISTENCY.md) is separate from these challenge rules. A grace date never counts as one of the seven required actual mission dates or awards the challenge bonus.

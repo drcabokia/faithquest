@@ -81,6 +81,12 @@ try {
     await tx.unsafe(
       await readFile(new URL("./verify-prayers.sql", import.meta.url), "utf8"),
     );
+    await tx.unsafe(
+      await readFile(
+        new URL("./verify-grace-days.sql", import.meta.url),
+        "utf8",
+      ),
+    );
     throw new VerifiedRollback();
   });
 } catch (error) {
