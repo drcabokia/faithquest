@@ -6,7 +6,11 @@ import { accountsEnabled, storageMode } from "@/lib/supabase/config";
 export default async function Login({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{
+    error?: string;
+    signedOut?: string;
+    deleted?: string;
+  }>;
 }) {
   const account = storageMode() === "supabase",
     enabled = accountsEnabled(),
@@ -18,6 +22,17 @@ export default async function Login({
         <ShieldCheck size={34} />
         <p className="eyebrow">WELCOME TO FAITHQUEST365</p>
         <h1>Your journey starts with one step.</h1>
+        {account && query.deleted === "1" && (
+          <p role="status">
+            Your FaithQuest365 account was deleted. Signing in again starts a
+            new journey.
+          </p>
+        )}
+        {account && query.signedOut === "all" && (
+          <p role="status">
+            Signed out of all devices. Sign in again to continue.
+          </p>
+        )}
         {query.error && (
           <div className="error-banner" role="alert">
             Sign-in could not be completed. Please try again.

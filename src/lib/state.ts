@@ -1,6 +1,11 @@
 import { z } from "zod";
+import { verseNotesSchema } from "./verse-notes";
 import { dateInZone } from "./dates";
-import { CHAPTER_KEYS } from "../services/reading-plan";
+import { CHAPTER_KEYS, PLAN_IDS } from "../services/reading-plan";
+import { verseKeySchema, SAVED_VERSE_LIMIT } from "./verses";
+import { journalCategorySchema } from "./journal";
+import { challengeStartsSchema } from "./challenges";
+import { fellowshipMembershipsSchema } from "./fellowship";
 const date = z.iso.date();
 const chapterKey = z.string().refine((key) => CHAPTER_KEYS.has(key));
 export const profileSchema = z.object({
@@ -16,41 +21,60 @@ export const profileSchema = z.object({
   }),
   theme: z.enum(["light", "dark", "system"]),
 });
-export const stateSchema = z.object({
-  version: z.literal(1),
-  profile: profileSchema,
-  chapters: z.record(chapterKey, date),
-  days: z.record(
-    z.string().regex(/^(?:[1-9]|[1-9][0-9]|[12][0-9]{2}|3[0-5][0-9]|36[0-5])$/),
-    date,
-  ),
-  rewards: z.record(
-    z.string().max(100),
-    z.object({ amount: z.number().int().nonnegative().max(150), date }),
-  ),
-  attempts: z.record(
-    z.string(),
-    z.object({
-      answer: z.number().int().min(0).max(3),
-      correct: z.boolean(),
-      correctOption: z.number().int().min(0).max(3).optional(),
-      explanation: z.string().optional(),
+export const stateSchema = z
+  .object({
+    version: z.literal(1),
+    readingPlan: z.enum(PLAN_IDS).optional(),
+    profile: profileSchema,
+    chapters: z.record(chapterKey, date),
+    days: z.record(
+      z
+        .string()
+        .regex(/^(?:[1-9]|[1-9][0-9]|[12][0-9]{2}|3[0-5][0-9]|36[0-5])$/),
       date,
-    }),
-  ),
-  reflections: z.record(
-    date,
-    z.object({
-      text: z.string().min(20).max(10000),
-      updatedAt: z.iso.datetime(),
-    }),
-  ),
-  earnedAchievements: z.array(z.string()).optional(),
-  resume: z
-    .object({ book: z.string(), chapter: z.number().int().positive() })
-    .refine((ref) => CHAPTER_KEYS.has(`${ref.book}.${ref.chapter}`))
-    .optional(),
-});
+    ),
+    rewards: z.record(
+      z.string().max(100),
+      z.object({ amount: z.number().int().nonnegative().max(150), date }),
+    ),
+    attempts: z.record(
+      z.string(),
+      z.object({
+        answer: z.number().int().min(0).max(3),
+        correct: z.boolean(),
+        correctOption: z.number().int().min(0).max(3).optional(),
+        explanation: z.string().optional(),
+        date,
+      }),
+    ),
+    reflections: z.record(
+      date,
+      z.object({
+        text: z.string().min(20).max(10000),
+        category: journalCategorySchema.optional(),
+        updatedAt: z.iso.datetime(),
+      }),
+    ),
+    fellowshipMemberships: fellowshipMembershipsSchema.optional(),
+    challengeStarts: challengeStartsSchema.optional(),
+    earnedAchievements: z.array(z.string()).optional(),
+    verseNotes: verseNotesSchema.optional(),
+    savedVerses: z
+      .record(verseKeySchema, z.iso.datetime())
+      .refine((v) => Object.keys(v).length <= SAVED_VERSE_LIMIT)
+      .optional(),
+    resume: z
+      .object({ book: z.string(), chapter: z.number().int().positive() })
+      .refine((ref) => CHAPTER_KEYS.has(`${ref.book}.${ref.chapter}`))
+      .optional(),
+  })
+  .refine(
+    (state) =>
+      Object.keys(state.verseNotes ?? {}).every((key) =>
+        Object.hasOwn(state.savedVerses ?? {}, key),
+      ),
+    { message: "Notes require a saved verse." },
+  );
 export type JourneyState = z.infer<typeof stateSchema>;
 export type Profile = JourneyState["profile"];
 export function initialState(now = new Date()): JourneyState {

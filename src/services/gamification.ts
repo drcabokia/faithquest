@@ -1,8 +1,14 @@
+import { awardChallenges } from "./challenges";
 import type { JourneyState } from "../lib/state";
 import { BOOKS } from "../data/books";
 import { QUESTIONS } from "../data/quizzes";
 import { dateInZone } from "../lib/dates";
-import { CHAPTER_KEYS, PLAN } from "./reading-plan";
+import {
+  CHAPTER_KEYS,
+  getPlan,
+  planId,
+  readingRewardKey,
+} from "./reading-plan";
 import { XP } from "./gamification-display";
 export * from "./gamification-display";
 function award(state: JourneyState, key: string, amount: number, date: string) {
@@ -18,13 +24,18 @@ export function completeChapter(
   const next = structuredClone(state);
   const date = dateInZone(state.profile.timeZone, now);
   next.chapters[key] = date;
-  for (const mission of PLAN) {
+  for (const mission of getPlan(planId(state))) {
     if (
       !next.days[mission.day] &&
       mission.chapters.every((c) => next.chapters[c.key])
     ) {
       next.days[mission.day] = date;
-      award(next, `reading:${mission.day}`, XP.reading, date);
+      award(
+        next,
+        readingRewardKey(planId(state), mission.day),
+        XP.reading,
+        date,
+      );
     }
   }
   for (const book of BOOKS) {
@@ -36,6 +47,7 @@ export function completeChapter(
     )
       award(next, `book:${book.id}`, XP.book, date);
   }
+  awardChallenges(next, date);
   return next;
 }
 export function submitAnswer(
@@ -61,12 +73,15 @@ export function submitAnswer(
   if (correct) award(next, `quiz:${id}`, XP.quiz, date);
   return next;
 }
+import { journalCategorySchema, type JournalCategory } from "@/lib/journal";
 export function saveReflection(
   state: JourneyState,
   date: string,
   text: string,
   now = new Date(),
+  category?: JournalCategory,
 ): JourneyState {
+  if (category !== undefined) journalCategorySchema.parse(category);
   const content = text.trim();
   if (content.length < 20 || content.length > 10000)
     throw new Error("Write between 20 and 10,000 characters for a reflection.");
@@ -80,7 +95,13 @@ export function saveReflection(
       "New reflections can be saved for today. Existing entries can be edited.",
     );
   const next = structuredClone(state);
-  next.reflections[date] = { text: content, updatedAt: now.toISOString() };
+  next.reflections[date] = {
+    text: content,
+    updatedAt: now.toISOString(),
+    ...((category ?? state.reflections[date]?.category)
+      ? { category: category ?? state.reflections[date]?.category }
+      : {}),
+  };
   award(next, `reflection:${date}`, XP.reflection, today);
   return next;
 }

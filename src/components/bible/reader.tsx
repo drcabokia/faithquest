@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { useVerseNoteDrafts } from "../verse-note-drafts";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
@@ -9,14 +10,21 @@ import {
   Check,
   ChevronRight,
   LoaderCircle,
+  Bookmark,
 } from "lucide-react";
 import { BOOKS, type BookId } from "@/data/books";
 import { bibleContent, type BibleChapter } from "@/services/bible-content";
-import { ALL_CHAPTERS, PLAN, currentDay } from "@/services/reading-plan";
+import {
+  ALL_CHAPTERS,
+  getPlan,
+  planId,
+  currentDay,
+} from "@/services/reading-plan";
 import { useJourney, JourneyLoading } from "@/components/journey-provider";
 import { Button } from "@/components/ui/button";
 import { PageHeading } from "@/components/ui/shared";
 import { cn } from "@/lib/utils";
+import { verseLabel, SAVED_VERSE_LIMIT } from "@/lib/verses";
 function ChapterText({
   book,
   chapter,
@@ -26,6 +34,9 @@ function ChapterText({
   chapter: number;
   onReady: () => void;
 }) {
+  const { state, busy, saveVerse } = useJourney();
+  const { drafts } = useVerseNoteDrafts();
+  const [selectedVerse, setSelectedVerse] = useState(1);
   const [data, setData] = useState<BibleChapter | null>(null),
     [error, setError] = useState<string | null>(null),
     [retry, setRetry] = useState(0);
@@ -47,6 +58,12 @@ function ChapterText({
       });
     return () => controller.abort();
   }, [book, chapter, onReady, retry]);
+  useEffect(() => {
+    if (!data || !/^#verse-[1-9]\d{0,2}$/.test(window.location.hash)) return;
+    document
+      .getElementById(window.location.hash.slice(1))
+      ?.scrollIntoView({ block: "center" });
+  }, [data]);
   if (error)
     return (
       <div className="empty-state" role="alert">
@@ -71,23 +88,98 @@ function ChapterText({
         Loading Scripture…
       </div>
     );
+  const selectedKey = `${book}.${chapter}.${selectedVerse}`;
+  const saved = Object.hasOwn(state?.savedVerses ?? {}, selectedKey);
+  const hasNote = !!state?.verseNotes?.[selectedKey];
+  const atLimit =
+    Object.keys(state?.savedVerses ?? {}).length >= SAVED_VERSE_LIMIT;
   return (
-    <div className="scripture-text">
-      {data.verses
-        .filter((v) => v.text.length > 0)
-        .map((v) => (
-          <p key={v.number}>
-            <sup>{v.number}</sup>
-            {v.text}
-          </p>
-        ))}
-      {data.verses.some((v) => !v.text) && (
-        <p className="verse-numbering-note">
-          Verse numbering follows the WEB source. Some verse numbers have no
-          text in this edition; no replacement text has been added.
+    <>
+      <div className="reader-save-controls">
+        <div className="verse-selector">
+          <label htmlFor="save-verse-number">Verse</label>
+          <select
+            id="save-verse-number"
+            value={selectedVerse}
+            onChange={(e) => setSelectedVerse(Number(e.target.value))}
+          >
+            {data.verses
+              .filter((v) => v.text)
+              .map((v) => (
+                <option key={v.number} value={v.number}>
+                  {v.number}
+                </option>
+              ))}
+          </select>
+        </div>
+        <Button
+          variant="secondary"
+          disabled={
+            busy ||
+            (!saved && atLimit) ||
+            hasNote ||
+            (saved && !!drafts[selectedKey])
+          }
+          aria-pressed={Object.hasOwn(
+            state?.savedVerses ?? {},
+            `${book}.${chapter}.${selectedVerse}`,
+          )}
+          onClick={() =>
+            void saveVerse(
+              book,
+              chapter,
+              selectedVerse,
+              !Object.hasOwn(
+                state?.savedVerses ?? {},
+                `${book}.${chapter}.${selectedVerse}`,
+              ),
+            )
+          }
+        >
+          <Bookmark size={16} />
+          {Object.hasOwn(
+            state?.savedVerses ?? {},
+            `${book}.${chapter}.${selectedVerse}`,
+          )
+            ? "Remove saved verse"
+            : "Save verse"}
+        </Button>
+        <Link className="text-link" href="/study">
+          My saved verses
+        </Link>
+        <p className="small muted">
+          {hasNote || (saved && drafts[selectedKey])
+            ? "Manage your private note in Study Tools before removing this saved verse."
+            : atLimit && !saved
+              ? "You have 1,000 saved verses. Remove one in Study Tools before adding another."
+              : `Save ${verseLabel(selectedKey)} for later reading or memory practice.`}
         </p>
-      )}
-    </div>
+      </div>
+      <div className="scripture-text">
+        {data.verses
+          .filter((v) => v.text.length > 0)
+          .map((v) => (
+            <p
+              key={v.number}
+              id={`verse-${v.number}`}
+              className={
+                state?.savedVerses?.[`${book}.${chapter}.${v.number}`]
+                  ? "saved-scripture-verse"
+                  : undefined
+              }
+            >
+              <sup>{v.number}</sup>
+              {v.text}
+            </p>
+          ))}
+        {data.verses.some((v) => !v.text) && (
+          <p className="verse-numbering-note">
+            Verse numbering follows the WEB source. Some verse numbers have no
+            text in this edition; no replacement text has been added.
+          </p>
+        )}
+      </div>
+    </>
   );
 }
 import { useCallback } from "react";
@@ -107,11 +199,18 @@ function ChapterReader({
     void remember(book, chapter);
   }, [book, chapter, remember]);
   if (!state) return null;
-  const index = ALL_CHAPTERS.findIndex(
+  const schedule = getPlan(planId(state));
+  const followsMission = schedule[day - 1].chapters.some(
     (c) => c.book === book && c.chapter === chapter,
   );
-  const previous = ALL_CHAPTERS[index - 1],
-    next = ALL_CHAPTERS[index + 1];
+  const ordered = followsMission
+    ? schedule.flatMap((m) => m.chapters.map((c) => ({ ...c, day: m.day })))
+    : ALL_CHAPTERS.map((c) => ({ ...c, day }));
+  const index = ordered.findIndex(
+    (c) => c.book === book && c.chapter === chapter,
+  );
+  const previous = ordered[index - 1],
+    next = ordered[index + 1];
   const done = !!state.chapters[`${book}.${chapter}`];
   return (
     <>
@@ -150,7 +249,7 @@ function ChapterReader({
         {previous ? (
           <Button asChild variant="secondary">
             <Link
-              href={`/bible?day=${day}&book=${previous.book}&chapter=${previous.chapter}`}
+              href={`/bible?day=${previous.day}&book=${previous.book}&chapter=${previous.chapter}`}
             >
               <ArrowLeft size={16} />
               Previous chapter
@@ -162,7 +261,7 @@ function ChapterReader({
         {next ? (
           <Button asChild>
             <Link
-              href={`/bible?day=${day}&book=${next.book}&chapter=${next.chapter}`}
+              href={`/bible?day=${next.day}&book=${next.book}&chapter=${next.chapter}`}
             >
               Next chapter
               <ArrowRight size={16} />
@@ -201,7 +300,7 @@ export function Reader() {
     Number.isInteger(queryDay) && queryDay >= 1 && queryDay <= 365
       ? queryDay
       : currentDay(state.profile.startDate, today);
-  const mission = PLAN[day - 1];
+  const mission = getPlan(planId(state))[day - 1];
   const resume =
     mission.chapters.find((c) => !state.chapters[c.key]) ?? mission.chapters[0];
   const savedResume =

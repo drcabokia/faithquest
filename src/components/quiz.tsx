@@ -7,8 +7,10 @@ import { QUIZ_PROMPTS, type QuizPrompt } from "@/data/quiz-prompts";
 import { useJourney, JourneyLoading } from "@/components/journey-provider";
 import { PageHeading, EmptyState } from "@/components/ui/shared";
 import { Button } from "@/components/ui/button";
-import { currentDay } from "@/services/reading-plan";
+import { currentDay, getMission, planId } from "@/services/reading-plan";
+import { quizDay, quizChapter, questionsForDay } from "@/services/plan-quizzes";
 import { cn } from "@/lib/utils";
+
 function Question({
   question,
   index,
@@ -75,7 +77,9 @@ function Question({
             {attempt.explanation ??
               "Read the referenced passage to review this answer."}
           </p>
-          <Link href={`/bible?day=${question.day}`}>
+          <Link
+            href={`/bible?day=${quizDay(question, planId(state ?? {}))}&book=${quizChapter(question).book}&chapter=${quizChapter(question).chapter}`}
+          >
             <BookOpen size={14} />
             {question.reference} · Read in context
           </Link>
@@ -110,7 +114,11 @@ export function Quiz() {
     (Number.isInteger(requested) && requested >= 1 && requested <= 365
       ? requested
       : currentDay(state.profile.startDate, today));
-  const questions = QUIZ_PROMPTS.filter((q) => q.day === day);
+  const id = planId(state);
+  const reviewedDays = [
+    ...new Set(QUIZ_PROMPTS.map((q) => quizDay(q, id))),
+  ].sort((a, b) => a - b);
+  const questions = questionsForDay(day, id);
   const history = QUIZ_PROMPTS.filter((q) => state.attempts[q.id]);
   return (
     <>
@@ -126,19 +134,20 @@ export function Quiz() {
             value={day}
             onChange={(e) => setSelected(Number(e.target.value))}
           >
-            {![1, 2, 3].includes(day) && (
+            {!reviewedDays.includes(day) && (
               <option value={day}>Day {day} · No reviewed questions yet</option>
             )}
-            {[1, 2, 3].map((n) => (
+            {reviewedDays.map((n) => (
               <option value={n} key={n}>
-                Day {n} · Genesis
+                Day {n} · {getMission(n, id).label}
               </option>
             ))}
           </select>
         </label>
         <p className="small muted">
-          Six manually reviewed demo questions cover days 1–3. Each question can
-          be submitted once.
+          {QUIZ_PROMPTS.length} passage-checked questions cover{" "}
+          {reviewedDays.length} reading days. Each question can be submitted
+          once.
         </p>
       </div>
       <div className="quiz-layout">
@@ -149,8 +158,8 @@ export function Quiz() {
             ))
           ) : (
             <EmptyState title="A quiet day for discovery">
-              There isn’t a reviewed quiz for this reading yet. Choose day 1, 2,
-              or 3 to explore the demo questions.
+              There isn’t a reviewed quiz for this reading yet. Choose an
+              available reading day above to explore its questions.
             </EmptyState>
           )}
         </div>

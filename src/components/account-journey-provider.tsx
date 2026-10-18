@@ -1,13 +1,17 @@
 "use client";
+import type { JournalCategory } from "@/lib/journal";
 import { useState, useRef, useCallback, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { JourneyContext } from "./journey-context";
-import { stateSchema, type JourneyState, type Profile } from "@/lib/state";
+import { type JourneyState, type Profile } from "@/lib/state";
 import type { JourneyCommand } from "@/lib/commands";
 import type { BookId } from "@/data/books";
 import { dateInZone } from "@/lib/dates";
 import { totalXp } from "@/services/gamification-display";
 import { browserSupabase } from "@/lib/supabase/browser";
+import { requestJourney as requestState } from "@/lib/account-client";
+import { restoreAccount } from "@/lib/account-client";
+import type { RestoreData } from "@/lib/backup";
 const paths = new Set([
   "/dashboard",
   "/reading-plan",
@@ -17,26 +21,9 @@ const paths = new Set([
   "/achievements",
   "/community",
   "/profile",
+  "/study",
+  "/challenges",
 ]);
-async function requestState(command?: JourneyCommand) {
-  const response = await fetch("/api/journey", {
-    method: command ? "POST" : "GET",
-    headers: command ? { "Content-Type": "application/json" } : undefined,
-    body: command ? JSON.stringify(command) : undefined,
-    cache: "no-store",
-    credentials: "same-origin",
-  });
-  if (response.status === 401) {
-    window.location.replace("/login");
-    throw new Error("Please sign in again.");
-  }
-  const data = await response.json();
-  if (!response.ok)
-    throw new Error(
-      data.error ?? "Your journey could not be saved. Please retry.",
-    );
-  return stateSchema.parse(data.state);
-}
 export function AccountJourneyProvider({
   children,
 }: {
@@ -56,6 +43,35 @@ export function AccountJourneyProvider({
     setState(next);
     setError(null);
   }, []);
+  const retryLoad = useCallback(() => {
+    const result = queue.current
+      .catch(() => {})
+      .then(async () => {
+        setBusy(true);
+        try {
+          const next = await requestState(
+            latest.current
+              ? undefined
+              : {
+                  type: "initialize",
+                  timeZone:
+                    Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC",
+                },
+          );
+          apply(next);
+        } catch (error) {
+          setError(
+            error instanceof Error
+              ? error.message
+              : "Your journey could not be loaded. Please retry.",
+          );
+        } finally {
+          setBusy(false);
+        }
+      });
+    queue.current = result;
+    return result;
+  }, [apply]);
   useEffect(() => {
     if (!active) return;
     let live = true;
@@ -134,14 +150,17 @@ export function AccountJourneyProvider({
     return () => media.removeEventListener("change", change);
   }, [theme]);
   const mutate = useCallback(
-    (command: JourneyCommand, message: string | null) => {
+    (command: JourneyCommand | RestoreData, message: string | null) => {
       const result = queue.current
         .catch(() => {})
         .then(async () => {
           setBusy(true);
           try {
             const before = latest.current;
-            const next = await requestState(command);
+            const next =
+              "type" in command
+                ? await requestState(command)
+                : await restoreAccount(command);
             apply(next);
             if (message) {
               const gained = before ? totalXp(next) - totalXp(before) : 0;
@@ -185,8 +204,8 @@ export function AccountJourneyProvider({
   const answer = async (id: string, answer: number) => {
     await mutate({ type: "answer", id, answer }, "Answer recorded.");
   };
-  const reflect = (date: string, text: string) =>
-    mutate({ type: "reflect", date, text }, "Reflection saved.");
+  const reflect = (date: string, text: string, category?: JournalCategory) =>
+    mutate({ type: "reflect", date, text, category }, "Reflection saved.");
   const profile = (profile: Profile) =>
     mutate({ type: "profile", profile }, "Preferences saved.");
   return (
@@ -202,7 +221,24 @@ export function AccountJourneyProvider({
         complete,
         answer,
         reflect,
+        joinChallenge: () =>
+          mutate({ type: "joinChallenge" }, "Seven-day challenge started."),
         profile,
+        selectPlan: (plan) =>
+          mutate({ type: "selectPlan", plan }, "Reading plan selected."),
+        refresh: retryLoad,
+        restore: (backup) =>
+          mutate(backup, "Backup merged. Your existing entries were kept."),
+        saveNote: (book, chapter, verse, text, expectedText) =>
+          mutate(
+            { type: "verseNote", book, chapter, verse, text, expectedText },
+            text === null ? "Private note deleted." : "Private note saved.",
+          ),
+        saveVerse: (book, chapter, verse, saved) =>
+          mutate(
+            { type: "saveVerse", book, chapter, verse, saved },
+            saved ? "Verse saved." : "Verse removed from saved verses.",
+          ),
       }}
     >
       {children}

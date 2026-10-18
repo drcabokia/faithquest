@@ -1,0 +1,290 @@
+[
+  {
+    "id": "gen-jacob-household",
+    "day": 15,
+    "book": "GEN",
+    "chapter": 46,
+    "verse": 27,
+    "evidence": "The sons of Joseph, who were born to him in Egypt, were two souls. All the souls of the house of Jacob, who came into Egypt, were seventy.",
+    "supportingPhrase": "were seventy"
+  },
+  {
+    "id": "gen-goshen",
+    "day": 15,
+    "book": "GEN",
+    "chapter": 47,
+    "verse": 6,
+    "evidence": "The land of Egypt is before you. Make your father and your brothers dwell in the best of the land. Let them dwell in the land of Goshen. If you know any able men among them, then put them in charge of my livestock.”",
+    "supportingPhrase": "the land of Goshen"
+  },
+  {
+    "id": "gen-joseph-age",
+    "day": 16,
+    "book": "GEN",
+    "chapter": 50,
+    "verse": 26,
+    "evidence": "So Joseph died, being one hundred ten years old, and they embalmed him, and he was put in a coffin in Egypt.",
+    "supportingPhrase": "one hundred ten years old"
+  },
+  {
+    "id": "exo-moses-named",
+    "day": 16,
+    "book": "EXO",
+    "chapter": 2,
+    "verse": 10,
+    "evidence": "The child grew, and she brought him to Pharaoh’s daughter, and he became her son. She named him Moses, and said, “Because I drew him out of the water.”",
+    "supportingPhrase": "Pharaoh’s daughter"
+  },
+  {
+    "id": "exo-holy-ground",
+    "day": 17,
+    "book": "EXO",
+    "chapter": 3,
+    "verse": 5,
+    "evidence": "He said, “Don’t come close. Take off your sandals, for the place you are standing on is holy ground.”",
+    "supportingPhrase": "Take off your sandals"
+  },
+  {
+    "id": "exo-rod-in-hand",
+    "day": 17,
+    "book": "EXO",
+    "chapter": 4,
+    "verse": 2,
+    "evidence": "Yahweh said to him, “What is that in your hand?” He said, “A rod.”",
+    "supportingPhrase": "A rod."
+  },
+  {
+    "id": "exo-aaron-rod",
+    "day": 18,
+    "book": "EXO",
+    "chapter": 7,
+    "verse": 12,
+    "evidence": "For they each cast down their rods, and they became serpents; but Aaron’s rod swallowed up their rods.",
+    "supportingPhrase": "Aaron’s rod swallowed up their rods"
+  },
+  {
+    "id": "exo-flies-goshen",
+    "day": 18,
+    "book": "EXO",
+    "chapter": 8,
+    "verse": 22,
+    "evidence": "I will set apart in that day the land of Goshen, in which my people dwell, that no swarms of flies shall be there, to the end you may know that I am Yahweh on the earth.",
+    "supportingPhrase": "the land of Goshen"
+  },
+  {
+    "id": "exo-darkness-days",
+    "day": 19,
+    "book": "EXO",
+    "chapter": 10,
+    "verse": 22,
+    "evidence": "Moses stretched out his hand toward the sky, and there was a thick darkness in all the land of Egypt for three days.",
+    "supportingPhrase": "for three days"
+  },
+  {
+    "id": "exo-locusts-sea",
+    "day": 19,
+    "book": "EXO",
+    "chapter": 10,
+    "verse": 19,
+    "evidence": "Yahweh sent an exceedingly strong west wind, which took up the locusts, and drove them into the Red Sea. There remained not one locust in all the borders of Egypt.",
+    "supportingPhrase": "into the Red Sea"
+  },
+  {
+    "id": "exo-sea-wind",
+    "day": 20,
+    "book": "EXO",
+    "chapter": 14,
+    "verse": 21,
+    "evidence": "Moses stretched out his hand over the sea, and Yahweh caused the sea to go back by a strong east wind all night, and made the sea dry land, and the waters were divided.",
+    "supportingPhrase": "a strong east wind all night"
+  },
+  {
+    "id": "exo-miriam-instrument",
+    "day": 20,
+    "book": "EXO",
+    "chapter": 15,
+    "verse": 20,
+    "evidence": "Miriam the prophetess, the sister of Aaron, took a tambourine in her hand; and all the women went out after her with tambourines and with dances.",
+    "supportingPhrase": "took a tambourine in her hand"
+  },
+  {
+    "id": "exo-manna-name",
+    "day": 21,
+    "book": "EXO",
+    "chapter": 16,
+    "verse": 31,
+    "evidence": "The house of Israel called its name “Manna”, and it was like coriander seed, white; and its taste was like wafers with honey.",
+    "supportingPhrase": "called its name “Manna”"
+  },
+  {
+    "id": "exo-moses-hands",
+    "day": 21,
+    "book": "EXO",
+    "chapter": 17,
+    "verse": 12,
+    "evidence": "But Moses’ hands were heavy; so they took a stone, and put it under him, and he sat on it. Aaron and Hur held up his hands, the one on the one side, and the other on the other side. His hands were steady until sunset.",
+    "supportingPhrase": "Aaron and Hur held up his hands"
+  },
+  {
+    "id": "exo-mount-sinai",
+    "day": 22,
+    "book": "EXO",
+    "chapter": 19,
+    "verse": 20,
+    "evidence": "Yahweh came down on Mount Sinai, to the top of the mountain. Yahweh called Moses to the top of the mountain, and Moses went up.",
+    "supportingPhrase": "Mount Sinai"
+  },
+  {
+    "id": "exo-sabbath-remember",
+    "day": 22,
+    "book": "EXO",
+    "chapter": 20,
+    "verse": 8,
+    "evidence": "“Remember the Sabbath day, to keep it holy.",
+    "supportingPhrase": "Remember the Sabbath day"
+  },
+  {
+    "id": "exo-help-donkey",
+    "day": 23,
+    "book": "EXO",
+    "chapter": 23,
+    "verse": 5,
+    "evidence": "If you see the donkey of him who hates you fallen down under his burden, don’t leave him. You shall surely help him with it.",
+    "supportingPhrase": "You shall surely help him with it"
+  },
+  {
+    "id": "exo-mountain-forty",
+    "day": 23,
+    "book": "EXO",
+    "chapter": 24,
+    "verse": 18,
+    "evidence": "Moses entered into the middle of the cloud, and went up on the mountain; and Moses was on the mountain forty days and forty nights.",
+    "supportingPhrase": "forty days and forty nights"
+  },
+  {
+    "id": "exo-bread-presence",
+    "day": 24,
+    "book": "EXO",
+    "chapter": 25,
+    "verse": 30,
+    "evidence": "You shall set bread of the presence on the table before me always.",
+    "supportingPhrase": "bread of the presence"
+  },
+  {
+    "id": "exo-lamp-oil",
+    "day": 24,
+    "book": "EXO",
+    "chapter": 27,
+    "verse": 20,
+    "evidence": "“You shall command the children of Israel, that they bring to you pure olive oil beaten for the light, to cause a lamp to burn continually.",
+    "supportingPhrase": "pure olive oil"
+  },
+  {
+    "id": "exo-bezalel-named",
+    "day": 25,
+    "book": "EXO",
+    "chapter": 31,
+    "verse": 2,
+    "evidence": "“Behold, I have called by name Bezalel the son of Uri, the son of Hur, of the tribe of Judah.",
+    "supportingPhrase": "Bezalel the son of Uri"
+  },
+  {
+    "id": "exo-dwell-israel",
+    "day": 25,
+    "book": "EXO",
+    "chapter": 29,
+    "verse": 45,
+    "evidence": "I will dwell among the children of Israel, and will be their God.",
+    "supportingPhrase": "among the children of Israel"
+  },
+  {
+    "id": "exo-molded-calf",
+    "day": 26,
+    "book": "EXO",
+    "chapter": 32,
+    "verse": 4,
+    "evidence": "He received what they handed him, fashioned it with an engraving tool, and made it a molded calf. Then they said, “These are your gods, Israel, which brought you up out of the land of Egypt.”",
+    "supportingPhrase": "made it a molded calf"
+  },
+  {
+    "id": "exo-moses-face",
+    "day": 26,
+    "book": "EXO",
+    "chapter": 34,
+    "verse": 29,
+    "evidence": "When Moses came down from Mount Sinai with the two tablets of the covenant in Moses’ hand, when he came down from the mountain, Moses didn’t know that the skin of his face shone by reason of his speaking with him.",
+    "supportingPhrase": "the skin of his face shone"
+  },
+  {
+    "id": "exo-willing-offering",
+    "day": 27,
+    "book": "EXO",
+    "chapter": 35,
+    "verse": 21,
+    "evidence": "They came, everyone whose heart stirred him up, and everyone whom his spirit made willing, and brought Yahweh’s offering for the work of the Tent of Meeting, and for all of its service, and for the holy garments.",
+    "supportingPhrase": "everyone whose heart stirred him up"
+  },
+  {
+    "id": "exo-material-enough",
+    "day": 27,
+    "book": "EXO",
+    "chapter": 36,
+    "verse": 7,
+    "evidence": "For the stuff they had was sufficient to do all the work, and too much.",
+    "supportingPhrase": "sufficient to do all the work, and too much"
+  },
+  {
+    "id": "exo-basin-mirrors",
+    "day": 28,
+    "book": "EXO",
+    "chapter": 38,
+    "verse": 8,
+    "evidence": "He made the basin of bronze, and its base of bronze, out of the mirrors of the ministering women who ministered at the door of the Tent of Meeting.",
+    "supportingPhrase": "out of the mirrors of the ministering women"
+  },
+  {
+    "id": "exo-cloud-tent",
+    "day": 28,
+    "book": "EXO",
+    "chapter": 40,
+    "verse": 34,
+    "evidence": "Then the cloud covered the Tent of Meeting, and Yahweh’s glory filled the tabernacle.",
+    "supportingPhrase": "the cloud covered the Tent of Meeting"
+  },
+  {
+    "id": "lev-offering-salt",
+    "day": 29,
+    "book": "LEV",
+    "chapter": 2,
+    "verse": 13,
+    "evidence": "Every offering of your meal offering you shall season with salt. You shall not allow the salt of the covenant of your God to be lacking from your meal offering. With all your offerings you shall offer salt.",
+    "supportingPhrase": "season with salt"
+  },
+  {
+    "id": "lev-priest-bull",
+    "day": 29,
+    "book": "LEV",
+    "chapter": 4,
+    "verse": 3,
+    "evidence": "if the anointed priest sins so as to bring guilt on the people, then let him offer for his sin which he has sinned a young bull without defect to Yahweh for a sin offering.",
+    "supportingPhrase": "a young bull without defect"
+  },
+  {
+    "id": "lev-altar-fire",
+    "day": 30,
+    "book": "LEV",
+    "chapter": 6,
+    "verse": 13,
+    "evidence": "Fire shall be kept burning on the altar continually; it shall not go out.",
+    "supportingPhrase": "Fire shall be kept burning on the altar continually"
+  },
+  {
+    "id": "lev-thanksgiving-day",
+    "day": 30,
+    "book": "LEV",
+    "chapter": 7,
+    "verse": 15,
+    "evidence": "The flesh of the sacrifice of his peace offerings for thanksgiving shall be eaten on the day of his offering. He shall not leave any of it until the morning.",
+    "supportingPhrase": "on the day of his offering"
+  }
+]

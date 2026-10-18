@@ -1,4 +1,10 @@
 "use client";
+import { setVerseNote } from "@/services/verse-notes";
+import type { JournalCategory } from "@/lib/journal";
+import { joinChallenge } from "@/services/challenges";
+import { selectReadingPlan } from "@/services/select-reading-plan";
+import { restoreDemo } from "@/services/restore-demo";
+import { setSavedVerse } from "@/services/saved-verses";
 import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
 import { DemoJourneyRepository, STORAGE_KEY } from "@/lib/repository";
 import {
@@ -180,8 +186,11 @@ export function DemoJourneyProvider({
   const answer = async (id: string, answer: number) => {
     await mutate((s) => submitAnswer(s, id, answer), "Answer recorded.");
   };
-  const reflect = (date: string, text: string) =>
-    mutate((s) => saveReflection(s, date, text), "Reflection saved.");
+  const reflect = (date: string, text: string, category?: JournalCategory) =>
+    mutate(
+      (s) => saveReflection(s, date, text, new Date(), category),
+      "Reflection saved.",
+    );
   const profile = (profile: Profile) =>
     mutate((s) => {
       const parsed = profileSchema.parse(profile);
@@ -190,7 +199,8 @@ export function DemoJourneyProvider({
       if (
         Object.keys(s.rewards).length ||
         Object.keys(s.chapters).length ||
-        Object.keys(s.attempts).length
+        Object.keys(s.attempts).length ||
+        (s.challengeStarts?.length ?? 0)
       ) {
         if (parsed.timeZone !== s.profile.timeZone)
           throw new Error(
@@ -212,7 +222,32 @@ export function DemoJourneyProvider({
         complete,
         answer,
         reflect,
+        joinChallenge: () =>
+          mutate((s) => joinChallenge(s), "Seven-day challenge started."),
         profile,
+        selectPlan: (plan) =>
+          mutate((s) => selectReadingPlan(s, plan), "Reading plan selected."),
+        saveNote: (book, chapter, verse, text, expectedText) =>
+          mutate(
+            (s) =>
+              setVerseNote(
+                s,
+                `${book}.${chapter}.${verse}`,
+                text,
+                expectedText,
+              ),
+            text === null ? "Private note deleted." : "Private note saved.",
+          ),
+        saveVerse: (book, chapter, verse, saved) =>
+          mutate(
+            (s) => setSavedVerse(s, `${book}.${chapter}.${verse}`, saved),
+            saved ? "Verse saved." : "Verse removed from saved verses.",
+          ),
+        restore: (backup) =>
+          mutate(
+            (s) => restoreDemo(s, backup),
+            "Backup merged. Your existing entries were kept.",
+          ),
       }}
     >
       {children}

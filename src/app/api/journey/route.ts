@@ -1,20 +1,16 @@
-import { NextResponse, type NextRequest } from "next/server";
+import { VerseNoteError } from "@/lib/verse-notes";
+import type { NextRequest } from "next/server";
 import { accountsEnabled, appOrigin } from "@/lib/supabase/config";
 import { serverSupabase } from "@/lib/supabase/server";
 import { commandSchema, validOrigin } from "@/lib/commands";
 import { SupabaseJourneyRepository } from "@/services/supabase-journey";
 import type { BookId } from "@/data/books";
+import { accountResponder, limitedReply } from "@/lib/account-response";
+import { verifiedAccount } from "@/lib/supabase/account-session";
+import { ReadingPlanSelectionError } from "@/services/select-reading-plan";
 export const dynamic = "force-dynamic";
-function reply(data: unknown, status = 200) {
-  return NextResponse.json(data, {
-    status,
-    headers: {
-      "Cache-Control": "private, no-store, max-age=0",
-      Vary: "Cookie",
-    },
-  });
-}
 async function handle(request: NextRequest, write: boolean) {
+  const reply = accountResponder("journey");
   if (!accountsEnabled())
     return reply({ error: "Account access is not enabled." }, 503);
   try {
@@ -23,9 +19,11 @@ async function handle(request: NextRequest, write: boolean) {
     if (write && Number(request.headers.get("content-length") ?? 0) > 20000)
       return reply({ error: "Request is too large." }, 413);
     const client = await serverSupabase();
-    const { data: identity, error } = await client.auth.getUser();
-    if (error || !identity.user)
-      return reply({ error: "Please sign in again." }, 401);
+    const identity = await verifiedAccount(client);
+    if (identity.failure) {
+      const failure = identity.failure;
+      return reply({ error: failure.message }, failure.status);
+    }
     const repository = new SupabaseJourneyRepository(client);
     if (!write) return reply({ state: await repository.getJourney() });
     const reader = request.body?.getReader();
@@ -60,6 +58,12 @@ async function handle(request: NextRequest, write: boolean) {
     const command = result.data;
     let state;
     switch (command.type) {
+      case "selectPlan":
+        state = await repository.selectPlan(command.plan);
+        break;
+      case "joinChallenge":
+        state = await repository.joinChallenge();
+        break;
       case "initialize": {
         const raw = identity.user.user_metadata.full_name;
         const name =
@@ -86,14 +90,41 @@ async function handle(request: NextRequest, write: boolean) {
         state = await repository.submitQuiz(command.id, command.answer);
         break;
       case "reflect":
-        state = await repository.saveReflection(command.date, command.text);
+        state = await repository.saveReflection(
+          command.date,
+          command.text,
+          command.category,
+        );
         break;
       case "profile":
         state = await repository.updatePreferences(command.profile);
         break;
+      case "verseNote":
+        state = await repository.setVerseNote(
+          command.book as BookId,
+          command.chapter,
+          command.verse,
+          command.text,
+          command.expectedText,
+        );
+        break;
+      case "saveVerse":
+        state = await repository.setSavedVerse(
+          command.book as BookId,
+          command.chapter,
+          command.verse,
+          command.saved,
+        );
+        break;
     }
     return reply({ state });
-  } catch {
+  } catch (error) {
+    if (error instanceof VerseNoteError)
+      return reply({ error: error.message }, 409);
+    if (error instanceof ReadingPlanSelectionError)
+      return reply({ error: error.message }, 400);
+    const limited = limitedReply(reply, error);
+    if (limited) return limited;
     return reply(
       {
         error: "Your account data could not be loaded or saved. Please retry.",

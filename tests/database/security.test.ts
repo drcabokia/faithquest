@@ -2,6 +2,11 @@ import { PGlite, type Transaction } from "@electric-sql/pglite";
 import { beforeAll, afterAll, describe, it, expect } from "vitest";
 import { readFileSync, readdirSync } from "node:fs";
 import { stateSchema } from "../../src/lib/state";
+import { QUESTIONS } from "../../src/data/quizzes";
+import { BALANCED_PLAN, PLAN_IDS } from "../../src/services/reading-plan";
+import { QUIZ_PROMPTS } from "../../src/data/quiz-prompts";
+import { quizDay } from "../../src/services/plan-quizzes";
+import verseIndex from "../../src/data/verse-index.json";
 let db: PGlite;
 const A = "10000000-0000-4000-8000-000000000001",
   B = "10000000-0000-4000-8000-000000000002";
@@ -14,6 +19,9 @@ async function asUser<T>(
     await tx.exec(`set local role ${role}`);
     await tx.query("select set_config('request.jwt.claim.sub',$1,true)", [
       user ?? "",
+    ]);
+    await tx.query("select set_config('request.jwt.claims',$1,true)", [
+      JSON.stringify(user ? { sub: user, session_id: user, role } : {}),
     ]);
     return action(tx);
   });
@@ -33,13 +41,17 @@ async function rpc(user: string, expression: string, params: unknown[] = []) {
 beforeAll(async () => {
   db = new PGlite();
   await db.exec(
-    `create role anon nologin nosuperuser;create role authenticated nologin nosuperuser;create schema auth;create table auth.users(id uuid primary key);create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;grant usage on schema auth,public to anon,authenticated;grant execute on function auth.uid() to anon,authenticated;`,
+    `create role anon nologin nosuperuser;create role authenticated nologin nosuperuser;create schema auth;create table auth.users(id uuid primary key);create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;create table auth.sessions(id uuid primary key,user_id uuid references auth.users(id) on delete cascade,not_after timestamptz);create function auth.jwt() returns jsonb language sql stable as $$select coalesce(nullif(current_setting('request.jwt.claims',true),''),'{}')::jsonb$$;grant execute on function auth.jwt() to anon,authenticated;grant usage on schema auth,public to anon,authenticated;grant execute on function auth.uid() to anon,authenticated;`,
   );
   for (const file of readdirSync("supabase/migrations")
     .filter((f) => f.endsWith(".sql"))
     .sort())
     await db.exec(readFileSync(`supabase/migrations/${file}`, "utf8"));
   await db.query("insert into auth.users(id) values($1),($2)", [A, B]);
+  await db.query(
+    "insert into auth.sessions(id,user_id) values($1,$1),($2,$2)",
+    [A, B],
+  );
   await rpc(A, "public.ensure_journey($1,$2)", [
     "Reader A",
     "Asia/Kuala_Lumpur",
@@ -50,6 +62,170 @@ afterAll(async () => {
   await db?.close();
 });
 describe("authenticated PostgreSQL commands and RLS", () => {
+  it("runs all shared privacy, reward, quota, plan, quiz and note drills together", async () => {
+    const rollback = new Error("Expanded quiz fixture rollback");
+    await expect(
+      db.transaction(async (tx) => {
+        for (const name of [
+          "verify-live-db",
+          "verify-request-limits",
+          "verify-restore",
+          "verify-saved-verses",
+          "verify-journal",
+          "verify-challenges",
+          "verify-fellowship",
+          "verify-reading-plans",
+          "verify-quiz-expansion",
+          "verify-verse-notes",
+        ]) {
+          await tx.exec(readFileSync(`scripts/${name}.sql`, "utf8"));
+        }
+        throw rollback;
+      }),
+    ).rejects.toBe(rollback);
+  }, 60000);
+  it("keeps balanced assignments and passage quiz mapping identical in PostgreSQL and the browser", async () => {
+    const { rows } = await db.query<{
+      day: number;
+      key: string;
+      position: number;
+    }>(
+      "select d.day,d.book_id||'.'||d.chapter as key,d.position from public.reading_plan_day_chapters d join public.reading_plans p on p.id=d.plan_id where p.slug='balanced' order by d.day,d.position",
+    );
+    expect(rows).toEqual(
+      BALANCED_PLAN.flatMap((m) =>
+        m.chapters.map((c, i) => ({ day: m.day, key: c.key, position: i + 1 })),
+      ),
+    );
+    for (const id of PLAN_IDS) {
+      const { rows } = await db.query<{ id: string; day: number }>(
+        "select q.id,m.day from public.quiz_questions q join public.bible_books b on q.scripture_reference like b.name||' %' join public.reading_plan_day_chapters m on m.book_id=b.id and q.scripture_reference like b.name||' '||m.chapter||':%' join public.reading_plans p on p.id=m.plan_id where p.slug||'-v'||p.schedule_version=$1 order by q.id",
+        [id],
+      );
+      expect(rows).toEqual(
+        QUIZ_PROMPTS.map((q) => ({ id: q.id, day: quizDay(q, id) })).sort(
+          (a, b) => a.id.localeCompare(b.id),
+        ),
+      );
+    }
+  });
+  it("enforces opt-in plan selection, versioned restores, rewards, quizzes and active sessions", async () => {
+    const rollback = new Error("Reading plans fixture rollback");
+    await expect(
+      db.transaction(async (tx) => {
+        await tx.exec(readFileSync("scripts/verify-reading-plans.sql", "utf8"));
+        throw rollback;
+      }),
+    ).rejects.toBe(rollback);
+  });
+
+  it("enforces consent, caller-only groups, safe participation, owner controls and invitation recovery", async () => {
+    const rollback = new Error("Fellowship fixture rollback");
+    await expect(
+      db.transaction(async (tx) => {
+        await tx.exec(readFileSync("scripts/verify-fellowship.sql", "utf8"));
+        throw rollback;
+      }),
+    ).rejects.toBe(rollback);
+  });
+
+  it("enforces private seven-day enrollment, calendar rewards, restore and session boundaries", async () => {
+    const rollback = new Error("Challenge fixture rollback");
+    await expect(
+      db.transaction(async (tx) => {
+        await tx.exec(readFileSync("scripts/verify-challenges.sql", "utf8"));
+        throw rollback;
+      }),
+    ).rejects.toBe(rollback);
+  });
+
+  it("keeps journal categories private, backward compatible and atomic", async () => {
+    const rollback = new Error("Journal fixture rollback");
+    await expect(
+      db.transaction(async (tx) => {
+        await tx.exec(readFileSync("scripts/verify-journal.sql", "utf8"));
+        throw rollback;
+      }),
+    ).rejects.toBe(rollback);
+  });
+
+  it("enforces private saved verses, safe restoration, quotas and account deletion", async () => {
+    const rollback = new Error("Saved verses fixture rollback");
+    await expect(
+      db.transaction(async (tx) => {
+        await tx.exec(readFileSync("scripts/verify-saved-verses.sql", "utf8"));
+        throw rollback;
+      }),
+    ).rejects.toBe(rollback);
+  });
+  it("matches hosted verse numbering metadata to the bundled catalogue", async () => {
+    const { rows } = await db.query<{
+      key: string;
+      verse_count: number;
+      empty_verses: number[];
+    }>(
+      "select book_id||'.'||chapter as key,verse_count,empty_verses from public.bible_chapters",
+    );
+    expect(Object.fromEntries(rows.map((r) => [r.key, r.verse_count]))).toEqual(
+      verseIndex.chapters,
+    );
+    expect(
+      rows.flatMap((r) => r.empty_verses.map((v) => `${r.key}.${v}`)).sort(),
+    ).toEqual([...verseIndex.empty].sort());
+  });
+  it("restores synthetic backups atomically, preserves conflicts and rejects abuse", async () => {
+    const rollback = new Error("Restore fixture rollback");
+    await expect(
+      db.transaction(async (tx) => {
+        await tx.exec(readFileSync("scripts/verify-restore.sql", "utf8"));
+        throw rollback;
+      }),
+    ).rejects.toBe(rollback);
+    expect(
+      (await db.query("select count(*)::integer as count from auth.users"))
+        .rows,
+    ).toEqual([{ count: 2 }]);
+  });
+  it("keeps every hosted prompt and private solution aligned with the reviewed catalogue", async () => {
+    const { rows } = await db.query(
+      "select q.id,q.day,q.question,q.options,q.scripture_reference as reference,a.correct_option as correct,a.explanation from public.quiz_questions q join private.quiz_answers a on a.question_id=q.id where q.reviewed order by q.id",
+    );
+    expect(rows).toEqual(
+      [...QUESTIONS].sort((a, b) => a.id.localeCompare(b.id)),
+    );
+  });
+  it("enforces shared per-account quotas at RPC boundaries without losing saved data", async () => {
+    const rollback = new Error("Rate fixture rollback");
+    await expect(
+      db.transaction(async (tx) => {
+        await tx.exec(
+          readFileSync("scripts/verify-request-limits.sql", "utf8"),
+        );
+        throw rollback;
+      }),
+    ).rejects.toBe(rollback);
+    expect(
+      (
+        await db.query<{ count: number }>(
+          "select count(*)::integer as count from auth.users",
+        )
+      ).rows[0].count,
+    ).toBe(2);
+  });
+  it("runs the shared hosted verification and rolls back every fixture", async () => {
+    const before = await db.query("select id from auth.users order by id");
+    const rollback = new Error("Verified rollback");
+    await expect(
+      db.transaction(async (tx) => {
+        await tx.exec(readFileSync("scripts/verify-live-db.sql", "utf8"));
+        throw rollback;
+      }),
+    ).rejects.toBe(rollback);
+    expect(await db.query("select id from auth.users order by id")).toEqual(
+      before,
+    );
+    expect((await db.query("select id from public.groups")).rows).toEqual([]);
+  });
   it("applies all migrations and creates valid server snapshots", async () => {
     const state = stateSchema.parse(await rpc(A, "public.get_journey()"));
     expect(state.profile.name).toBe("Reader A");
@@ -113,7 +289,7 @@ describe("authenticated PostgreSQL commands and RLS", () => {
     const prompts = await asUser(B, (tx) =>
       tx.query("select * from public.quiz_questions"),
     );
-    expect(prompts.rows).toHaveLength(6);
+    expect(prompts.rows).toHaveLength(QUESTIONS.length);
     expect(prompts.rows[0]).not.toHaveProperty("correct_option");
     await expect(
       asUser(B, (tx) => tx.query("select * from private.quiz_answers")),

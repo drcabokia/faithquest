@@ -345,6 +345,9 @@ em {
   font-size: 1rem;
   margin: 12px 0;
 }
+.error-banner .button {
+  margin: 8px 0 0 8px;
+}
 .toast-region {
   position: fixed;
   bottom: 25px;
@@ -1409,6 +1412,172 @@ select {
 .scripture-text p:after {
   content: " ";
 }
+.scripture-text p[id] {
+  scroll-margin-top: 130px;
+}
+.saved-scripture-verse {
+  background: var(--soft);
+  border-bottom: 2px solid var(--primary);
+}
+.reader-save-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 12px;
+  padding-bottom: 24px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+}
+.reader-save-controls .verse-selector,
+.study-filters .study-filter {
+  display: grid;
+  gap: 8px;
+  font-weight: 600;
+}
+.reader-save-controls > p {
+  width: 100%;
+}
+.study-intro {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 26px;
+  margin-bottom: 24px;
+}
+.study-intro > div {
+  flex: 1;
+  min-width: 0;
+}
+.study-intro p {
+  margin-top: 12px;
+  line-height: 1.7;
+}
+.study-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  margin-bottom: 16px;
+}
+.study-filters > .study-filter {
+  flex: 1;
+  min-width: min(220px, 100%);
+}
+.study-filters input,
+.study-filters select {
+  width: 100%;
+  min-width: 0;
+}
+.saved-verses-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 350px), 1fr));
+  gap: 22px;
+  margin-top: 20px;
+}
+.saved-verse-card {
+  min-width: 0;
+  padding: 26px;
+}
+.saved-verse-card h2 {
+  font-size: 1.25rem;
+}
+.memory-text {
+  margin-block: 24px;
+  min-height: 120px;
+  line-height: 1.8;
+}
+.memory-text blockquote {
+  margin: 0;
+  font-family: Georgia, serif;
+  font-size: 1.25rem;
+}
+.memory-prompt {
+  color: var(--muted);
+}
+.saved-verse-actions,
+.study-pagination {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+.study-pagination {
+  justify-content: center;
+  margin-top: 24px;
+}
+.practice-launch {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  padding: 24px;
+  margin-top: 20px;
+}
+.practice-launch > div:first-child {
+  flex: 1;
+  min-width: min(260px, 100%);
+}
+.practice-launch p {
+  margin-top: 10px;
+}
+.practice-launch-controls,
+.practice-recall {
+  display: grid;
+  gap: 12px;
+}
+.practice-launch-controls {
+  flex: 0 1 240px;
+}
+.memory-practice {
+  padding: clamp(20px, 4vw, 36px);
+  max-width: 850px;
+  margin-inline: auto;
+}
+.memory-practice h2 {
+  margin-block: 12px;
+}
+.practice-recall,
+.practice-next {
+  margin-top: 24px;
+}
+.practice-recall textarea,
+.practice-launch-controls select {
+  width: 100%;
+  min-width: 0;
+}
+.practice-recall textarea {
+  resize: vertical;
+}
+.practice-recall .button {
+  justify-self: start;
+}
+.practice-feedback {
+  margin-top: 16px;
+  padding: 16px;
+  background: var(--soft);
+  border-radius: 10px;
+}
+.practice-feedback .button {
+  margin-top: 12px;
+}
+.practice-hints {
+  font-family: monospace;
+  font-size: 1.05rem;
+  line-height: 2;
+  overflow-wrap: anywhere;
+}
+.practice-privacy {
+  border-top: 1px solid var(--border);
+  padding-top: 20px;
+  margin-block: 24px 12px;
+}
+@media (max-width: 600px) {
+  .study-intro {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .saved-verse-card {
+    padding: 22px;
+  }
+}
 .reader-completion {
   border-top: 1px solid var(--border);
   margin-top: 40px;
@@ -1686,6 +1855,238 @@ select {
 }
 .journal-history {
   padding: 24px;
+}
+.fellowship-privacy,
+.fellowship-demo,
+.fellowship-group,
+.fellowship-empty {
+  padding: 25px;
+  margin: 20px 0;
+}
+.fellowship-privacy p,
+.fellowship-demo p,
+.fellowship-forms p {
+  margin: 12px 0;
+  line-height: 1.8;
+}
+.fellowship-forms {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px;
+  margin: 24px 0;
+}
+.fellowship-forms > section {
+  padding: 25px;
+  min-width: 0;
+}
+.fellowship-forms h2,
+.fellowship-groups > h2 {
+  margin-bottom: 15px;
+}
+.fellowship-forms label,
+.fellowship-owner-tools label,
+.fellowship-confirm label {
+  display: block;
+  font-weight: 600;
+  margin: 16px 0 9px;
+}
+.fellowship-forms input:not([type="checkbox"]),
+.fellowship-owner-tools input,
+.fellowship-confirm input {
+  width: 100%;
+  min-width: 0;
+  padding: 12px;
+  background: var(--background);
+  color: var(--foreground);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.fellowship-forms .fellowship-consent {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-weight: 400;
+  line-height: 1.7;
+  margin: 18px 0;
+}
+.fellowship-consent input {
+  margin-top: 6px;
+  flex-shrink: 0;
+}
+.fellowship-roster {
+  list-style: none;
+  padding: 0;
+  margin: 22px 0;
+}
+.fellowship-roster li {
+  padding: 18px 0;
+  border-top: 1px solid var(--border);
+}
+.fellowship-roster li > div:first-child {
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.fellowship-roster li span {
+  color: var(--muted);
+}
+.fellowship-owner-tools {
+  border-top: 1px solid var(--border);
+  padding-top: 10px;
+  margin-bottom: 20px;
+}
+.fellowship-owner-tools > button {
+  margin: 12px 10px 0 0;
+}
+.fellowship-confirm {
+  padding: 18px;
+  margin-top: 18px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+.fellowship-confirm p {
+  line-height: 1.8;
+  margin-bottom: 14px;
+}
+.fellowship-confirm input {
+  margin-bottom: 14px;
+}
+.fellowship-group h2,
+.fellowship-roster strong {
+  overflow-wrap: anywhere;
+}
+@media (max-width: 700px) {
+  .fellowship-forms {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.challenge-rules,
+.challenge-current,
+.challenge-history {
+  padding: 26px;
+  margin-bottom: 24px;
+}
+.challenge-rules h2,
+.challenge-current h2,
+.challenge-history h2 {
+  margin: 10px 0 16px;
+}
+.challenge-rules p,
+.challenge-current > p {
+  margin: 14px 0;
+  line-height: 1.8;
+}
+.challenge-days {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px;
+  padding: 0;
+  margin: 24px 0;
+  list-style: none;
+}
+.challenge-date {
+  padding: 15px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  display: grid;
+  gap: 10px;
+  overflow-wrap: anywhere;
+}
+.challenge-date.done {
+  background: var(--background);
+  border-color: var(--primary);
+}
+.challenge-date.today {
+  border: 2px solid var(--primary);
+}
+.challenge-date > span:last-child {
+  color: var(--muted);
+}
+.challenge-celebration {
+  color: var(--primary);
+  font-weight: 600;
+}
+.challenge-history ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.challenge-history li {
+  display: grid;
+  gap: 8px;
+  padding: 18px 0;
+  border-top: 1px solid var(--border);
+}
+.challenge-history li span {
+  color: var(--muted);
+}
+.challenge-dashboard-link {
+  padding: 16px 20px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 24px;
+}
+.challenge-dashboard-link a {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+.journal-filters {
+  display: grid;
+  gap: 9px;
+  margin-top: 22px;
+}
+.journal-filters input,
+.journal-filters select,
+.journal-editor select {
+  width: 100%;
+  min-width: 0;
+  padding: 10px;
+  color: var(--foreground);
+  background: var(--background);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.journal-filters label {
+  font-weight: 600;
+}
+.journal-category {
+  display: block;
+  color: var(--muted);
+  margin-top: 6px;
+}
+.journal-pagination {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: 16px;
+}
+.journal-draft-banner,
+.journal-warning {
+  padding: 16px;
+  margin-bottom: 18px;
+}
+.journal-warning {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-top: 16px;
+}
+.journal-saved-text {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.journal-draft-actions {
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+  margin-bottom: 16px;
+}
+.journal-draft-list {
+  margin-top: 20px;
 }
 .journal-history .empty-state {
   padding: 35px 0 10px;
@@ -2011,6 +2412,20 @@ select {
 .backup-card {
   margin-top: 24px;
   padding: 25px;
+  min-width: 0;
+}
+.profile-layout > aside {
+  min-width: 0;
+}
+.backup-card input[type="file"] {
+  width: 100%;
+  min-width: 0;
+  font-size: 1rem;
+}
+.backup-card label {
+  display: block;
+  line-height: 1.6;
+  margin-bottom: 12px;
 }
 .backup-card > svg {
   color: var(--primary);
@@ -4464,4 +4879,122 @@ body {
 }
 .login-card > form .button {
   width: 100%;
+}
+.plan-catalogue {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  scroll-margin-top: 5rem;
+}
+.plan-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+.plan-options .info-box {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin: 0;
+}
+.plan-options h3,
+.plan-options p {
+  margin: 0;
+}
+.plan-options button {
+  margin-top: auto;
+  white-space: normal;
+}
+.schedule-preview ol {
+  padding: 0;
+  list-style: none;
+}
+.schedule-preview li {
+  display: grid;
+  grid-template-columns: 5rem 1fr;
+  gap: 1rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--border);
+}
+.schedule-preview span {
+  overflow-wrap: anywhere;
+}
+.plan-selection {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+.plan-selection button {
+  justify-self: start;
+  white-space: normal;
+}
+.preview-week-label {
+  display: grid;
+  gap: 0.5rem;
+  max-width: 26rem;
+  margin-block: 1rem;
+}
+.preview-week-label select {
+  min-width: 0;
+  width: 100%;
+}
+.draft-context {
+  display: block;
+  color: var(--muted);
+  margin-top: 0.4rem;
+}
+.placement-notes {
+  margin-block: 1.5rem;
+}
+.placement-notes summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+.placement-notes article {
+  margin-top: 1.5rem;
+}
+.placement-notes p {
+  margin-block: 0.5rem;
+}
+.placement-notes ul {
+  padding-left: 1.25rem;
+}
+.schedule-preview .placement-notes li {
+  display: list-item;
+  padding: 0.25rem 0;
+  border: 0;
+}
+.placement-notes a {
+  color: var(--primary);
+  text-decoration: underline;
+  overflow-wrap: anywhere;
+}
+
+.verse-note-editor {
+  border-top: 1px solid var(--border);
+  margin-top: 22px;
+  padding-top: 20px;
+  display: grid;
+  gap: 12px;
+}
+.verse-note-editor textarea {
+  width: 100%;
+  resize: vertical;
+}
+.verse-note-editor > label {
+  font-weight: 600;
+}
+.personal-note-text {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.verse-note-draft-list {
+  padding: 24px;
+  margin-bottom: 24px;
+  display: grid;
+  gap: 14px;
+}
+.verse-note-draft-list > .button {
+  justify-self: start;
 }

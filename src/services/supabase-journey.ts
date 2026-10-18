@@ -1,17 +1,38 @@
+import type { JournalCategory } from "@/lib/journal";
 import "server-only";
+import { isNoteError, VerseNoteError } from "../lib/verse-notes";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { stateSchema, type Profile } from "@/lib/state";
 import type { BookId } from "@/data/books";
 import type { ProductionJourneyRepository } from "./production-repository";
+import { databaseRateLimit } from "../../supabase/functions/_shared/operations";
+import type { PlanId } from "./reading-plan";
+import { ReadingPlanSelectionError } from "./select-reading-plan";
 export class SupabaseJourneyRepository implements ProductionJourneyRepository {
   constructor(private client: SupabaseClient) {}
   private async call(name: string, args?: Record<string, unknown>) {
     const { data, error } = await this.client.rpc(name, args);
-    if (error)
+    if (error) {
+      const limit = databaseRateLimit(error);
+      if (limit) throw limit;
       throw new Error(
         "Your account changes could not be saved. Please try again.",
       );
+    }
+    if (name === "select_reading_plan" && data?.error === "plan_locked")
+      throw new ReadingPlanSelectionError();
+    if (
+      (name === "set_verse_note" || name === "set_saved_verse") &&
+      isNoteError(data?.error)
+    )
+      throw new VerseNoteError(data.error);
     return stateSchema.parse(data);
+  }
+  joinChallenge() {
+    return this.call("join_reading_challenge");
+  }
+  selectPlan(plan: PlanId) {
+    return this.call("select_reading_plan", { p_plan: plan });
   }
   getJourney() {
     return this.call("get_journey");
@@ -31,8 +52,37 @@ export class SupabaseJourneyRepository implements ProductionJourneyRepository {
       p_option: selectedOption,
     });
   }
-  saveReflection(date: string, content: string) {
-    return this.call("save_reflection", { p_date: date, p_content: content });
+  saveReflection(date: string, content: string, category?: JournalCategory) {
+    return category === undefined
+      ? this.call("save_reflection", { p_date: date, p_content: content })
+      : this.call("save_categorized_reflection", {
+          p_date: date,
+          p_content: content,
+          p_category: category,
+        });
+  }
+  setVerseNote(
+    book: BookId,
+    chapter: number,
+    verse: number,
+    text: string | null,
+    expectedText: string | null,
+  ) {
+    return this.call("set_verse_note", {
+      p_book: book,
+      p_chapter: chapter,
+      p_verse: verse,
+      p_text: text,
+      p_expected_text: expectedText,
+    });
+  }
+  setSavedVerse(book: BookId, chapter: number, verse: number, saved: boolean) {
+    return this.call("set_saved_verse", {
+      p_book: book,
+      p_chapter: chapter,
+      p_verse: verse,
+      p_saved: saved,
+    });
   }
   updatePreferences(profile: Profile) {
     return this.call("update_journey_preferences", {

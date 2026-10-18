@@ -5,6 +5,9 @@ import {
   storageMode,
   supabaseSettings,
 } from "@/lib/supabase/config";
+import { authFailure } from "@/lib/supabase/auth-failure";
+import { accountSessionFailure } from "@/lib/supabase/account-session";
+import { operationTrace } from "../supabase/functions/_shared/operations";
 const journeyRoutes = [
   "/dashboard",
   "/reading-plan",
@@ -14,6 +17,8 @@ const journeyRoutes = [
   "/achievements",
   "/community",
   "/profile",
+  "/study",
+  "/challenges",
 ];
 export async function proxy(request: NextRequest) {
   if (storageMode() === "demo") return NextResponse.next();
@@ -24,6 +29,19 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next();
   }
   let response = NextResponse.next({ request });
+  const trace = operationTrace("proxy");
+  function unavailable() {
+    const reference = trace.record(503);
+    const failed = new NextResponse(
+      `Your account service is temporarily unavailable. Refresh this page to try again. Reference: ${reference}`,
+      {
+        status: 503,
+        headers: { "Retry-After": "5", "X-Request-ID": reference },
+      },
+    );
+    for (const cookie of response.cookies.getAll()) failed.cookies.set(cookie);
+    return failed;
+  }
   try {
     const { url, key } = supabaseSettings();
     const supabase = createServerClient(url, key, {
@@ -38,17 +56,22 @@ export async function proxy(request: NextRequest) {
       },
     });
     const { data, error } = await supabase.auth.getClaims();
-    if (protectedPage && (error || !data?.claims?.sub)) {
-      const redirect = NextResponse.redirect(new URL("/login", request.url));
-      for (const cookie of response.cookies.getAll())
-        redirect.cookies.set(cookie);
-      response = redirect;
+    const failure = protectedPage
+      ? error || !data?.claims?.sub
+        ? authFailure(error)
+        : await accountSessionFailure(supabase)
+      : null;
+    if (failure) {
+      if (failure.status === 503) response = unavailable();
+      else {
+        const redirect = NextResponse.redirect(new URL("/login", request.url));
+        for (const cookie of response.cookies.getAll())
+          redirect.cookies.set(cookie);
+        response = redirect;
+      }
     }
   } catch {
-    if (protectedPage)
-      response = NextResponse.redirect(
-        new URL("/login?error=connection", request.url),
-      );
+    if (protectedPage) response = unavailable();
   }
   response.headers.set("Cache-Control", "private, no-store, max-age=0");
   response.headers.set("Vary", "Cookie");
@@ -64,8 +87,15 @@ export const config = {
     "/achievements",
     "/community",
     "/profile",
+    "/study",
+    "/challenges",
     "/login",
     "/auth/:path*",
     "/api/journey",
+    "/api/fellowship",
+    "/api/account/export",
+    "/api/account/delete",
+    "/api/account/health",
+    "/api/account/restore",
   ],
 };

@@ -10,6 +10,9 @@ playwright-report/
 .vercel/
 *recovery-codes*
 *credentials*
+client_secret_*.json
+faithquest365-account-export*.json
+faithquest365-demo-backup*.json
 *.pem
 *.key
 .DS_Store
@@ -19,3 +22,8 @@ npm-debug.log*
 .cache/
 
 Prompt to start FaithQuest.txt
+
+supabase/.temp/
+
+# Downloaded public review artifacts; authored schedules live in src/data.
+/faithquest365-chronological-draft-v*.json

@@ -17,14 +17,19 @@ import {
   Sprout,
   Sun,
   Moon,
+  Bookmark,
+  Flag,
 } from "lucide-react";
 import { Logo } from "@/components/brand";
 import { useJourney } from "@/components/journey-provider";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 const navigation = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/reading-plan", label: "My Reading Plan", icon: Map },
   { href: "/bible", label: "Bible Reader", icon: BookOpen },
+  { href: "/challenges", label: "Reading Challenges", icon: Flag },
+  { href: "/study", label: "Study Tools", icon: Bookmark },
   { href: "/quiz", label: "Daily Quiz", icon: CircleHelp },
   { href: "/journal", label: "Reflection Journal", icon: NotebookPen },
   { href: "/achievements", label: "Achievements", icon: Award },
@@ -33,7 +38,7 @@ const navigation = [
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const { state, error, profile, mode } = useJourney();
+  const { state, error, profile, mode, refresh, busy } = useJourney();
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
       if (event.key === "Escape" && open) {
@@ -171,6 +176,16 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               {mode === "demo"
                 ? "Changes that could not be saved have not been applied."
                 : "Please retry or refresh to check the latest saved progress."}
+              {mode === "supabase" && refresh && (
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  disabled={busy}
+                  onClick={() => void refresh()}
+                >
+                  {busy ? "Checking…" : "Check saved progress"}
+                </Button>
+              )}
             </div>
           )}
           {children}

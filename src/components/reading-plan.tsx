@@ -12,7 +12,13 @@ import {
 import { useJourney, JourneyLoading } from "@/components/journey-provider";
 import { PageHeading, Progress } from "@/components/ui/shared";
 import { Button } from "@/components/ui/button";
-import { PLAN, currentDay } from "@/services/reading-plan";
+import {
+  getPlan,
+  planId,
+  PLAN_DETAILS,
+  currentDay,
+} from "@/services/reading-plan";
+import { PlanCatalogue } from "./plan-catalogue";
 import { addDays, displayDate } from "@/lib/dates";
 import { cn } from "@/lib/utils";
 export function ReadingPlan() {
@@ -21,6 +27,7 @@ export function ReadingPlan() {
     [filter, setFilter] = useState("all"),
     [page, setPage] = useState(0);
   if (!state) return <JourneyLoading />;
+  const PLAN = getPlan(planId(state));
   const day = currentDay(state.profile.startDate, today),
     completed = Object.keys(state.days).length,
     missed = PLAN.filter((m) => m.day < day && !state.days[m.day]);
@@ -40,14 +47,19 @@ export function ReadingPlan() {
       <PageHeading
         eyebrow="YOUR 365-DAY ADVENTURE"
         title="One day. One meaningful step."
-        description="From Genesis to Revelation, with room to grow at your own pace."
+        description="Explore the whole Bible, with room to grow at your own pace."
+        action={
+          <Link className="text-link" href="#plan-catalogue">
+            Compare reading journeys
+          </Link>
+        }
       />
       <section className="plan-overview card">
         <span className="plan-symbol">
           <Route size={35} />
         </span>
         <div>
-          <span className="eyebrow">CANONICAL JOURNEY</span>
+          <span className="eyebrow">{PLAN_DETAILS[planId(state)].name}</span>
           <h2>The whole story, in a year.</h2>
           <p>66 books · 1,189 chapters · 365 days · Protestant canon</p>
           <Progress
@@ -170,14 +182,7 @@ export function ReadingPlan() {
           <ArrowRight size={15} />
         </Button>
       </div>
-      <section className="coming-plans">
-        <span className="eyebrow">MORE PATHS, SAME PURPOSE</span>
-        <p>
-          <strong>Chronological Journey</strong> and{" "}
-          <strong>Balanced Daily Journey</strong> are planned. They’ll become
-          available after the full schedules are reviewed.
-        </p>
-      </section>
+      <PlanCatalogue />
     </>
   );
 }

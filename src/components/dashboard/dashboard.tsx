@@ -13,13 +13,19 @@ import {
   NotebookPen,
   Trophy,
   Compass,
+  Flag,
 } from "lucide-react";
 import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer } from "recharts";
 import { useJourney, JourneyLoading } from "@/components/journey-provider";
 import { JourneyArt } from "@/components/journey-art";
 import { Button } from "@/components/ui/button";
 import { Progress, SectionLink } from "@/components/ui/shared";
-import { PLAN, currentDay } from "@/services/reading-plan";
+import {
+  getPlan,
+  planId,
+  PLAN_DETAILS,
+  currentDay,
+} from "@/services/reading-plan";
 import {
   achievements,
   levelInfo,
@@ -28,13 +34,13 @@ import {
   totalXp,
 } from "@/services/gamification-display";
 import { addDays, displayDate } from "@/lib/dates";
-import { QUIZ_PROMPTS } from "@/data/quiz-prompts";
+import { questionsForDay } from "@/services/plan-quizzes";
 import psalm from "../../../public/bible/PSA/119.json";
 export function Dashboard() {
   const { state, today } = useJourney();
   if (!state) return <JourneyLoading />;
   const day = currentDay(state.profile.startDate, today),
-    mission = PLAN[day - 1],
+    mission = getPlan(planId(state))[day - 1],
     completed = Object.keys(state.days).length,
     xp = totalXp(state),
     level = levelInfo(xp),
@@ -46,7 +52,7 @@ export function Dashboard() {
   ).length;
   const resume =
     mission.chapters.find((c) => !state.chapters[c.key]) ?? mission.chapters[0];
-  const quiz = QUIZ_PROMPTS.filter((q) => q.day === day);
+  const quiz = questionsForDay(day, planId(state));
   const quizDone = quiz.length > 0 && quiz.every((q) => state.attempts[q.id]);
   const activity = Array.from({ length: 7 }, (_, i) => {
     const date = addDays(today, i - 6);
@@ -80,6 +86,17 @@ export function Dashboard() {
         </div>
         <span className="date-label">{displayDate(today)}</span>
       </div>
+      <p className="card challenge-dashboard-link">
+        <Flag size={18} />
+        <Link href="/challenges">
+          {(state.challengeStarts ?? []).some(
+            (start) => start <= today && addDays(start, 6) >= today,
+          )
+            ? "View your seven-day reading challenge"
+            : "Start a seven-day reading challenge"}
+          <ArrowRight size={16} />
+        </Link>
+      </p>
       <div className="stats-grid">
         <article className="stat-card">
           <span className="stat-icon green">
@@ -170,7 +187,7 @@ export function Dashboard() {
               <div className="mission-meta">
                 <BookOpen size={15} />
                 {mission.chapters.length} chapters <span />
-                Canonical Journey
+                {PLAN_DETAILS[planId(state)].name}
               </div>
               <Button asChild>
                 <Link
