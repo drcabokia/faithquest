@@ -5118,3 +5118,51 @@ body {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+.reading-comfort {
+  max-width: 840px;
+  margin: 0 auto 24px;
+  padding: 24px;
+  display: grid;
+  gap: 16px;
+}
+.reading-comfort h2 {
+  margin-bottom: 8px;
+}
+.reading-comfort-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 16px;
+}
+.reading-comfort-field {
+  display: grid;
+  gap: 8px;
+  flex: 1 1 180px;
+  min-width: 0;
+  font-weight: 600;
+}
+.reading-comfort-controls select {
+  width: 100%;
+  min-width: 0;
+  min-height: 48px;
+}
+.scripture-text[data-text-size] {
+  font-size: 1.375rem;
+  overflow-wrap: anywhere;
+}
+.scripture-text[data-text-size="large"] {
+  font-size: 1.625rem;
+}
+.scripture-text[data-text-size="extra-large"] {
+  font-size: 1.875rem;
+}
+.scripture-text[data-line-spacing] {
+  line-height: 1.95;
+}
+.scripture-text[data-line-spacing="relaxed"] {
+  line-height: 2.25;
+}
+.scripture-text[data-line-spacing] p[id] {
+  line-height: inherit;
+}

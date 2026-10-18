@@ -1,3 +1,4 @@
+import { readingComfortTests } from "../support/reading-comfort";
 import { readFile } from "node:fs/promises";
 import { test, expect } from "@playwright/test";
 import { addDays, dateInZone } from "../../src/lib/dates";
@@ -3234,3 +3235,5 @@ test("account connection checks distinguish success, outages and cooldowns", asy
     page.getByRole("button", { name: /Try connection check in/ }),
   ).toBeDisabled();
 });
+
+readingComfortTests();

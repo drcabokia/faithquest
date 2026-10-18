@@ -22,6 +22,7 @@
 | Reading challenges                    | Private seven-date periods, mission-date progress, one-time 100 XP bonus, history and backup recovery                               | Implemented in development; real seven-day browser acceptance pending                                                 |
 | Private prayer tracking               | Separate requests, user-controlled status, dated notes, protected drafts, version checks and export/restore                         | Implemented; user reported successful browser testing                                                                 |
 | Reading consistency                   | Catch-up guidance, explicit yesterday-only grace policy, private calendar/history and export/restore                                | Implemented in demo/development accounts; browser acceptance pending                                                  |
+| Reading comfort                       | Scripture text size and spacing, device persistence, keyboard controls and mobile wrapping                                          | Implemented; user browser acceptance pending                                                                          |
 | Optional integrations                 | AI with citations/interpretation labels, PWA, push                                                                                  | Future; absent/disabled                                                                                               |
 
 AI must never invent verses or blur Scripture and interpretation. It must disclose uncertainty and differing Christian interpretations. Group design must encourage consistency without comparing spiritual maturity. Grace days use the explicit yesterday-only, 30-day-spacing policy documented in [Reading consistency](READING_CONSISTENCY.md). There is no accumulating grace balance.
@@ -123,3 +124,7 @@ Implemented after the CI repair: private requests separate from daily journals, 
 ## Reading consistency and optional grace
 
 Implemented after successful user-reported prayer-tracking testing: shared catch-up guidance, actual-reading and grace labels, optional confirmed grace for yesterday, calendar-based cooldown, bounded history, version 1 backup recovery and private caller-only commands. Grace preserves displayed continuity without mission, XP, achievement or challenge credit. [Browser checks](READING_CONSISTENCY.md) cover immediately testable catch-up/layout and conditional grace eligibility. Five-day weekly scheduling and Chronological activation remain separate future milestones.
+
+## Reading comfort
+
+The next development task adds browser-local Scripture text size and line spacing in Bible Reader, immediate rendering, cross-tab updates, reset and honest storage-failure feedback. It builds on daily reading without changing the active plan or personal activity. [Browser checks](READING_COMFORT.md) need no developer tools or new account. This does not close the preceding reading-consistency acceptance or independent editorial gates.

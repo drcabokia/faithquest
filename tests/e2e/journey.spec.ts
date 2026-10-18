@@ -1,3 +1,4 @@
+import { readingComfortTests } from "../support/reading-comfort";
 import { test, expect } from "@playwright/test";
 import { readFile } from "node:fs/promises";
 import { addDays, dateInZone } from "../../src/lib/dates";
@@ -1532,3 +1533,5 @@ test("parallel browser tabs merge chapter writes instead of dropping progress", 
   );
   expect(Object.keys(state.chapters).sort()).toEqual(["GEN.1", "GEN.2"]);
 });
+
+readingComfortTests();

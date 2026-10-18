@@ -1,5 +1,7 @@
 "use client";
 import Link from "next/link";
+import { ReadingComfort } from "./reading-comfort";
+import { useReadingPreferences } from "./reading-preferences";
 import { useVerseNoteDrafts } from "../verse-note-drafts";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -36,6 +38,7 @@ function ChapterText({
 }) {
   const { state, busy, saveVerse } = useJourney();
   const { drafts } = useVerseNoteDrafts();
+  const { preferences } = useReadingPreferences();
   const [selectedVerse, setSelectedVerse] = useState(1);
   const [data, setData] = useState<BibleChapter | null>(null),
     [error, setError] = useState<string | null>(null),
@@ -155,7 +158,11 @@ function ChapterText({
               : `Save ${verseLabel(selectedKey)} for later reading or memory practice.`}
         </p>
       </div>
-      <div className="scripture-text">
+      <div
+        className="scripture-text"
+        data-text-size={preferences.textSize}
+        data-line-spacing={preferences.lineSpacing}
+      >
         {data.verses
           .filter((v) => v.text.length > 0)
           .map((v) => (
@@ -396,6 +403,7 @@ export function Reader() {
           My reading plan <ChevronRight size={15} />
         </Link>
       </div>
+      <ReadingComfort />
       <ChapterReader
         key={`${book.id}.${chapter}`}
         book={book.id}
