@@ -225,3 +225,11 @@ Both final demo and account production builds pass. The final root build uses ac
 ## Repository publication verification
 
 Before publishing the accumulated development phases on 18 October 2026, `npm run check` passed: lint, strict types, frozen Edge Function validation, all 233 automated tests and the account production build. The entire isolated account browser suite then passed **52 of 52 scenarios in one run**. Its assertion timeout is now fifteen seconds, matching the bounded account-request wait and accommodating first-use route compilation in the isolated development server. The prior full 22-scenario demo run and final two-scenario note rerun remain passing production-browser evidence. Local credentials, personal exports, generated caches and downloaded public draft-review artifacts are excluded from the commit.
+
+## GitHub browser validation race correction
+
+The first publication run passed `npm run check` but failed the demo saved-verse parallel-tab case: the test read local storage immediately after clicking Remove, before the asynchronous Web Lock callback committed the removal. The account browser suite was consequently skipped. Holding the same write lock in the second tab reproduced the original assertion failure locally.
+
+The existing browser case now deliberately holds that lock, confirms that removal is pending with both verses still persisted, releases the lock in `finally`, and waits for the selected verse's Save button to become enabled before checking storage. It still requires only the other tab's verse to remain and no XP rewards. No application behavior or validation thresholds were changed.
+
+Local verification passed the controlled-delay scenario five consecutive times, all **22 demo browser scenarios**, targeted lint, strict types, formatting and `git diff --check`. GitHub validation will rerun on the corrective commit; its final result is recorded by the linked repository workflow.

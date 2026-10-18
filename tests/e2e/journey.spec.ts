@@ -864,9 +864,44 @@ test("parallel tabs merge saved verses and preserve the other verse on removal",
     KEY,
   );
   expect(Object.keys(state.savedVerses).sort()).toEqual(["GEN.1.1", "GEN.1.2"]);
-  await a
-    .getByRole("button", { name: "Remove saved verse", exact: true })
-    .click();
+  // Hold the shared write lock so removal cannot finish during click().
+  // This reproduces CI's read-before-commit race without timing assumptions.
+  const releaseWriteLock = await b.evaluateHandle(async () => {
+    let release!: () => void;
+    const held = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    await new Promise<void>((acquired) => {
+      void navigator.locks.request("faithquest365-demo-write", async () => {
+        acquired();
+        await held;
+      });
+    });
+    return release;
+  });
+  try {
+    await a
+      .getByRole("button", { name: "Remove saved verse", exact: true })
+      .click();
+    await expect(
+      a.getByRole("button", { name: "Remove saved verse", exact: true }),
+    ).toBeDisabled();
+    state = await a.evaluate(
+      (key) => JSON.parse(localStorage.getItem(key)!),
+      KEY,
+    );
+    expect(Object.keys(state.savedVerses).sort()).toEqual([
+      "GEN.1.1",
+      "GEN.1.2",
+    ]);
+  } finally {
+    await releaseWriteLock.evaluate((release) => release());
+    await releaseWriteLock.dispose();
+  }
+  // click() waits for event dispatch, not the asynchronous locked write.
+  await expect(
+    a.getByRole("button", { name: "Save verse", exact: true }),
+  ).toBeEnabled();
   state = await a.evaluate(
     (key) => JSON.parse(localStorage.getItem(key)!),
     KEY,
