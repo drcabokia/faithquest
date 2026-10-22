@@ -1,3 +1,4 @@
+import { JournalConflictError } from "@/lib/journal";
 import { GraceDayError } from "@/lib/grace-days";
 import { PrayerError } from "@/lib/prayers";
 import { VerseNoteError } from "@/lib/verse-notes";
@@ -106,6 +107,7 @@ async function handle(request: NextRequest, write: boolean) {
           command.date,
           command.text,
           command.category,
+          command.expectedRevision,
         );
         break;
       case "profile":
@@ -133,6 +135,8 @@ async function handle(request: NextRequest, write: boolean) {
   } catch (error) {
     if (error instanceof GraceDayError)
       return reply({ error: error.message }, 409);
+    if (error instanceof JournalConflictError)
+      return reply({ error: error.message, code: "journal_conflict" }, 409);
     if (error instanceof PrayerError)
       return reply({ error: error.message }, 409);
     if (error instanceof VerseNoteError)

@@ -53,7 +53,7 @@ begin
   'select public.complete_chapter(''GEN'',1)',
   'select public.remember_chapter(''GEN'',1)',
   'select public.submit_quiz(''gen-light'',0)',
-  'select public.save_reflection(current_date,''A synthetic reflection that must not be saved.'')',
+  'select public.save_journal_entry(current_date,''A synthetic reflection that must not be saved.'',''reflection'',null)',
   'select public.update_journey_preferences(''Changed'',current_date,''UTC'',''light'')'
  ] loop
   blocked:=false;

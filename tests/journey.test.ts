@@ -119,6 +119,8 @@ describe("participation rewards", () => {
       "2026-10-16",
       "An edited reflection about listening and growing in patience.",
       new Date("2026-10-17T12:00Z"),
+      undefined,
+      s.reflections["2026-10-16"].revision!,
     );
     expect(totalXp(s)).toBe(20);
     expect(s.reflections["2026-10-16"].text).toContain("edited");

@@ -1,3 +1,4 @@
+import { JournalConflictError } from "./journal";
 import { fellowshipSnapshotSchema, type FellowshipCommand } from "./fellowship";
 import { stateSchema } from "./state";
 import type { JourneyCommand } from "./commands";
@@ -47,6 +48,14 @@ async function readAccount(
         wait,
       );
     }
+    if (
+      response.status === 409 &&
+      data &&
+      typeof data === "object" &&
+      "code" in data &&
+      data.code === "journal_conflict"
+    )
+      throw new JournalConflictError();
     const message =
       data &&
       typeof data === "object" &&

@@ -1,3 +1,4 @@
+import { journalRevision, JournalConflictError } from "../src/lib/journal";
 import { describe, expect, it } from "vitest";
 import { initialState, stateSchema } from "../src/lib/state";
 import { commandSchema } from "../src/lib/commands";
@@ -20,8 +21,22 @@ function state() {
 describe("private journal categories", () => {
   it("changes categories without awarding additional XP and preserves them on legacy edits", () => {
     const first = saveReflection(state(), day, text, now, "prayer");
-    const changed = saveReflection(first, day, text, now, "gratitude");
-    const legacy = saveReflection(changed, day, text + " Edited.", now);
+    const changed = saveReflection(
+      first,
+      day,
+      text,
+      now,
+      "gratitude",
+      journalRevision(first.reflections[day]),
+    );
+    const legacy = saveReflection(
+      changed,
+      day,
+      text + " Edited.",
+      now,
+      undefined,
+      journalRevision(changed.reflections[day]),
+    );
     expect(legacy.reflections[day].category).toBe("gratitude");
     expect(totalXp(first)).toBe(20);
     expect(totalXp(legacy)).toBe(20);
@@ -88,7 +103,13 @@ describe("private journal categories", () => {
     expect(backup.reflections[day]).toEqual({ text });
     expect(restoreDemo(state(), backup, now).reflections[day].text).toBe(text);
     expect(
-      commandSchema.safeParse({ type: "reflect", date: day, text }).success,
+      commandSchema.safeParse({
+        type: "reflect",
+        date: day,
+        text,
+        category: "reflection",
+        expectedRevision: null,
+      }).success,
     ).toBe(true);
   });
   it("continues to allow new entries only today and preserves existing historical categories", () => {
@@ -102,9 +123,130 @@ describe("private journal categories", () => {
       updatedAt: now.toISOString(),
     };
     expect(
-      saveReflection(old, "2026-10-16", text + " Edited.", now).reflections[
-        "2026-10-16"
-      ].category,
+      saveReflection(
+        old,
+        "2026-10-16",
+        text + " Edited.",
+        now,
+        undefined,
+        journalRevision(old.reflections["2026-10-16"]),
+      ).reflections["2026-10-16"].category,
     ).toBe("application");
+  });
+});
+
+describe("journal save conflicts", () => {
+  it("rejects competing creates, stale edits and category-only conflicts without mutating state or XP", () => {
+    const first = saveReflection(state(), day, text, now, "prayer");
+    const base = journalRevision(first.reflections[day]);
+    const latest = saveReflection(first, day, text, now, "gratitude", base);
+    const snapshot = structuredClone(latest);
+    for (const token of [null, base]) {
+      expect(() =>
+        saveReflection(
+          latest,
+          day,
+          text + " A local draft.",
+          now,
+          "prayer",
+          token,
+        ),
+      ).toThrow(JournalConflictError);
+    }
+    expect(latest).toEqual(snapshot);
+    expect(totalXp(latest)).toBe(20);
+    const replaced = saveReflection(
+      latest,
+      day,
+      text + " Reviewed replacement.",
+      now,
+      "application",
+      journalRevision(latest.reflections[day]),
+    );
+    expect(replaced.reflections[day].category).toBe("application");
+    expect(totalXp(replaced)).toBe(20);
+  });
+  it("does not reuse a revision when text or category changes back within one timestamp", () => {
+    const first = saveReflection(state(), day, text, now, "prayer");
+    const second = saveReflection(
+      first,
+      day,
+      text,
+      now,
+      "gratitude",
+      journalRevision(first.reflections[day]),
+    );
+    const third = saveReflection(
+      second,
+      day,
+      text,
+      now,
+      "prayer",
+      journalRevision(second.reflections[day]),
+    );
+    expect(
+      new Set([first, second, third].map((s) => s.reflections[day].revision))
+        .size,
+    ).toBe(3);
+    expect(() =>
+      saveReflection(
+        third,
+        day,
+        text + " Stale edit.",
+        now,
+        "prayer",
+        journalRevision(first.reflections[day]),
+      ),
+    ).toThrow(JournalConflictError);
+  });
+  it("acknowledges identical committed content after a lost response without changing the revision or reward", () => {
+    const first = saveReflection(state(), day, text, now, "prayer");
+    expect(
+      saveReflection(
+        first,
+        day,
+        text,
+        new Date(now.getTime() + 1000),
+        "prayer",
+        null,
+      ),
+    ).toBe(first);
+  });
+  it("mints fresh revisions for imported entries and preserves destination revisions", () => {
+    const source = saveReflection(state(), day, text, now, "prayer");
+    const backup = parseBackup(JSON.stringify(source), "UTC", now);
+    expect(backup.reflections[day]).not.toHaveProperty("revision");
+    const restored = restoreDemo(state(), backup, now);
+    expect(restored.reflections[day].revision).toBeTruthy();
+    expect(restored.reflections[day].revision).not.toBe(
+      source.reflections[day].revision,
+    );
+    const latest = saveReflection(
+      restored,
+      day,
+      text,
+      now,
+      "gratitude",
+      journalRevision(restored.reflections[day]),
+    );
+    expect(restoreDemo(latest, backup, now).reflections[day]).toEqual(
+      latest.reflections[day],
+    );
+  });
+  it("requires an explicit nullable revision token and a category at the command boundary", () => {
+    const command = {
+      type: "reflect",
+      date: day,
+      text,
+      category: "prayer",
+      expectedRevision: null,
+    };
+    expect(commandSchema.safeParse(command).success).toBe(true);
+    for (const token of [undefined, "bad", 12, {}, { text }]) {
+      expect(
+        commandSchema.safeParse({ ...command, expectedRevision: token })
+          .success,
+      ).toBe(false);
+    }
   });
 });

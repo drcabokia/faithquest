@@ -430,22 +430,29 @@ const server = createServer(async (request, response) => {
         updateMembershipExport();
         return send(200, fellowshipState);
       }
-      if (
-        path.endsWith("/save_reflection") ||
-        path.endsWith("/save_categorized_reflection")
-      ) {
-        state.reflections[body.p_date] = {
-          text: body.p_content.trim(),
-          category:
-            body.p_category ??
-            state.reflections[body.p_date]?.category ??
-            "reflection",
-          updatedAt: new Date().toISOString(),
-        };
-        state.rewards[`reflection:${body.p_date}`] ??= {
-          amount: 20,
-          date: today(),
-        };
+      if (path.endsWith("/save_journal_entry")) {
+        const current = state.reflections[body.p_date];
+        const same =
+          current?.text === body.p_content.trim() &&
+          (current.category ?? "reflection") === body.p_category;
+        if (
+          !same &&
+          (current?.revision ?? current?.updatedAt ?? null) !==
+            body.p_expected_revision
+        )
+          return send(200, { error: "journal_conflict" });
+        if (!same) {
+          state.reflections[body.p_date] = {
+            text: body.p_content.trim(),
+            category: body.p_category,
+            revision: randomUUID(),
+            updatedAt: new Date().toISOString(),
+          };
+          state.rewards[`reflection:${body.p_date}`] ??= {
+            amount: 20,
+            date: today(),
+          };
+        }
       }
       // Minimal synthetic protocol responses for browser workflow checks.
       // The shared SQL fixture tests the actual reconstruction/security rules.
@@ -509,6 +516,7 @@ const server = createServer(async (request, response) => {
         state.graceDates = mergedGrace;
         for (const [day, r] of Object.entries(body.p_backup.reflections)) {
           state.reflections[day] ??= {
+            revision: randomUUID(),
             ...r,
             updatedAt: new Date().toISOString(),
           };

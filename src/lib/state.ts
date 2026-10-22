@@ -5,7 +5,7 @@ import { verseNotesSchema } from "./verse-notes";
 import { dateInZone } from "./dates";
 import { CHAPTER_KEYS, PLAN_IDS } from "../services/reading-plan";
 import { verseKeySchema, SAVED_VERSE_LIMIT } from "./verses";
-import { journalCategorySchema } from "./journal";
+import { journalCategorySchema, journalRevisionSchema } from "./journal";
 import { challengeStartsSchema } from "./challenges";
 import { fellowshipMembershipsSchema } from "./fellowship";
 const date = z.iso.date();
@@ -54,6 +54,7 @@ export const stateSchema = z
       z.object({
         text: z.string().min(20).max(10000),
         category: journalCategorySchema.optional(),
+        revision: journalRevisionSchema.optional(),
         updatedAt: z.iso.datetime(),
       }),
     ),

@@ -73,13 +73,20 @@ export function submitAnswer(
   if (correct) award(next, `quiz:${id}`, XP.quiz, date);
   return next;
 }
-import { journalCategorySchema, type JournalCategory } from "@/lib/journal";
+import {
+  journalCategorySchema,
+  journalExpectedRevisionSchema,
+  journalRevision,
+  JournalConflictError,
+  type JournalCategory,
+} from "@/lib/journal";
 export function saveReflection(
   state: JourneyState,
   date: string,
   text: string,
   now = new Date(),
   category?: JournalCategory,
+  expectedRevision: string | null = null,
 ): JourneyState {
   if (category !== undefined) journalCategorySchema.parse(category);
   const content = text.trim();
@@ -94,8 +101,19 @@ export function saveReflection(
     throw new Error(
       "New reflections can be saved for today. Existing entries can be edited.",
     );
+  journalExpectedRevisionSchema.nullable().parse(expectedRevision);
+  const current = state.reflections[date];
+  const desiredCategory = category ?? current?.category ?? "reflection";
+  if (
+    current?.text === content &&
+    (current.category ?? "reflection") === desiredCategory
+  )
+    return state;
+  if (journalRevision(current) !== expectedRevision)
+    throw new JournalConflictError();
   const next = structuredClone(state);
   next.reflections[date] = {
+    revision: crypto.randomUUID(),
     text: content,
     updatedAt: now.toISOString(),
     ...((category ?? state.reflections[date]?.category)

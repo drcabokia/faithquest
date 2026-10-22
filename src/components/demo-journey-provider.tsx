@@ -2,7 +2,11 @@
 import { claimGraceDay } from "@/services/reading-consistency";
 import { changePrayer } from "@/services/prayers";
 import { setVerseNote } from "@/services/verse-notes";
-import type { JournalCategory } from "@/lib/journal";
+import {
+  JournalConflictError,
+  journalRevision,
+  type JournalCategory,
+} from "@/lib/journal";
 import { joinChallenge } from "@/services/challenges";
 import { selectReadingPlan } from "@/services/select-reading-plan";
 import { restoreDemo } from "@/services/restore-demo";
@@ -136,8 +140,9 @@ export function DemoJourneyProvider({
       }
       setBusy(true);
       const commit = () => {
+        let before: JourneyState | undefined;
         try {
-          const before = withFeedback(
+          before = withFeedback(
             repository.load() ?? snapshot.state ?? initialState(),
           );
           const next = change(before);
@@ -150,6 +155,9 @@ export function DemoJourneyProvider({
         } catch (error) {
           publish({
             ...snapshot,
+            ...(error instanceof JournalConflictError && before
+              ? { state: before }
+              : {}),
             error:
               error instanceof Error
                 ? error.message
@@ -188,11 +196,27 @@ export function DemoJourneyProvider({
   const answer = async (id: string, answer: number) => {
     await mutate((s) => submitAnswer(s, id, answer), "Answer recorded.");
   };
-  const reflect = (date: string, text: string, category?: JournalCategory) =>
-    mutate(
-      (s) => saveReflection(s, date, text, new Date(), category),
-      "Reflection saved.",
-    );
+  const reflect = async (
+    date: string,
+    text: string,
+    category: JournalCategory,
+    expectedRevision: string | null,
+  ): Promise<string | false> => {
+    let revision: string | null = null;
+    const ok = await mutate((s) => {
+      const next = saveReflection(
+        s,
+        date,
+        text,
+        new Date(),
+        category,
+        expectedRevision,
+      );
+      revision = journalRevision(next.reflections[date]);
+      return next;
+    }, "Reflection saved.");
+    return ok && revision ? revision : false;
+  };
   const profile = (profile: Profile) =>
     mutate((s) => {
       const parsed = profileSchema.parse(profile);

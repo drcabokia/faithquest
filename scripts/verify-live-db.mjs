@@ -50,6 +50,12 @@ try {
     );
     await tx.unsafe(
       await readFile(
+        new URL("./verify-journal-conflicts.sql", import.meta.url),
+        "utf8",
+      ),
+    );
+    await tx.unsafe(
+      await readFile(
         new URL("./verify-challenges.sql", import.meta.url),
         "utf8",
       ),

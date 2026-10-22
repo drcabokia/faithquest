@@ -43,12 +43,12 @@ begin
   if repeated is distinct from snapshot then
     raise exception 'Repeated chapter changed the journey';
   end if;
-  perform public.save_reflection(reflection_day,'A synthetic private reflection used only for isolation testing.');
+  perform public.save_journal_entry(reflection_day,'A synthetic private reflection used only for isolation testing.',coalesce((select category from public.reflections where user_id=auth.uid() and reflection_date=reflection_day),'reflection'),(select revision::text from public.reflections where user_id=auth.uid() and reflection_date=reflection_day));
   perform public.submit_quiz('gen-light',0);
   perform public.submit_quiz('gen-rest',0);
   perform public.submit_quiz('gen-rest',2);
   perform public.submit_quiz('gen-light',0);
-  snapshot := public.save_reflection(reflection_day,'Edited synthetic reflection used only for isolation testing.');
+  snapshot := public.save_journal_entry(reflection_day,'Edited synthetic reflection used only for isolation testing.',coalesce((select category from public.reflections where user_id=auth.uid() and reflection_date=reflection_day),'reflection'),(select revision::text from public.reflections where user_id=auth.uid() and reflection_date=reflection_day));
   if snapshot #>> '{attempts,gen-rest,correct}' is distinct from 'false'
     or snapshot #>> '{attempts,gen-rest,answer}' is distinct from '0'
     or snapshot->'rewards' ? 'quiz:gen-rest'

@@ -1,3 +1,4 @@
+import { journalConflictTests } from "../support/journal-conflicts";
 import { prayerListFlowTest } from "../support/prayer-list-flow";
 import { readingComfortTests } from "../support/reading-comfort";
 import { readFile } from "node:fs/promises";
@@ -2558,6 +2559,148 @@ test("typing during an in-flight journal save retains the newer draft", async ({
     first,
   );
 });
+test("a journal conflict whose refresh fails keeps the draft until saved progress is checked", async ({
+  page,
+  request,
+}) => {
+  await page.goto("/journal");
+  const draft = "A synthetic local draft kept when a conflict refresh fails.";
+  const remote = "A synthetic entry saved elsewhere before this stale save.";
+  await page.getByLabel("Your reflection", { exact: true }).fill(draft);
+  const { state } = await (await request.post(control, { data: {} })).json();
+  await request.post(control, {
+    data: {
+      reflections: {
+        [state.profile.startDate]: {
+          text: remote,
+          category: "gratitude",
+          revision: crypto.randomUUID(),
+          updatedAt: new Date().toISOString(),
+        },
+      },
+      rewards: {
+        ["reflection:" + state.profile.startDate]: {
+          amount: 20,
+          date: state.profile.startDate,
+        },
+      },
+    },
+  });
+  let writes = 0;
+  await page.route("**/api/journey", async (route) => {
+    if (route.request().method() === "GET") await route.abort("failed");
+    else {
+      if (route.request().postDataJSON().type === "reflect") writes++;
+      await route.continue();
+    }
+  });
+  await page
+    .getByRole("button", { name: "Save reflection", exact: true })
+    .click();
+  await expect(page.locator(".error-banner")).toContainText(
+    "Your draft is still here",
+  );
+  await expect(page.getByLabel("Your reflection", { exact: true })).toHaveValue(
+    draft,
+  );
+  expect(writes).toBe(1);
+  await page.unroute("**/api/journey");
+  await page
+    .getByRole("button", { name: "Check saved progress", exact: true })
+    .click();
+  await expect(page.locator(".journal-warning")).toBeVisible();
+  await expect(page.getByLabel("Your reflection", { exact: true })).toHaveValue(
+    draft,
+  );
+  await page.getByText("Review the saved entry", { exact: true }).click();
+  await expect(page.locator(".journal-saved-text")).toHaveText(remote);
+  await page
+    .getByRole("button", { name: "Discard draft", exact: true })
+    .click();
+  await page
+    .getByRole("button", { name: "Discard changes", exact: true })
+    .click();
+  await expect(page.getByLabel("Your reflection", { exact: true })).toHaveValue(
+    remote,
+  );
+  await expect(page.getByLabel("Entry category", { exact: true })).toHaveValue(
+    "gratitude",
+  );
+  const result = await (await request.post(control, { data: {} })).json();
+  expect(Object.values(result.state.reflections)[0]).toMatchObject({
+    text: remote,
+    category: "gratitude",
+  });
+  expect(Object.values(result.state.rewards)).toHaveLength(1);
+});
+
+test("reverting text and category while a journal save is pending keeps a newer draft with the accepted revision", async ({
+  page,
+  request,
+}) => {
+  await page.goto("/journal");
+  const original = "The original synthetic journal entry kept for comparison.";
+  const sent = "A synthetic journal edit sent before the reply is delayed.";
+  await page.getByLabel("Your reflection", { exact: true }).fill(original);
+  await page
+    .getByRole("button", { name: "Save reflection", exact: true })
+    .click();
+  await expect(
+    page.getByRole("button", { name: "Saved", exact: true }),
+  ).toBeVisible();
+  await page.getByLabel("Your reflection", { exact: true }).fill(sent);
+  await page
+    .getByLabel("Entry category", { exact: true })
+    .selectOption("prayer");
+  let release: (() => void) | undefined;
+  await page.route("**/api/journey", async (route) => {
+    if (
+      route.request().method() === "POST" &&
+      route.request().postDataJSON().type === "reflect"
+    ) {
+      const response = await route.fetch();
+      await new Promise<void>((resolve) => {
+        release = resolve;
+      });
+      await route.fulfill({ response });
+    } else await route.continue();
+  });
+  await page
+    .getByRole("button", { name: "Save reflection", exact: true })
+    .click();
+  await expect.poll(() => Boolean(release)).toBe(true);
+  await page.getByLabel("Your reflection", { exact: true }).fill(original);
+  await page
+    .getByLabel("Entry category", { exact: true })
+    .selectOption("reflection");
+  release!();
+  await expect(
+    page.getByRole("button", { name: "Saving…", exact: true }),
+  ).toHaveCount(0);
+  await expect(page.getByLabel("Your reflection", { exact: true })).toHaveValue(
+    original,
+  );
+  await expect(page.locator(".journal-draft-actions")).toContainText(
+    "Unsaved draft",
+  );
+  await expect(page.locator(".journal-warning")).toHaveCount(0);
+  await page.unroute("**/api/journey");
+  await page
+    .getByRole("button", { name: "Save reflection", exact: true })
+    .click();
+  await expect(
+    page.getByRole("button", { name: "Saved", exact: true }),
+  ).toBeVisible();
+  const { state } = await (await request.post(control, { data: {} })).json();
+  expect(Object.values(state.reflections)[0]).toMatchObject({
+    text: original,
+    category: "reflection",
+  });
+  expect(Object.values(state.rewards)).toEqual([
+    { amount: 20, date: state.profile.startDate },
+  ]);
+});
+
 test("saved verses support exact-text memory practice, export, removal and restore without XP", async ({
   page,
   request,
@@ -3260,3 +3403,5 @@ test("account connection checks distinguish success, outages and cooldowns", asy
 readingComfortTests();
 
 prayerListFlowTest("account");
+
+journalConflictTests("account");

@@ -1,3 +1,4 @@
+import { journalConflictTests } from "../support/journal-conflicts";
 import { prayerListFlowTest } from "../support/prayer-list-flow";
 import { readingComfortTests } from "../support/reading-comfort";
 import { test, expect } from "@playwright/test";
@@ -1566,3 +1567,5 @@ test("parallel browser tabs merge chapter writes instead of dropping progress", 
 readingComfortTests();
 
 prayerListFlowTest("demo");
+
+journalConflictTests("demo");

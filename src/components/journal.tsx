@@ -5,7 +5,11 @@ import { useJourney, JourneyLoading } from "@/components/journey-provider";
 import { PageHeading, EmptyState } from "@/components/ui/shared";
 import { Button } from "@/components/ui/button";
 import { displayDate } from "@/lib/dates";
-import { JOURNAL_CATEGORIES, type JournalCategory } from "@/lib/journal";
+import {
+  JOURNAL_CATEGORIES,
+  journalRevision,
+  type JournalCategory,
+} from "@/lib/journal";
 import { useJournalDrafts } from "./journal-drafts";
 const prompts = [
   "What did I learn about God today?",
@@ -21,10 +25,14 @@ const categoryPrompts: Record<JournalCategory, string> = {
 };
 function Editor({ date }: { date: string }) {
   const { reflect, busy, state } = useJourney();
-  const { drafts, put, remove } = useJournalDrafts();
+  const { drafts, put, remove, saved: acknowledgeSave } = useJournalDrafts();
   const [saved, setSaved] = useState(false);
   const [discarding, setDiscarding] = useState(false);
+  const [reviewedRevision, setReviewedRevision] = useState<
+    string | null | undefined
+  >();
   const entry = state?.reflections[date];
+  const revision = journalRevision(entry);
   const draft = drafts[date];
   const text = draft?.text ?? entry?.text ?? "";
   const category = draft?.category ?? entry?.category ?? "reflection";
@@ -32,22 +40,21 @@ function Editor({ date }: { date: string }) {
     draft &&
     (draft.text.trim() !== (entry?.text ?? "") ||
       draft.category !== (entry?.category ?? "reflection")) &&
-    (draft.baseText !== (entry?.text ?? "") ||
-      draft.baseCategory !== (entry?.category ?? "reflection"));
+    draft.baseRevision !== revision;
   const change = (nextText: string, nextCategory: JournalCategory) => {
     setSaved(false);
     setDiscarding(false);
     if (
       nextText === (entry?.text ?? "") &&
-      nextCategory === (entry?.category ?? "reflection")
+      nextCategory === (entry?.category ?? "reflection") &&
+      !busy
     )
       remove(date);
     else
       put(date, {
         text: nextText,
         category: nextCategory,
-        baseText: draft?.baseText ?? entry?.text ?? "",
-        baseCategory: draft?.baseCategory ?? entry?.category ?? "reflection",
+        baseRevision: draft ? draft.baseRevision : revision,
       });
   };
   const valid = text.trim().length >= 20 && text.trim().length <= 10000;
@@ -72,9 +79,16 @@ function Editor({ date }: { date: string }) {
         <div className="journal-warning" role="status">
           <p>
             The saved entry changed while you were writing. Your draft is still
-            here. Saving will replace that entry.
+            here. Review the saved entry before choosing whether to replace it.
           </p>
-          <details>
+          <details
+            onToggle={(event) => {
+              setReviewedRevision(
+                event.currentTarget.open ? revision : undefined,
+              );
+            }}
+            key={revision}
+          >
             <summary>Review the saved entry</summary>
             <p className="journal-saved-text">
               {entry?.text ?? "No saved entry"}
@@ -100,11 +114,21 @@ function Editor({ date }: { date: string }) {
           {text.trim().length.toLocaleString()} / 10,000 characters · Minimum 20
         </span>
         <Button
-          disabled={!valid || busy}
+          disabled={
+            !valid ||
+            busy ||
+            (!!changedElsewhere && reviewedRevision !== revision)
+          }
           onClick={async () => {
             const captured = draft;
-            if (await reflect(date, text, category)) {
-              if (captured) remove(date, captured);
+            const expected = changedElsewhere
+              ? revision
+              : captured
+                ? captured.baseRevision
+                : revision;
+            const result = await reflect(date, text, category, expected);
+            if (result) {
+              if (captured) acknowledgeSave(date, captured, result);
               setSaved(true);
             }
           }}

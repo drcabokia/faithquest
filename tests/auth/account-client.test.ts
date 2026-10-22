@@ -1,3 +1,4 @@
+import { JournalConflictError } from "../../src/lib/journal";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   AccountRequestError,
@@ -23,6 +24,28 @@ beforeEach(() => {
 afterEach(() => vi.unstubAllGlobals());
 
 describe("account requests and recovery", () => {
+  it("recognizes a definitive journal conflict without replaying a write or exposing raw response fields", async () => {
+    fetchMock.mockResolvedValueOnce(
+      Response.json(
+        {
+          error: "private upstream detail",
+          code: "journal_conflict",
+          text: "PRIVATE RAW JOURNAL",
+        },
+        { status: 409 },
+      ),
+    );
+    const command = {
+      type: "reflect" as const,
+      date: "2026-10-16",
+      text: "A synthetic journal draft retained on conflict.",
+      category: "prayer" as const,
+      expectedRevision: null,
+    };
+    await expect(requestJourney(command)).rejects.toThrow(JournalConflictError);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(storageWrite).not.toHaveBeenCalled();
+  });
   it("keeps group invitation codes out of URLs/storage and never replays uncertain creates", async () => {
     const command = {
       type: "create" as const,
@@ -104,6 +127,8 @@ describe("account requests and recovery", () => {
     await expect(
       requestJourney({
         type: "reflect",
+        category: "reflection",
+        expectedRevision: null,
         date: "2026-10-16",
         text: saved.reflections["2026-10-16"].text,
       }),

@@ -112,7 +112,7 @@ The initial target is **USD 0/month** for personal, non-commercial use, subject 
 
 Service readiness is available at `/api/health`; `npm run health:check` checks the running app without signing in. It returns only readiness status and a support reference, never account data. Application error logs contain allowlisted operational fields only. See [operations and verification](docs/SUPABASE_INTEGRATION.md#8-reliability-and-monitoring--16-october-2026) for limits and current evidence.
 
-Private journal categories, local text/date search and tab-lifetime draft protection are available in demo and development account modes. See [journal testing instructions](docs/JOURNAL_TOOLS.md). Save before closing/signing out; drafts are memory-only and are not included in backups.
+Private journal categories, local text/date search, tab-lifetime drafts and server-checked conflict protection are available in demo and development account modes. See [journal testing instructions](docs/JOURNAL_TOOLS.md). Save before closing/signing out; drafts are memory-only and are not included in backups.
 
 Private seven-day reading challenges now support explicit enrollment, seven calendar-date progress, a one-time 100 XP bonus, history and backup recovery. See [the calendar policy and testing guide](docs/READING_CHALLENGES.md).
 

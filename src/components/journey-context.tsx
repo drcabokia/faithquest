@@ -19,8 +19,9 @@ export type JourneyContextValue = {
   reflect: (
     date: string,
     text: string,
-    category?: JournalCategory,
-  ) => Promise<boolean>;
+    category: JournalCategory,
+    expectedRevision: string | null,
+  ) => Promise<string | false>;
   profile: (profile: Profile) => Promise<boolean>;
   refresh?: () => Promise<void>;
   claimGrace: (date: string) => Promise<boolean>;

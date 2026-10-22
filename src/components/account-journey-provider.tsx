@@ -1,5 +1,9 @@
 "use client";
-import type { JournalCategory } from "@/lib/journal";
+import {
+  JournalConflictError,
+  journalRevision,
+  type JournalCategory,
+} from "@/lib/journal";
 import { useState, useRef, useCallback, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { JourneyContext } from "./journey-context";
@@ -151,7 +155,11 @@ export function AccountJourneyProvider({
     return () => media.removeEventListener("change", change);
   }, [theme]);
   const mutate = useCallback(
-    (command: JourneyCommand | RestoreData, message: string | null) => {
+    (
+      command: JourneyCommand | RestoreData,
+      message: string | null,
+      onSaved?: (state: JourneyState) => void,
+    ) => {
       const result = queue.current
         .catch(() => {})
         .then(async () => {
@@ -163,6 +171,7 @@ export function AccountJourneyProvider({
                 ? await requestState(command)
                 : await restoreAccount(command);
             apply(next);
+            onSaved?.(next);
             if (message) {
               const gained =
                 "type" in command && command.type === "grace"
@@ -174,6 +183,15 @@ export function AccountJourneyProvider({
             }
             return true;
           } catch (error) {
+            if (error instanceof JournalConflictError) {
+              // The server definitively rejected this write. Refresh only; never
+              // replay it or rebase the user's draft without their review.
+              try {
+                apply(await requestState());
+              } catch {
+                /* Keep the draft and last readable snapshot. */
+              }
+            }
             setError(
               error instanceof Error
                 ? error.message
@@ -210,8 +228,22 @@ export function AccountJourneyProvider({
   const answer = async (id: string, answer: number) => {
     await mutate({ type: "answer", id, answer }, "Answer recorded.");
   };
-  const reflect = (date: string, text: string, category?: JournalCategory) =>
-    mutate({ type: "reflect", date, text, category }, "Reflection saved.");
+  const reflect = async (
+    date: string,
+    text: string,
+    category: JournalCategory,
+    expectedRevision: string | null,
+  ): Promise<string | false> => {
+    let revision: string | null = null;
+    const ok = await mutate(
+      { type: "reflect", date, text, category, expectedRevision },
+      "Reflection saved.",
+      (next) => {
+        revision = journalRevision(next.reflections[date]);
+      },
+    );
+    return ok && revision ? revision : false;
+  };
   const profile = (profile: Profile) =>
     mutate({ type: "profile", profile }, "Preferences saved.");
   return (

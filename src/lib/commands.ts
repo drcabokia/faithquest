@@ -4,7 +4,10 @@ import { noteTextSchema } from "./verse-notes";
 import { profileSchema } from "./state";
 import { CHAPTER_KEYS } from "../services/reading-plan";
 import { verseReferenceSchema } from "./verses";
-import { journalCategorySchema } from "./journal";
+import {
+  journalCategorySchema,
+  journalExpectedRevisionSchema,
+} from "./journal";
 import { PLAN_IDS } from "../services/reading-plan";
 const ref = { book: z.string(), chapter: z.number().int().positive() };
 const reference = z
@@ -55,7 +58,8 @@ export const commandSchema = z
         type: z.literal("reflect"),
         date: z.iso.date(),
         text: z.string().trim().min(20).max(10000),
-        category: journalCategorySchema.optional(),
+        category: journalCategorySchema,
+        expectedRevision: journalExpectedRevisionSchema.nullable(),
       })
       .strict(),
     z.object({ type: z.literal("profile"), profile: profileSchema }).strict(),

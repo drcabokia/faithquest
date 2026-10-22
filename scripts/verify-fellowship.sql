@@ -11,7 +11,7 @@ begin
  perform set_config('request.jwt.claims',jsonb_build_object('sub',a,'session_id',sa,'role','authenticated')::text,true);
  perform public.ensure_journey('Alpha fixture','UTC');
  for entry in select book_id,chapter from public.reading_plan_day_chapters where plan_id=plan and day<=4 order by day,position loop perform public.complete_chapter(entry.book_id,entry.chapter); end loop;
- perform public.save_reflection(current_date,'FIXTURE PRIVATE JOURNAL MUST NEVER APPEAR IN GROUP DATA.');
+ perform public.save_journal_entry(current_date,'FIXTURE PRIVATE JOURNAL MUST NEVER APPEAR IN GROUP DATA.',coalesce((select category from public.reflections where user_id=auth.uid() and reflection_date=current_date),'reflection'),(select revision::text from public.reflections where user_id=auth.uid() and reflection_date=current_date));
  perform public.set_saved_verse('JHN',3,16,true);
  personal:=public.get_journey()-'fellowshipMemberships';
  foreach invalid in array array[

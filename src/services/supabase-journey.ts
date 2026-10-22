@@ -1,4 +1,4 @@
-import type { JournalCategory } from "@/lib/journal";
+import { JournalConflictError, type JournalCategory } from "@/lib/journal";
 import "server-only";
 import { isGraceError, GraceDayError } from "../lib/grace-days";
 import { isPrayerError, PrayerError, type PrayerChange } from "../lib/prayers";
@@ -32,6 +32,8 @@ export class SupabaseJourneyRepository implements ProductionJourneyRepository {
       throw new PrayerError(data.error);
     if (name === "claim_grace_day" && isGraceError(data?.error))
       throw new GraceDayError(data.error);
+    if (name === "save_journal_entry" && data?.error === "journal_conflict")
+      throw new JournalConflictError();
     return stateSchema.parse(data);
   }
   changePrayer(
@@ -73,14 +75,18 @@ export class SupabaseJourneyRepository implements ProductionJourneyRepository {
       p_option: selectedOption,
     });
   }
-  saveReflection(date: string, content: string, category?: JournalCategory) {
-    return category === undefined
-      ? this.call("save_reflection", { p_date: date, p_content: content })
-      : this.call("save_categorized_reflection", {
-          p_date: date,
-          p_content: content,
-          p_category: category,
-        });
+  saveReflection(
+    date: string,
+    content: string,
+    category: JournalCategory,
+    expectedRevision: string | null,
+  ) {
+    return this.call("save_journal_entry", {
+      p_date: date,
+      p_content: content,
+      p_category: category,
+      p_expected_revision: expectedRevision,
+    });
   }
   setVerseNote(
     book: BookId,

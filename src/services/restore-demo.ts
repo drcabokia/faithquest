@@ -73,7 +73,11 @@ export function restoreDemo(
   }
   for (const [day, reflection] of Object.entries(backup.reflections))
     if (!Object.hasOwn(next.reflections, day))
-      next.reflections[day] = { ...reflection, updatedAt: now.toISOString() };
+      next.reflections[day] = {
+        revision: crypto.randomUUID(),
+        ...reflection,
+        updatedAt: now.toISOString(),
+      };
   const award = (key: string, amount: number, date: string) => {
     if (!Object.hasOwn(next.rewards, key)) next.rewards[key] = { amount, date };
   };

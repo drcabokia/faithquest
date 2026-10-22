@@ -10,7 +10,7 @@ begin
  perform set_config('request.jwt.claim.sub',a::text,true);
  perform set_config('request.jwt.claims',jsonb_build_object('sub',a,'session_id',sa,'role','authenticated')::text,true);
  perform public.ensure_journey('Restore fixture A','UTC');
- perform public.save_reflection(today,'Existing reflection must survive a conflicting backup.');
+ perform public.save_journal_entry(today,'Existing reflection must survive a conflicting backup.',coalesce((select category from public.reflections where user_id=auth.uid() and reflection_date=today),'reflection'),(select revision::text from public.reflections where user_id=auth.uid() and reflection_date=today));
  perform public.submit_quiz('gen-rest',0);
  backup:=jsonb_build_object('version',1,'timeZone','UTC',
  'chapters',jsonb_build_object('GEN.1',yesterday,'GEN.2',yesterday,'GEN.3',yesterday),

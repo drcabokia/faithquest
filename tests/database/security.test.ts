@@ -72,6 +72,7 @@ describe("authenticated PostgreSQL commands and RLS", () => {
           "verify-restore",
           "verify-saved-verses",
           "verify-journal",
+          "verify-journal-conflicts",
           "verify-challenges",
           "verify-fellowship",
           "verify-reading-plans",
@@ -308,15 +309,20 @@ describe("authenticated PostgreSQL commands and RLS", () => {
         profile: { startDate: string };
       }
     ).profile.startDate;
-    await rpc(A, "public.save_reflection($1,$2)", [
-      date,
-      "My private reflection about gratitude and growing in faith.",
-    ]);
+    await rpc(
+      A,
+      "public.save_journal_entry($1,$2,'reflection',(select revision::text from public.reflections where user_id=auth.uid() and reflection_date=$1))",
+      [date, "My private reflection about gratitude and growing in faith."],
+    );
     const s = stateSchema.parse(
-      await rpc(A, "public.save_reflection($1,$2)", [
-        date,
-        "An edited private reflection about gratitude and growing in faith.",
-      ]),
+      await rpc(
+        A,
+        "public.save_journal_entry($1,$2,'reflection',(select revision::text from public.reflections where user_id=auth.uid() and reflection_date=$1))",
+        [
+          date,
+          "An edited private reflection about gratitude and growing in faith.",
+        ],
+      ),
     );
     expect(s.rewards[`reflection:${date}`].amount).toBe(20);
     const other = await asUser(B, (tx) =>
@@ -354,10 +360,14 @@ describe("authenticated PostgreSQL commands and RLS", () => {
       rpc(B, "public.complete_chapter($1,$2)", ["GEN", 999]),
     ).rejects.toThrow();
     await expect(
-      rpc(B, "public.save_reflection($1,$2)", [
-        "2099-01-01",
-        "A future reflection must not earn a reward before its day.",
-      ]),
+      rpc(
+        B,
+        "public.save_journal_entry($1,$2,'reflection',(select revision::text from public.reflections where user_id=auth.uid() and reflection_date=$1))",
+        [
+          "2099-01-01",
+          "A future reflection must not earn a reward before its day.",
+        ],
+      ),
     ).rejects.toThrow();
   });
   it("returns server-earned achievement IDs only to their owner", async () => {

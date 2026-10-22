@@ -22,7 +22,8 @@ export interface ProductionJourneyRepository {
   saveReflection(
     date: string,
     content: string,
-    category?: JournalCategory,
+    category: JournalCategory,
+    expectedRevision: string | null,
   ): Promise<JourneyState>;
   setVerseNote(
     book: BookId,

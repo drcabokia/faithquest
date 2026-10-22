@@ -368,30 +368,42 @@ describe("authenticated request boundary", () => {
     expect(mocks.rpc).not.toHaveBeenCalled();
   });
 
-  it("validates journal categories and preserves the legacy command contract", async () => {
+  it("requires a guarded journal command and sanitizes conflict responses", async () => {
     const entry = {
       type: "reflect",
       date: "2026-10-17",
       text: "A synthetic private reflection about gratitude.",
+      category: "prayer",
+      expectedRevision: null,
     };
-    expect((await POST(request({ ...entry, category: "prayer" }))).status).toBe(
-      200,
-    );
-    expect(mocks.rpc).toHaveBeenLastCalledWith("save_categorized_reflection", {
+    expect((await POST(request(entry))).status).toBe(200);
+    expect(mocks.rpc).toHaveBeenLastCalledWith("save_journal_entry", {
       p_date: entry.date,
       p_content: entry.text,
       p_category: "prayer",
+      p_expected_revision: null,
     });
     mocks.rpc.mockClear();
-    expect((await POST(request({ ...entry, category: "public" }))).status).toBe(
-      400,
-    );
+    for (const invalid of [
+      { ...entry, category: "public" },
+      { ...entry, expectedRevision: undefined },
+      { ...entry, expectedRevision: "bad" },
+      { ...entry, user_id: "other" },
+    ]) {
+      expect((await POST(request(invalid))).status).toBe(400);
+    }
     expect(mocks.rpc).not.toHaveBeenCalled();
-    expect((await POST(request(entry))).status).toBe(200);
-    expect(mocks.rpc).toHaveBeenLastCalledWith("save_reflection", {
-      p_date: entry.date,
-      p_content: entry.text,
+    mocks.rpc.mockResolvedValue({
+      data: { error: "journal_conflict", text: "PRIVATE RAW TEXT" },
+      error: null,
     });
+    const conflict = await POST(request(entry));
+    expect(conflict.status).toBe(409);
+    expect(conflict.headers.get("cache-control")).toContain("no-store");
+    const body = await conflict.json();
+    expect(body.code).toBe("journal_conflict");
+    expect(body.error).toContain("Your draft is still here");
+    expect(JSON.stringify(body)).not.toContain("PRIVATE RAW TEXT");
   });
 
   it("saves a validated verse through a caller-only RPC without accepting verse text or rewards", async () => {

@@ -7,13 +7,13 @@ import type { JournalCategory } from "@/lib/journal";
 export type JournalDraft = {
   text: string;
   category: JournalCategory;
-  baseText: string;
-  baseCategory: JournalCategory;
+  baseRevision: string | null;
 };
 const Context = createContext<{
   drafts: Record<string, JournalDraft>;
   put: (date: string, draft: JournalDraft) => void;
   remove: (date: string, expected?: JournalDraft) => void;
+  saved: (date: string, captured: JournalDraft, revision: string) => void;
 } | null>(null);
 
 // The journey layout keeps this memory across internal navigation and destroys
@@ -41,6 +41,16 @@ export function JournalDraftProvider({
         drafts,
         put: (date, draft) =>
           setDrafts((current) => ({ ...current, [date]: draft })),
+        saved: (date, captured, revision) =>
+          setDrafts((current) => {
+            const draft = current[date];
+            if (!draft) return current;
+            const next = { ...current };
+            if (draft === captured) delete next[date];
+            else if (draft.baseRevision === captured.baseRevision)
+              next[date] = { ...draft, baseRevision: revision };
+            return next;
+          }),
         remove: (date, expected) =>
           setDrafts((current) => {
             if (expected && current[date] !== expected) return current;
