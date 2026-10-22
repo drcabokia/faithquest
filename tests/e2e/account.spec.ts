@@ -1,3 +1,8 @@
+import {
+  openSavedVerse,
+  selectPracticeVerses,
+  studyListFlowTests,
+} from "../support/study-list-flow";
 import { readingRhythmUiTest } from "../support/reading-rhythm-ui";
 import { journalConflictTests } from "../support/journal-conflicts";
 import { prayerListFlowTest } from "../support/prayer-list-flow";
@@ -765,7 +770,7 @@ test("private verse notes save, export, delete and restore without changing Scri
   await page
     .getByRole("link", { name: "My saved verses", exact: true })
     .click();
-  const card = page.getByRole("article", { name: "John 3:16", exact: true });
+  const card = await openSavedVerse(page);
   const source = await card.locator("blockquote").textContent();
   const text = "A synthetic private thought about this verse.\nA second line.";
   await card
@@ -786,6 +791,7 @@ test("private verse notes save, export, delete and restore without changing Scri
   ).toBeDisabled();
   await expect(card.locator("blockquote")).toHaveText(source!);
   await page.reload();
+  await openSavedVerse(page);
   await expect(card.locator(".personal-note-text")).toHaveText(text);
   await page.goto("/profile");
   const download = page.waitForEvent("download");
@@ -795,6 +801,7 @@ test("private verse notes save, export, delete and restore without changing Scri
   const buffer = await readFile((await (await download).path())!);
   expect(JSON.parse(buffer.toString()).verseNotes["JHN.3.16"].text).toBe(text);
   await page.goto("/study");
+  await openSavedVerse(page);
   await card
     .getByRole("button", { name: "Delete private note", exact: true })
     .click();
@@ -828,6 +835,7 @@ test("private verse notes save, export, delete and restore without changing Scri
     }),
   ).toBeVisible();
   await page.goto("/study");
+  await openSavedVerse(page);
   await expect(card.locator(".personal-note-text")).toHaveText(text);
   await expect(card.locator("blockquote")).toHaveText(source!);
   await page.goto("/bible?book=JHN&chapter=3");
@@ -867,7 +875,7 @@ test("private note drafts survive app navigation and reject stale concurrent edi
   await page
     .getByRole("link", { name: "My saved verses", exact: true })
     .click();
-  const card = page.getByRole("article", { name: "John 3:16", exact: true });
+  const card = await openSavedVerse(page);
   await card
     .getByRole("button", { name: "Add private note", exact: true })
     .click();
@@ -926,7 +934,7 @@ test("private note drafts survive app navigation and reject stale concurrent edi
   await expect(
     card.getByRole("button", { name: "Save private note", exact: true }),
   ).toBeDisabled();
-  await card.locator("summary").click();
+  await card.locator(".journal-warning summary").click();
   await expect(card.locator(".personal-note-text")).toHaveText(remote);
   await card
     .getByRole("button", {
@@ -959,7 +967,7 @@ test("an uncertain note save keeps newer typing and recovers committed text with
   await page
     .getByRole("link", { name: "My saved verses", exact: true })
     .click();
-  const card = page.getByRole("article", { name: "John 3:16", exact: true });
+  const card = await openSavedVerse(page);
   await card
     .getByRole("button", { name: "Add private note", exact: true })
     .click();
@@ -1037,7 +1045,7 @@ test("a successful earlier private note save cannot erase newer clearing", async
   await page
     .getByRole("link", { name: "My saved verses", exact: true })
     .click();
-  const card = page.getByRole("article", { name: "John 3:16", exact: true });
+  const card = await openSavedVerse(page);
   await card
     .getByRole("button", { name: "Add private note", exact: true })
     .click();
@@ -1102,6 +1110,7 @@ test("a removed saved reference leaves its unsaved note draft recoverable", asyn
   await page
     .getByRole("link", { name: "My saved verses", exact: true })
     .click();
+  await openSavedVerse(page);
   await page
     .getByRole("button", { name: "Add private note", exact: true })
     .click();
@@ -1148,7 +1157,7 @@ test("a removed saved reference leaves its unsaved note draft recoverable", asyn
   await page
     .getByRole("link", { name: "My saved verses", exact: true })
     .click();
-  const card = page.getByRole("article", { name: "John 3:16", exact: true });
+  const card = await openSavedVerse(page);
   await expect(
     card.getByLabel("Private note for John 3:16", { exact: true }),
   ).toHaveValue(text);
@@ -1178,6 +1187,7 @@ test("guided account recall uses exact Scripture and clears typing between verse
   page.on("request", (r) => {
     if (r.method() === "POST") posts.push(r.url() + (r.postData() ?? ""));
   });
+  await selectPracticeVerses(page, "John 3:16", "John 3:17");
   await page
     .getByRole("button", { name: "Start practice", exact: true })
     .click();
@@ -1290,13 +1300,15 @@ test("guided practice recovers Scripture failures and reload discards temporary 
   await page
     .getByRole("link", { name: "My saved verses", exact: true })
     .click();
-  await expect(page.locator(".saved-verse-card blockquote")).toBeVisible();
+  await openSavedVerse(page);
+  await expect(page.locator(".saved-verse-row blockquote")).toBeVisible();
   let unavailable = true;
   await page.route("**/bible/JHN/3.json", (route) =>
     unavailable
       ? route.fulfill({ status: 503, body: "Unavailable" })
       : route.continue(),
   );
+  await selectPracticeVerses(page, "John 3:16");
   await page
     .getByRole("button", { name: "Start practice", exact: true })
     .click();
@@ -1326,6 +1338,7 @@ test("guided practice recovers Scripture failures and reload discards temporary 
     .fill("Temporary synthetic recall before reload.");
   await page.reload();
   await expect(practice).toHaveCount(0);
+  await selectPracticeVerses(page, "John 3:16");
   await page
     .getByRole("button", { name: "Start practice", exact: true })
     .click();
@@ -1344,6 +1357,7 @@ test("guided practice recovers Scripture failures and reload discards temporary 
   await page.goBack();
   await expect(page).toHaveURL(/\/study$/);
   await expect(practice).toHaveCount(0);
+  await selectPracticeVerses(page, "John 3:16");
   await page
     .getByRole("button", { name: "Start practice", exact: true })
     .click();
@@ -1371,6 +1385,7 @@ test("an account collection refresh stops practice for a removed queued verse", 
   await page
     .getByRole("link", { name: "My saved verses", exact: true })
     .click();
+  await selectPracticeVerses(page, "John 3:16", "John 3:17");
   await page
     .getByRole("button", { name: "Start practice", exact: true })
     .click();
@@ -1406,7 +1421,7 @@ test("an account collection refresh stops practice for a removed queued verse", 
   await practice
     .getByRole("button", { name: "Return to saved verses", exact: true })
     .click();
-  await expect(page.locator(".saved-verse-card")).toHaveCount(1);
+  await expect(page.locator(".saved-verse-row")).toHaveCount(1);
 });
 
 test("day 30 quiz feedback stays private until submission and first answers remain immutable", async ({
@@ -2713,16 +2728,17 @@ test("saved verses support exact-text memory practice, export, removal and resto
   await page
     .getByRole("link", { name: "My saved verses", exact: true })
     .click();
-  const card = page.getByRole("article", { name: "John 3:16", exact: true });
+  const card = await openSavedVerse(page);
   const source = JSON.parse(
     await readFile("public/bible/JHN/3.json", "utf8"),
   ).verses.find((v: { number: number }) => v.number === 16).text;
   await expect(card.locator("blockquote")).toHaveText(source);
-  await card.getByRole("button", { name: "Hide verse to practise" }).click();
+  await card.locator(".saved-verse-details > summary").click();
   await expect(card.locator("blockquote")).toHaveCount(0);
-  await card.getByRole("button", { name: "Show verse" }).click();
+  await openSavedVerse(page);
   await expect(card.locator("blockquote")).toHaveText(source);
   await page.reload();
+  await openSavedVerse(page);
   await expect(card.locator("blockquote")).toHaveText(source);
   await page.goto("/profile");
   const downloadPromise = page.waitForEvent("download");
@@ -2733,6 +2749,7 @@ test("saved verses support exact-text memory practice, export, removal and resto
     "JHN.3.16",
   );
   await page.goto("/study");
+  await openSavedVerse(page);
   await card.getByRole("button", { name: "Remove", exact: true }).click();
   await expect(
     page.getByRole("heading", {
@@ -2756,6 +2773,7 @@ test("saved verses support exact-text memory practice, export, removal and resto
     }),
   ).toBeVisible();
   await page.goto("/study");
+  await openSavedVerse(page);
   await expect(card.locator("blockquote")).toHaveText(source);
   const { state } = await (await request.post(control, { data: {} })).json();
   expect(Object.keys(state.savedVerses)).toEqual(["JHN.3.16"]);
@@ -2804,7 +2822,7 @@ test("saved-verse Scripture failures are visible and retry without invented text
   await page
     .getByRole("link", { name: "My saved verses", exact: true })
     .click();
-  const card = page.getByRole("article", { name: "John 3:16", exact: true });
+  const card = await openSavedVerse(page);
   await expect(card.getByRole("alert")).toContainText(
     "Scripture could not be loaded",
   );
@@ -3411,3 +3429,5 @@ prayerListFlowTest("account");
 journalConflictTests("account");
 
 readingRhythmUiTest("account");
+
+studyListFlowTests("account");

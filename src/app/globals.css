@@ -1437,20 +1437,25 @@ select {
 .reader-save-controls > p {
   width: 100%;
 }
-.study-intro {
+.study-toolbar {
   display: flex;
-  align-items: center;
-  gap: 24px;
-  padding: 26px;
+  align-items: start;
+  justify-content: space-between;
+  gap: 16px;
   margin-bottom: 24px;
 }
-.study-intro > div {
+.study-help {
   flex: 1;
   min-width: 0;
 }
-.study-intro p {
-  margin-top: 12px;
-  line-height: 1.7;
+.study-help summary {
+  cursor: pointer;
+  padding-block: 10px;
+  font-weight: 600;
+}
+.study-help p {
+  margin-top: 10px;
+  max-width: 65ch;
 }
 .study-filters {
   display: flex;
@@ -1467,18 +1472,86 @@ select {
   width: 100%;
   min-width: 0;
 }
-.saved-verses-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 350px), 1fr));
-  gap: 22px;
+.saved-verses-list {
+  list-style: none;
+  padding: 0;
   margin-top: 20px;
 }
-.saved-verse-card {
-  min-width: 0;
-  padding: 26px;
+.saved-verses-list > li + li {
+  border-top: 1px solid var(--border);
 }
-.saved-verse-card h2 {
-  font-size: 1.25rem;
+.saved-verse-row {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr);
+  min-width: 0;
+}
+.study-row-choice {
+  display: flex;
+  justify-content: center;
+  align-items: start;
+  align-self: start;
+  min-height: 64px;
+  padding-top: 23px;
+  cursor: pointer;
+}
+.study-row-choice input {
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  padding: 0;
+  accent-color: var(--primary);
+  cursor: pointer;
+}
+.study-row-choice:has(input:disabled) {
+  cursor: default;
+  opacity: 0.55;
+}
+.saved-verse-details {
+  min-width: 0;
+}
+.saved-verse-details > summary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 20px 18px 0;
+  list-style: none;
+  cursor: pointer;
+  border-radius: var(--radius);
+}
+.saved-verse-details > summary::-webkit-details-marker {
+  display: none;
+}
+.saved-verse-details[open] > summary > svg {
+  transform: rotate(180deg);
+}
+.saved-verse-overview {
+  flex: 1;
+  min-width: 0;
+}
+.saved-verse-overview h2 {
+  font-size: 1rem;
+}
+.saved-verse-preview {
+  margin-top: 4px;
+  color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.saved-verse-note-status {
+  display: inline-block;
+  margin-top: 4px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--primary);
+}
+.saved-verse-body {
+  padding: 0 20px 24px 0;
+  overflow-wrap: anywhere;
+}
+.saved-verse-body .memory-text {
+  margin-top: 0;
+  min-height: 0;
 }
 .memory-text {
   margin-block: 24px;
@@ -1504,27 +1577,37 @@ select {
   justify-content: center;
   margin-top: 24px;
 }
-.practice-launch {
+.practice-selection {
   display: flex;
   flex-wrap: wrap;
-  gap: 24px;
-  padding: 24px;
-  margin-top: 20px;
+  align-items: center;
+  gap: 12px;
+  padding-block: 16px;
+  border-block: 1px solid var(--border);
 }
-.practice-launch > div:first-child {
+.practice-selection > div:first-child {
   flex: 1;
-  min-width: min(260px, 100%);
+  min-width: min(220px, 100%);
 }
-.practice-launch p {
-  margin-top: 10px;
+.practice-selection h2 {
+  font-size: 1rem;
 }
-.practice-launch-controls,
+.practice-selection-actions,
+.practice-selected-verses {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.practice-selected-verses {
+  list-style: none;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
 .practice-recall {
   display: grid;
   gap: 12px;
-}
-.practice-launch-controls {
-  flex: 0 1 240px;
 }
 .memory-practice {
   padding: clamp(20px, 4vw, 36px);
@@ -1538,8 +1621,7 @@ select {
 .practice-next {
   margin-top: 24px;
 }
-.practice-recall textarea,
-.practice-launch-controls select {
+.practice-recall textarea {
   width: 100%;
   min-width: 0;
 }
@@ -1570,12 +1652,21 @@ select {
   margin-block: 24px 12px;
 }
 @media (max-width: 600px) {
-  .study-intro {
+  .study-toolbar {
     flex-direction: column;
     align-items: stretch;
   }
-  .saved-verse-card {
-    padding: 22px;
+  .saved-verse-row {
+    grid-template-columns: 44px minmax(0, 1fr);
+  }
+  .saved-verse-details > summary {
+    padding-right: 12px;
+  }
+  .saved-verse-body {
+    padding-right: 12px;
+  }
+  .practice-selection-actions {
+    width: 100%;
   }
 }
 .reader-completion {
