@@ -43,8 +43,14 @@ const brand = `<a class="brand" href="/" aria-label="FaithQuest365 home"><img sr
 const links =
   '<nav class="legal-links" aria-label="Legal information"><a href="/privacy">Privacy Policy</a><a href="/terms">Terms of Service</a></nav>';
 const contact = `<a href="mailto:${escape(site.contactEmail)}">${escape(site.contactEmail)}</a>`;
+if (!/^[A-Za-z0-9_-]+$/.test(site.googleSiteVerification ?? ""))
+  throw new Error("A Google site verification value is required");
 function page(title, description, path, body) {
-  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${escape(title)} | FaithQuest365</title><meta name="description" content="${escape(description)}"><link rel="canonical" href="${escape(site.publicOrigin + path)}"><link rel="icon" href="/brand/faithquest365-mark.svg"><link rel="apple-touch-icon" href="/brand/faithquest365-logo-512.png"><link rel="stylesheet" href="/brand/information.css"></head><body class="public-site"><a href="#main-content" class="skip-link">Skip to content</a>${body}</body></html>\n`;
+  const verification =
+    path === "/"
+      ? `<meta name="google-site-verification" content="${escape(site.googleSiteVerification)}" />`
+      : "";
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8">${verification}<meta name="viewport" content="width=device-width, initial-scale=1"><title>${escape(title)} | FaithQuest365</title><meta name="description" content="${escape(description)}"><link rel="canonical" href="${escape(site.publicOrigin + path)}"><link rel="icon" href="/brand/faithquest365-mark.svg"><link rel="apple-touch-icon" href="/brand/faithquest365-logo-512.png"><link rel="stylesheet" href="/brand/information.css"></head><body class="public-site"><a href="#main-content" class="skip-link">Skip to content</a>${body}</body></html>\n`;
 }
 function document(kind) {
   const data = legal[kind];
