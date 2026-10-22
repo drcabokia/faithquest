@@ -193,10 +193,18 @@ test("demo prayers keep drafts private and persist explicit requests, statuses a
   await page
     .getByRole("button", { name: "Save prayer request", exact: true })
     .click();
+  const prayerEditor = page.getByRole("region", {
+    name: "Prayer editor",
+    exact: true,
+  });
   await expect(
-    page
-      .getByRole("region", { name: "Prayer editor", exact: true })
-      .getByText("Archived", { exact: true }),
+    prayerEditor.getByRole("button", {
+      name: "Edit prayer request",
+      exact: true,
+    }),
+  ).toBeEnabled();
+  await expect(
+    prayerEditor.getByRole("paragraph").filter({ hasText: /^Archived$/ }),
   ).toBeVisible();
   await page.reload();
   await page

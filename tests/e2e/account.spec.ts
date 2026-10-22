@@ -288,7 +288,12 @@ test("prayer requests support statuses, dated follow-ups, export, deletion and r
   await page
     .getByRole("button", { name: "Save prayer request", exact: true })
     .click();
-  await expect(editor.getByText("Answered", { exact: true })).toBeVisible();
+  await expect(
+    editor.getByRole("button", { name: "Edit prayer request", exact: true }),
+  ).toBeEnabled();
+  await expect(
+    editor.getByRole("paragraph").filter({ hasText: /^Answered$/ }),
+  ).toBeVisible();
   await page
     .getByRole("button", { name: "Back to prayer requests", exact: true })
     .click();
