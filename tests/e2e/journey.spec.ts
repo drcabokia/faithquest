@@ -1,3 +1,4 @@
+import { prayerListFlowTest } from "../support/prayer-list-flow";
 import { readingComfortTests } from "../support/reading-comfort";
 import { test, expect } from "@playwright/test";
 import { readFile } from "node:fs/promises";
@@ -182,10 +183,17 @@ test("demo prayers keep drafts private and persist explicit requests, statuses a
     .getByRole("button", { name: "Save prayer request", exact: true })
     .click();
   await expect(
-    page.getByRole("article").getByText("Archived", { exact: true }),
+    page
+      .getByRole("region", { name: "Prayer editor", exact: true })
+      .getByText("Archived", { exact: true }),
   ).toBeVisible();
   await page.reload();
-  await page.getByRole("button", { name: "Open prayer", exact: true }).click();
+  await page
+    .getByRole("button", {
+      name: "Open prayer: Synthetic demo prayer",
+      exact: true,
+    })
+    .click();
   await expect(
     page
       .getByRole("region", { name: "Prayer editor", exact: true })
@@ -219,7 +227,12 @@ test("parallel demo prayer editors preserve drafts until the latest version is e
   ).toBeEnabled();
   const other = await context.newPage();
   await other.goto("/prayers");
-  await other.getByRole("button", { name: "Open prayer", exact: true }).click();
+  await other
+    .getByRole("button", {
+      name: "Open prayer: Parallel synthetic prayer",
+      exact: true,
+    })
+    .click();
   await page
     .getByRole("button", { name: "Edit prayer request", exact: true })
     .click();
@@ -302,19 +315,35 @@ test("demo prayer search and status filters use bounded pages and fit a phone", 
   });
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/prayers");
-  await expect(page.getByRole("article")).toHaveCount(10);
+  await expect(
+    page
+      .getByRole("list", { name: "Prayer requests", exact: true })
+      .getByRole("listitem"),
+  ).toHaveCount(10);
   await page
     .getByRole("button", { name: "Next prayer page", exact: true })
     .click();
-  await expect(page.getByRole("article")).toHaveCount(2);
+  await expect(
+    page
+      .getByRole("list", { name: "Prayer requests", exact: true })
+      .getByRole("listitem"),
+  ).toHaveCount(2);
   await page
     .getByLabel("Filter by prayer status", { exact: true })
     .selectOption("answered");
-  await expect(page.getByRole("article")).toHaveCount(1);
+  await expect(
+    page
+      .getByRole("list", { name: "Prayer requests", exact: true })
+      .getByRole("listitem"),
+  ).toHaveCount(1);
   await page
     .getByLabel("Search prayer requests", { exact: true })
     .fill("NO MATCH");
-  await expect(page.getByRole("article")).toHaveCount(0);
+  await expect(
+    page
+      .getByRole("list", { name: "Prayer requests", exact: true })
+      .getByRole("listitem"),
+  ).toHaveCount(0);
   expect(
     await page.evaluate(
       () => document.documentElement.scrollWidth <= innerWidth,
@@ -1535,3 +1564,5 @@ test("parallel browser tabs merge chapter writes instead of dropping progress", 
 });
 
 readingComfortTests();
+
+prayerListFlowTest("demo");

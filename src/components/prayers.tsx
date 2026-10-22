@@ -1,6 +1,7 @@
 "use client";
-import { useLayoutEffect, useState } from "react";
-import { Heart } from "lucide-react";
+import { useId, useLayoutEffect, useRef, useState } from "react";
+import { ArrowLeft, ArrowRight, ChevronRight, Plus } from "lucide-react";
+import { dateInZone, displayDate } from "@/lib/dates";
 import { useJourney, JourneyLoading } from "./journey-provider";
 import { usePrayerDrafts, type PrayerDraft } from "./prayer-drafts";
 import { Button } from "./ui/button";
@@ -23,6 +24,35 @@ export function Prayers() {
     [page, setPage] = useState(0);
   const [discarding, setDiscarding] = useState<string | null>(null),
     [deleting, setDeleting] = useState<string | null>(null);
+  const listId = useId();
+  const editorRef = useRef<HTMLElement>(null);
+  const searchRef = useRef<HTMLInputElement>(null);
+  const listSummaryRef = useRef<HTMLParagraphElement>(null);
+  const rowRefs = useRef(new Map<string, HTMLButtonElement>());
+  const previousView = useRef<{
+    id: string | null;
+    kind?: PrayerDraft["kind"];
+  }>({ id: null });
+  const draft = selected
+    ? (drafts[selected] ?? drafts[followKey(selected)])
+    : undefined;
+  const draftKind = draft?.kind;
+  useLayoutEffect(() => {
+    const previous = previousView.current;
+    if (selected) {
+      if (selected !== previous.id || draftKind !== previous.kind) {
+        const target = draftKind
+          ? editorRef.current?.querySelector<HTMLInputElement>(
+              "input, textarea",
+            )
+          : editorRef.current?.querySelector<HTMLHeadingElement>("h2");
+        target?.focus();
+      }
+    } else if (previous.id) {
+      (rowRefs.current.get(previous.id) ?? listSummaryRef.current)?.focus();
+    }
+    previousView.current = { id: selected, kind: draftKind };
+  }, [selected, draftKind]);
   useLayoutEffect(
     () => () => {
       setDiscarding(null);
@@ -33,9 +63,6 @@ export function Prayers() {
   if (!state) return <JourneyLoading />;
   const prayers = state.prayers ?? {};
   const entry = selected ? prayers[selected] : undefined;
-  const draft = selected
-    ? (drafts[selected] ?? drafts[followKey(selected)])
-    : undefined;
   const draftKey = draft
     ? draft.kind === "request"
       ? draft.id
@@ -44,22 +71,54 @@ export function Prayers() {
   const missing = !!draft && draft.baseRevision !== null && !entry;
   const changed = !!draft && draft.baseRevision !== (entry?.revision ?? null);
   const query = search.trim().toLocaleLowerCase();
-  const matches = Object.entries(prayers)
+  // One row per identity: an unsaved draft resumes here instead of appearing twice.
+  const ids = [
+    ...new Set([
+      ...Object.keys(prayers),
+      ...Object.values(drafts).map((d) => d.id),
+    ]),
+  ];
+  const matches = ids
+    .map((id) => {
+      const saved = prayers[id];
+      const pending = drafts[id] ?? drafts[followKey(id)];
+      const requestDraft = pending?.kind === "request" ? pending : undefined;
+      const title =
+        requestDraft?.title.trim() ||
+        saved?.title ||
+        (pending?.baseRevision ? "Deleted prayer" : "Untitled prayer");
+      const text = requestDraft?.text ?? saved?.text ?? pending?.text ?? "";
+      const status = requestDraft?.status ?? saved?.status;
+      const label = pending
+        ? pending.kind === "followUp"
+          ? "Continue follow-up for " + title
+          : "Continue " + title
+        : "Open prayer: " + title;
+      return { id, saved, pending, title, text, status, label };
+    })
     .filter(
-      ([, p]) =>
-        (filter === "all" || p.status === filter) &&
+      ({ saved, pending, title, text, status }) =>
+        (filter === "all" ||
+          (filter === "drafts" ? !!pending : status === filter)) &&
         (!query ||
           [
-            p.title,
-            p.text,
-            ...Object.values(p.followUps).flatMap((n) => [n.text, n.date]),
-          ].some((t) => t.toLocaleLowerCase().includes(query))),
+            title,
+            text,
+            pending?.text ?? "",
+            pending?.kind === "followUp" ? pending.date : "",
+            ...Object.values(saved?.followUps ?? {}).flatMap((n) => [
+              n.text,
+              n.date,
+            ]),
+          ].some((value) => value.toLocaleLowerCase().includes(query))),
     )
-    .sort(
-      (a, b) =>
-        b[1].updatedAt.localeCompare(a[1].updatedAt) ||
-        a[0].localeCompare(b[0]),
-    );
+    .sort((a, b) => {
+      if (Boolean(a.saved) !== Boolean(b.saved)) return a.saved ? 1 : -1;
+      return (
+        (b.saved?.updatedAt ?? "").localeCompare(a.saved?.updatedAt ?? "") ||
+        a.id.localeCompare(b.id)
+      );
+    });
   const last = Math.max(0, Math.ceil(matches.length / 10) - 1),
     currentPage = Math.min(page, last);
   const closeDialogs = () => {
@@ -89,94 +148,88 @@ export function Prayers() {
       <PageHeading
         eyebrow="A PRIVATE SPACE FOR PRAYER"
         title="Prayer Requests"
-        description="Bring your concerns, remember your prayers, and record your own follow-ups."
-      />
-      <p className="small muted">
-        Requests and follow-ups stay private to you and are never shared with
-        fellowship groups. Prayer activity earns no XP. You choose when a
-        request is answered.
-      </p>
-      <div className="card prayer-toolbar">
-        <Button
-          disabled={busy || Object.keys(prayers).length >= PRAYER_LIMIT}
-          onClick={() => {
-            const id = crypto.randomUUID();
-            put(id, {
-              kind: "request",
-              id,
-              title: "",
-              text: "",
-              status: "ongoing",
-              baseRevision: null,
-            });
-            setSelected(id);
-            closeDialogs();
-          }}
-        >
-          <Heart size={16} /> New prayer request
-        </Button>
-        <p className="small muted">
-          {Object.keys(prayers).length} / {PRAYER_LIMIT} saved requests. Each
-          request can have up to {FOLLOW_UP_LIMIT} dated follow-ups.
-        </p>
-        <label htmlFor="prayer-search">Search prayer requests</label>
-        <input
-          id="prayer-search"
-          type="search"
-          value={search}
-          autoComplete="off"
-          onChange={(e) => {
-            setSearch(e.target.value);
-            setPage(0);
-          }}
-        />
-        <label htmlFor="prayer-filter">Filter by prayer status</label>
-        <select
-          id="prayer-filter"
-          value={filter}
-          onChange={(e) => {
-            setFilter(e.target.value);
-            setPage(0);
-          }}
-        >
-          <option value="all">All statuses</option>
-          {Object.entries(PRAYER_STATUS_LABELS).map(([v, label]) => (
-            <option key={v} value={v}>
-              {label}
-            </option>
-          ))}
-        </select>
-      </div>
-      {Object.keys(drafts).length > 0 && (
-        <section
-          className="card prayer-drafts"
-          aria-label="Unsaved prayer drafts"
-        >
-          <h2>Unsaved prayer drafts</h2>
-          <p className="small muted">
-            Drafts survive internal navigation in this tab. Save before
-            reloading, signing out or closing the browser.
-          </p>
-          {Object.entries(drafts).map(([key, d]) => (
+        description="Your prayers and follow-ups, in one private place."
+        action={
+          !selected ? (
             <Button
-              key={key}
-              variant="secondary"
+              disabled={busy || Object.keys(prayers).length >= PRAYER_LIMIT}
               onClick={() => {
-                setSelected(d.id);
+                const id = crypto.randomUUID();
+                put(id, {
+                  kind: "request",
+                  id,
+                  title: "",
+                  text: "",
+                  status: "ongoing",
+                  baseRevision: null,
+                });
+                setSelected(id);
                 closeDialogs();
               }}
             >
-              Continue{" "}
-              {d.kind === "request"
-                ? d.title || "untitled prayer"
-                : `follow-up for ${prayers[d.id]?.title ?? "deleted prayer"}`}
+              <Plus size={18} aria-hidden="true" /> New prayer request
             </Button>
-          ))}
-        </section>
+          ) : undefined
+        }
+      />
+      {!selected && (
+        <div className="prayer-toolbar">
+          <div>
+            <label htmlFor="prayer-search">Search prayer requests</label>
+            <input
+              id="prayer-search"
+              ref={searchRef}
+              type="search"
+              placeholder="Search prayers and follow-ups"
+              value={search}
+              autoComplete="off"
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setPage(0);
+              }}
+            />
+          </div>
+          <div>
+            <label htmlFor="prayer-filter">Filter by prayer status</label>
+            <select
+              id="prayer-filter"
+              value={filter}
+              onChange={(e) => {
+                setFilter(e.target.value);
+                setPage(0);
+              }}
+            >
+              <option value="all">All statuses</option>
+              {Object.entries(PRAYER_STATUS_LABELS).map(([value, label]) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
+              <option value="drafts">Unsaved drafts</option>
+            </select>
+          </div>
+        </div>
       )}
       {selected && (
-        <section className="card prayer-editor" aria-label="Prayer editor">
-          <h2>{entry?.title ?? "New prayer request"}</h2>
+        <section
+          ref={editorRef}
+          className="card prayer-editor"
+          aria-label="Prayer editor"
+        >
+          <Button
+            className="prayer-back"
+            variant="ghost"
+            onClick={() => {
+              setSelected(null);
+              closeDialogs();
+            }}
+          >
+            <ArrowLeft size={16} aria-hidden="true" /> Back to prayer requests
+          </Button>
+          <h2 tabIndex={-1}>
+            {entry?.title ??
+              (missing ? "Recover prayer draft" : "New prayer request")}
+          </h2>
           {draft && draftKey ? (
             <>
               {changed && (
@@ -405,6 +458,7 @@ export function Prayers() {
                     type="button"
                     variant="ghost"
                     disabled={busy}
+                    data-prayer-discard
                     onClick={() => setDiscarding(draftKey)}
                   >
                     Discard prayer draft
@@ -429,7 +483,17 @@ export function Prayers() {
                   >
                     Discard prayer changes
                   </Button>{" "}
-                  <Button variant="ghost" onClick={() => setDiscarding(null)}>
+                  <Button
+                    variant="ghost"
+                    onClick={() => {
+                      setDiscarding(null);
+                      editorRef.current
+                        ?.querySelector<HTMLButtonElement>(
+                          "[data-prayer-discard]",
+                        )
+                        ?.focus();
+                    }}
+                  >
                     Keep writing
                   </Button>
                 </div>
@@ -467,44 +531,13 @@ export function Prayers() {
                 >
                   Add follow-up
                 </Button>
-                <Button
-                  variant="ghost"
-                  disabled={busy}
-                  onClick={() => setDeleting(entry.revision)}
-                >
-                  Delete prayer request
-                </Button>
               </div>
-              {deleting && (
-                <div role="group" aria-label="Delete prayer request">
-                  <p>
-                    Delete this prayer and all its follow-ups permanently? Keep
-                    a private export first if you need a copy.
-                  </p>
-                  <Button
-                    variant="secondary"
-                    disabled={busy}
-                    onClick={async () => {
-                      if (
-                        await changePrayer(
-                          selected,
-                          { action: "delete", value: {} },
-                          deleting,
-                        )
-                      ) {
-                        setSelected(null);
-                        setDeleting(null);
-                      }
-                    }}
-                  >
-                    Delete prayer permanently
-                  </Button>{" "}
-                  <Button variant="ghost" onClick={() => setDeleting(null)}>
-                    Keep prayer
-                  </Button>
-                </div>
-              )}
-              <h3>Dated follow-ups</h3>
+              <h3>
+                Dated follow-ups{" "}
+                <span className="muted small">
+                  ({Object.keys(entry.followUps).length} / {FOLLOW_UP_LIMIT})
+                </span>
+              </h3>
               {Object.keys(entry.followUps).length === 0 ? (
                 <p className="muted">No follow-ups yet.</p>
               ) : (
@@ -521,6 +554,55 @@ export function Prayers() {
                     </div>
                   ))
               )}
+              <div className="prayer-delete-actions">
+                <Button
+                  variant="ghost"
+                  disabled={busy}
+                  data-prayer-delete
+                  onClick={() => setDeleting(entry.revision)}
+                >
+                  Delete prayer request
+                </Button>
+                {deleting && (
+                  <div role="group" aria-label="Delete prayer request">
+                    <p>
+                      Delete this prayer and all its follow-ups permanently?
+                      Keep a private export first if you need a copy.
+                    </p>
+                    <Button
+                      variant="secondary"
+                      disabled={busy}
+                      onClick={async () => {
+                        if (
+                          await changePrayer(
+                            selected,
+                            { action: "delete", value: {} },
+                            deleting,
+                          )
+                        ) {
+                          setSelected(null);
+                          setDeleting(null);
+                        }
+                      }}
+                    >
+                      Delete prayer permanently
+                    </Button>{" "}
+                    <Button
+                      variant="ghost"
+                      onClick={() => {
+                        setDeleting(null);
+                        editorRef.current
+                          ?.querySelector<HTMLButtonElement>(
+                            "[data-prayer-delete]",
+                          )
+                          ?.focus();
+                      }}
+                    >
+                      Keep prayer
+                    </Button>
+                  </div>
+                )}
+              </div>
             </>
           ) : (
             <p>
@@ -528,72 +610,156 @@ export function Prayers() {
               new one.
             </p>
           )}
-          <Button
-            variant="ghost"
-            onClick={() => {
-              setSelected(null);
-              closeDialogs();
-            }}
-          >
-            Close prayer editor
-          </Button>
         </section>
       )}
-      <section aria-label="Saved prayer requests">
-        <h2>Your saved requests</h2>
-        <p className="small muted">{matches.length} matching requests</p>
-        <div className="prayer-list">
-          {matches
-            .slice(currentPage * 10, currentPage * 10 + 10)
-            .map(([id, p]) => (
-              <article className="card" key={id} aria-label={p.title}>
-                <p className="eyebrow">{PRAYER_STATUS_LABELS[p.status]}</p>
-                <h3>{p.title}</h3>
-                <p className="personal-note-text prayer-excerpt">{p.text}</p>
-                <p className="small muted">
-                  {Object.keys(p.followUps).length} follow-ups
-                </p>
-                <Button
-                  variant="secondary"
-                  onClick={() => {
-                    setSelected(id);
-                    closeDialogs();
-                  }}
-                >
-                  Open prayer
-                </Button>
-              </article>
-            ))}
-        </div>
-        {!matches.length && (
-          <p className="card">
-            {Object.keys(prayers).length
-              ? "No requests match these filters."
-              : "Your prayer list is ready. Add your first request when you are ready."}
-          </p>
-        )}
-        {last > 0 && (
-          <div className="saved-verse-actions">
-            <Button
-              variant="secondary"
-              disabled={currentPage === 0}
-              onClick={() => setPage(currentPage - 1)}
+      {!selected && (
+        <section aria-label="Prayer request list">
+          <div className="prayer-list-heading">
+            <p
+              ref={listSummaryRef}
+              tabIndex={-1}
+              className="small muted"
+              role="status"
             >
-              Previous prayer page
-            </Button>
-            <span>
-              Page {currentPage + 1} of {last + 1}
-            </span>
-            <Button
-              variant="secondary"
-              disabled={currentPage === last}
-              onClick={() => setPage(currentPage + 1)}
-            >
-              Next prayer page
-            </Button>
+              {matches.length} {matches.length === 1 ? "request" : "requests"}
+              {filter !== "all" || query ? " found" : ""}
+            </p>
+            {(filter !== "all" || search) && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  setSearch("");
+                  setFilter("all");
+                  setPage(0);
+                  searchRef.current?.focus();
+                }}
+              >
+                Clear filters
+              </Button>
+            )}
           </div>
-        )}
-      </section>
+          <ul className="prayer-list" aria-label="Prayer requests">
+            {matches
+              .slice(currentPage * 10, currentPage * 10 + 10)
+              .map(({ id, saved, pending, title, text, status, label }) => (
+                <li key={id}>
+                  <button
+                    type="button"
+                    className="prayer-row"
+                    aria-label={label}
+                    aria-describedby={
+                      (status ? listId + id + "-status " : "") + listId + id
+                    }
+                    ref={(node) => {
+                      if (node) rowRefs.current.set(id, node);
+                      else rowRefs.current.delete(id);
+                    }}
+                    onClick={() => {
+                      setSelected(id);
+                      closeDialogs();
+                    }}
+                  >
+                    <span className="prayer-row-copy">
+                      <span className="prayer-row-heading">
+                        <span className="prayer-row-title">{title}</span>
+                        {status && (
+                          <span
+                            id={listId + id + "-status"}
+                            className="prayer-status"
+                            data-status={status}
+                          >
+                            {PRAYER_STATUS_LABELS[status]}
+                          </span>
+                        )}
+                      </span>
+                      <span className="prayer-row-preview">
+                        {text || "Write your prayer request…"}
+                      </span>
+                      <span className="prayer-row-meta" id={listId + id}>
+                        {pending && (
+                          <span className="prayer-draft-label">
+                            {saved
+                              ? pending.kind === "followUp"
+                                ? "Unsaved follow-up"
+                                : "Unsaved changes"
+                              : pending.baseRevision
+                                ? "Draft · deleted elsewhere"
+                                : "New draft"}
+                          </span>
+                        )}
+                        {saved && (
+                          <>
+                            <time dateTime={saved.updatedAt}>
+                              Last saved{" "}
+                              {displayDate(
+                                dateInZone(
+                                  state.profile.timeZone,
+                                  new Date(saved.updatedAt),
+                                ),
+                              )}
+                            </time>
+                            {Object.keys(saved.followUps).length > 0 && (
+                              <span>
+                                {Object.keys(saved.followUps).length}{" "}
+                                {Object.keys(saved.followUps).length === 1
+                                  ? "follow-up"
+                                  : "follow-ups"}
+                              </span>
+                            )}
+                          </>
+                        )}
+                      </span>
+                    </span>
+                    <ChevronRight size={18} aria-hidden="true" />
+                  </button>
+                </li>
+              ))}
+          </ul>
+          {!matches.length && (
+            <div className="prayer-empty">
+              <p>
+                {ids.length
+                  ? "No requests match these filters."
+                  : "Add your first prayer request when you’re ready."}
+              </p>
+            </div>
+          )}
+          {last > 0 && (
+            <nav
+              className="prayer-pagination"
+              aria-label="Prayer request pages"
+            >
+              <Button
+                variant="secondary"
+                aria-label="Previous prayer page"
+                disabled={currentPage === 0}
+                onClick={() => setPage(currentPage - 1)}
+              >
+                <ArrowLeft size={16} aria-hidden="true" /> Previous
+              </Button>
+              <span>
+                Page {currentPage + 1} of {last + 1}
+              </span>
+              <Button
+                variant="secondary"
+                aria-label="Next prayer page"
+                disabled={currentPage === last}
+                onClick={() => setPage(currentPage + 1)}
+              >
+                Next <ArrowRight size={16} aria-hidden="true" />
+              </Button>
+            </nav>
+          )}
+          <p className="small muted prayer-list-note">
+            {Object.keys(prayers).length} of {PRAYER_LIMIT} saved requests.
+            {Object.keys(drafts).length > 0 &&
+              " Unsaved drafts stay in this tab. Save before reloading or signing out."}
+            {Object.keys(prayers).length >= PRAYER_LIMIT &&
+              " Export and delete an old request to make room for another."}
+          </p>
+        </section>
+      )}
     </>
   );
 }

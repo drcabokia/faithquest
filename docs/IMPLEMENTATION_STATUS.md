@@ -1,6 +1,6 @@
 # Implementation status
 
-As of **18 October 2026**:
+As of **22 October 2026**:
 
 | Phase                     | Outcome                                                                                                                                                                                               |
 | ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -162,3 +162,11 @@ Verification includes 249 automated tests in twenty-two files, all 62 account br
 Bible Reader now offers three text sizes, two line-spacing choices and explicit reset. Preferences stay in a separate, strictly validated browser record, shared across tabs on the same origin. They contain no personal activity and are excluded from account exports. Storage errors retain usable in-memory choices with visible feedback; damaged values use defaults without silently overwriting storage. Both demo and account readers use the same controls. No database, authentication, content or reward change is needed. [Testing steps](READING_COMFORT.md) are ready; user acceptance remains pending. Earlier reading-consistency testing has not been inferred from the request to continue development.
 
 Verification: 249 automated tests, 30 demo browser scenarios and 65 isolated account browser scenarios pass. The final demo reader cases, lint/types and production builds also pass; the normal account build is restored. Mobile layout and browser-local failure/retry behavior are covered in [validation evidence](VALIDATION.md#reading-comfort-validation).
+
+## Prayer request list and navigation — 22 October 2026
+
+At the user’s request, Prayer Requests uses a single-column list and a separate detail view. Each identity has one row, including when it has a draft. The row opens either the saved request or its in-memory draft, with an Unsaved drafts filter for unfinished writing. The list retains search, status and page when returning; keyboard focus returns to the originating row or result summary. New-request creation belongs to the list, while edit/follow-up actions belong to the detail view. Confirmed deletion is separated below the follow-ups. The old card grid, duplicate draft section and second close action are removed.
+
+Persistence commands, stale-version checks, captured-draft clearing, reload protection, confirmed discard/deletion, exports and reward rules retain their existing behavior. No migration or backup-format change is part of this UI revision. [Manual checks](PRAYER_TRACKING.md#list-and-detail-flow--22-october-2026) cover the new navigation; user acceptance is pending.
+
+Verification: 249 automated tests, all seven prayer account browser cases, all 31 demo browser cases, strict types, lint and production builds pass. Desktop/phone views in both themes were inspected, including long titles and final pagination. The normal account build is restored. See [validation evidence](VALIDATION.md#prayer-request-list-and-navigation-validation).

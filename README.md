@@ -28,7 +28,7 @@ Open **http://127.0.0.1:3000**. Default configuration opens the labelled demo; t
 - Private saved verses and guided memory practice with first-letter hints and temporary typed recall checks in **Study Tools**, with reference search, book/order filters, pagination, removal and export/restore. Save any available verse using the Bible Reader’s verse selector; practice keeps XP/streaks unchanged.
 - Private notes on saved verses, with explicit saving/deletion, protected in-memory drafts, concurrent-edit checks and export/restore. Notes stay separate from Scripture, earn no XP and are never shared with fellowship groups.
 - Reflection journal with prompts, saved entries, history/editing, and **20 XP** per daily reflection. Editing an entry never re-awards its reward.
-- Private [prayer requests](docs/PRAYER_TRACKING.md), with Ongoing/Answered/Archived status, dated follow-ups, search, protected drafts, concurrent-edit checks and export/restore. Prayer activity earns no XP.
+- Private [prayer requests](docs/PRAYER_TRACKING.md), with a compact list, Ongoing/Answered/Archived status, dated follow-ups, search, protected drafts, concurrent-edit checks and export/restore. Prayer activity earns no XP.
 - Reading rhythm and catch-up guidance on Dashboard/My Reading Plan, with an explicit yesterday-only grace claim at most once per rolling 30 days. Grace dates preserve displayed continuity without reading, XP, badge or challenge credit. See [policy and testing](docs/READING_CONSISTENCY.md).
 - Eight achievements, seven participation levels, and an interactive map of all 66 books.
 - Display name, start date, fixed journey timezone after the first activity, appearance, JSON backup export and previewed restore.

@@ -20,7 +20,7 @@
 | Study tools                           | Private saved verses, guided exact-WEB memory practice, private annotations, protected drafts and export/restore                    | Memory-practice testing reported complete; private-note acceptance pending                                            |
 | Private journal tools                 | Categories, private text/date search, bounded history, in-memory drafts and explicit discard                                        | Implemented in development; user browser acceptance pending                                                           |
 | Reading challenges                    | Private seven-date periods, mission-date progress, one-time 100 XP bonus, history and backup recovery                               | Implemented in development; real seven-day browser acceptance pending                                                 |
-| Private prayer tracking               | Separate requests, user-controlled status, dated notes, protected drafts, version checks and export/restore                         | Implemented; user reported successful browser testing                                                                 |
+| Private prayer tracking               | Compact request list, separate details, user-controlled status, dated notes, protected drafts and export/restore                    | Implemented; user reported successful browser testing                                                                 |
 | Reading consistency                   | Catch-up guidance, explicit yesterday-only grace policy, private calendar/history and export/restore                                | Implemented in demo/development accounts; browser acceptance pending                                                  |
 | Reading comfort                       | Scripture text size and spacing, device persistence, keyboard controls and mobile wrapping                                          | Implemented; user browser acceptance pending                                                                          |
 | Optional integrations                 | AI with citations/interpretation labels, PWA, push                                                                                  | Future; absent/disabled                                                                                               |
@@ -128,3 +128,7 @@ Implemented after successful user-reported prayer-tracking testing: shared catch
 ## Reading comfort
 
 The next development task adds browser-local Scripture text size and line spacing in Bible Reader, immediate rendering, cross-tab updates, reset and honest storage-failure feedback. It builds on daily reading without changing the active plan or personal activity. [Browser checks](READING_COMFORT.md) need no developer tools or new account. This does not close the preceding reading-consistency acceptance or independent editorial gates.
+
+## Prayer list simplification
+
+Updated on 22 October 2026 at the user’s request: one compact list row per prayer, integrated draft resumption, a separate detail view, one back action, retained search/status/page, keyboard focus restoration and quieter placement of confirmed deletion. [Browser checks](PRAYER_TRACKING.md#list-and-detail-flow--22-october-2026) cover the revised flow. User acceptance of this UI revision remains pending.

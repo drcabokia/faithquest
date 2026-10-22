@@ -1,3 +1,4 @@
+import { prayerListFlowTest } from "../support/prayer-list-flow";
 import { readingComfortTests } from "../support/reading-comfort";
 import { readFile } from "node:fs/promises";
 import { test, expect } from "@playwright/test";
@@ -277,25 +278,35 @@ test("prayer requests support statuses, dated follow-ups, export, deletion and r
   await page
     .getByRole("button", { name: "Save prayer request", exact: true })
     .click();
-  await expect(
-    page
-      .getByRole("article", { name: "Synthetic prayer", exact: true })
-      .getByText("Answered", { exact: true }),
-  ).toBeVisible();
+  await expect(editor.getByText("Answered", { exact: true })).toBeVisible();
+  await page
+    .getByRole("button", { name: "Back to prayer requests", exact: true })
+    .click();
   await page
     .getByLabel("Filter by prayer status", { exact: true })
     .selectOption("ongoing");
-  await expect(page.getByRole("article")).toHaveCount(0);
+  await expect(
+    page
+      .getByRole("list", { name: "Prayer requests", exact: true })
+      .getByRole("listitem"),
+  ).toHaveCount(0);
   await page
     .getByLabel("Filter by prayer status", { exact: true })
     .selectOption("all");
   await page
     .getByLabel("Search prayer requests", { exact: true })
     .fill("PRIVATE FOLLOW-UP");
-  await expect(page.getByRole("article")).toHaveCount(1);
+  await expect(
+    page
+      .getByRole("list", { name: "Prayer requests", exact: true })
+      .getByRole("listitem"),
+  ).toHaveCount(1);
   await page.reload();
   await expect(
-    page.getByRole("article", { name: "Synthetic prayer", exact: true }),
+    page.getByRole("button", {
+      name: "Open prayer: Synthetic prayer",
+      exact: true,
+    }),
   ).toBeVisible();
   const actual = (await (await request.post(control, { data: {} })).json())
     .state;
@@ -309,19 +320,27 @@ test("prayer requests support statuses, dated follow-ups, export, deletion and r
   const buffer = await readFile((await (await download).path())!);
   expect(JSON.parse(buffer.toString()).prayers).toEqual(actual.prayers);
   await page.goto("/prayers");
-  await page.getByRole("button", { name: "Open prayer", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Open prayer: Synthetic prayer", exact: true })
+    .click();
   await page
     .getByRole("button", { name: "Delete prayer request", exact: true })
     .click();
   await page.getByRole("button", { name: "Keep prayer", exact: true }).click();
-  await expect(page.getByRole("article")).toHaveCount(1);
+  await expect(
+    editor.getByRole("button", { name: "Delete prayer request", exact: true }),
+  ).toBeFocused();
   await page
     .getByRole("button", { name: "Delete prayer request", exact: true })
     .click();
   await page
     .getByRole("button", { name: "Delete prayer permanently", exact: true })
     .click();
-  await expect(page.getByRole("article")).toHaveCount(0);
+  await expect(
+    page
+      .getByRole("list", { name: "Prayer requests", exact: true })
+      .getByRole("listitem"),
+  ).toHaveCount(0);
   await page.goto("/profile");
   await page.getByLabel("Backup file", { exact: true }).setInputFiles({
     name: "prayers.json",
@@ -341,7 +360,9 @@ test("prayer requests support statuses, dated follow-ups, export, deletion and r
     }),
   ).toBeVisible();
   await page.goto("/prayers");
-  await page.getByRole("button", { name: "Open prayer", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Open prayer: Synthetic prayer", exact: true })
+    .click();
   await expect(
     editor.getByText("Synthetic progress recorded in a private follow-up.", {
       exact: true,
@@ -3237,3 +3258,5 @@ test("account connection checks distinguish success, outages and cooldowns", asy
 });
 
 readingComfortTests();
+
+prayerListFlowTest("account");
