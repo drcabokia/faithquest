@@ -1,3 +1,4 @@
+import { readingRhythmUiTest } from "../support/reading-rhythm-ui";
 import { journalConflictTests } from "../support/journal-conflicts";
 import { prayerListFlowTest } from "../support/prayer-list-flow";
 import { readingComfortTests } from "../support/reading-comfort";
@@ -30,6 +31,7 @@ test("grace confirmation persists, exports and restores without XP or challenge 
 }) => {
   const { state, date, today } = await graceFixture(request);
   await page.goto("/dashboard");
+  await page.locator(".rhythm-disclosure > summary").click();
   const rhythm = page.getByRole("region", {
     name: "Reading rhythm and catch-up",
     exact: true,
@@ -99,6 +101,7 @@ test("grace confirmation persists, exports and restores without XP or challenge 
     }),
   ).toBeVisible();
   await page.goto("/dashboard");
+  await page.locator(".rhythm-disclosure > summary").click();
   await expect(rhythm.locator(".grace-history li")).toHaveCount(1);
   expect(
     (await (await request.post(control, { data: {} })).json()).state.rewards,
@@ -117,6 +120,7 @@ test("an uncertain grace claim recovers by reading and never replays its write",
 }) => {
   const { date } = await graceFixture(request);
   await page.goto("/dashboard");
+  await page.locator(".rhythm-disclosure > summary").click();
   let writes = 0;
   await page.route("**/api/journey", async (route) => {
     if (
@@ -153,6 +157,7 @@ test("stale grace eligibility and overlapping backup histories preserve current 
 }) => {
   const { state, date } = await graceFixture(request);
   await page.goto("/dashboard");
+  await page.locator(".rhythm-disclosure > summary").click();
   await page
     .getByRole("button", { name: "Use grace for yesterday", exact: true })
     .click();
@@ -209,16 +214,15 @@ test("catch-up links resume the first unread chapter in Canonical and Balanced",
       },
     });
     await page.goto("/dashboard");
+    await page.locator(".rhythm-disclosure > summary").click();
     const rhythm = page.getByRole("region", {
       name: "Reading rhythm and catch-up",
       exact: true,
     });
-    await expect(
-      rhythm.getByText(/8 earlier unfinished missions/),
-    ).toBeVisible();
+    await expect(rhythm.getByText(/8 missions to catch up/)).toBeVisible();
     await rhythm
       .getByRole("link", {
-        name: "Continue next unfinished mission",
+        name: "Continue Day 1",
         exact: true,
       })
       .click();
@@ -3405,3 +3409,5 @@ readingComfortTests();
 prayerListFlowTest("account");
 
 journalConflictTests("account");
+
+readingRhythmUiTest("account");

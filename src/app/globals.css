@@ -5207,13 +5207,108 @@ body {
 }
 
 .consistency-card {
-  padding: 24px;
+  padding: 0;
   margin: 24px 0;
   min-width: 0;
   overflow-wrap: anywhere;
 }
-.consistency-card h2 {
-  margin-top: 0;
+.rhythm-disclosure > summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 20px 24px;
+  border-radius: var(--radius);
+}
+.rhythm-disclosure > summary::-webkit-details-marker {
+  display: none;
+}
+.consistency-card .rhythm-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 0;
+  font-size: 1.25rem;
+}
+.rhythm-status {
+  display: block;
+  color: var(--muted);
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  margin-top: 4px;
+}
+.rhythm-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--primary);
+  font-size: 0.875rem;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+.rhythm-toggle svg {
+  flex-shrink: 0;
+}
+.rhythm-hide,
+.rhythm-disclosure[open] .rhythm-show {
+  display: none;
+}
+.rhythm-disclosure[open] .rhythm-hide {
+  display: inline;
+}
+.rhythm-disclosure[open] .rhythm-toggle svg {
+  transform: rotate(180deg);
+}
+.rhythm-details {
+  padding: 0 24px 24px;
+}
+.rhythm-next {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+.rhythm-next p {
+  margin: 4px 0;
+}
+.profile-preferences {
+  display: grid;
+  align-content: start;
+  gap: 24px;
+  min-width: 0;
+}
+.reader-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-left: auto;
+}
+.reader-controls .reader-tools .text-link {
+  margin-left: 0;
+  padding: 12px 0;
+  flex-basis: auto;
+}
+@media (max-width: 700px) {
+  .rhythm-disclosure > summary {
+    padding: 18px;
+  }
+  .rhythm-details {
+    padding: 0 18px 18px;
+  }
+  .rhythm-toggle {
+    max-width: 90px;
+  }
+  .reader-tools {
+    flex-basis: 100%;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .reader-controls .reader-tools .text-link {
+    padding: 0;
+  }
 }
 .consistency-card h3 {
   margin-top: 24px;
@@ -5258,8 +5353,9 @@ body {
 }
 
 .reading-comfort {
-  max-width: 840px;
-  margin: 0 auto 24px;
+  scroll-margin-top: 96px;
+  min-width: 0;
+  margin: 0;
   padding: 24px;
   display: grid;
   gap: 16px;

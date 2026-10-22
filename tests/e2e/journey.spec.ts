@@ -1,3 +1,4 @@
+import { readingRhythmUiTest } from "../support/reading-rhythm-ui";
 import { journalConflictTests } from "../support/journal-conflicts";
 import { prayerListFlowTest } from "../support/prayer-list-flow";
 import { readingComfortTests } from "../support/reading-comfort";
@@ -36,8 +37,10 @@ test("parallel demo grace claims preserve only one explicit date and no reading 
     { prior },
   );
   await page.goto("/dashboard");
+  await page.locator(".rhythm-disclosure > summary").click();
   const other = await context.newPage();
   await other.goto("/dashboard");
+  await other.locator(".rhythm-disclosure > summary").click();
   await page
     .getByRole("button", { name: "Use grace for yesterday", exact: true })
     .click();
@@ -79,6 +82,7 @@ test("parallel demo grace claims preserve only one explicit date and no reading 
   expect(stored.days).toEqual({ "1": prior });
   expect(stored.rewards).toEqual({ "reading:1": { amount: 50, date: prior } });
   await other.reload();
+  await other.locator(".rhythm-disclosure > summary").click();
   await expect(other.locator(".grace-history li")).toHaveCount(1);
 });
 test("grace history uses bounded pages and actual reading remains separate on a phone", async ({
@@ -113,6 +117,7 @@ test("grace history uses bounded pages and actual reading remains separate on a 
   );
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/dashboard");
+  await page.locator(".rhythm-disclosure > summary").click();
   await expect(page.locator(".grace-history li")).toHaveCount(10);
   await page
     .getByRole("button", { name: "Next grace page", exact: true })
@@ -1569,3 +1574,5 @@ readingComfortTests();
 prayerListFlowTest("demo");
 
 journalConflictTests("demo");
+
+readingRhythmUiTest("demo");

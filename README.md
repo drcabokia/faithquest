@@ -24,7 +24,7 @@ Open **http://127.0.0.1:3000**. Default configuration opens the labelled demo; t
 - Full World English Bible Classic reader, bundled locally by chapter; book/chapter navigation, saved reading position, explicit chapter completion, honest loading/error states, and a retry control.
 - Reading missions award **50 XP** after every assigned chapter is completed. Book completion awards **150 XP**. Stable reward keys prevent duplicate claims.
 - Sixty passage-checked quiz questions for canonical days 1–30, four choices, Scripture references, explanations, saved attempts, and **10 XP** per correct answer. A submitted answer cannot be retried for more XP.
-- Adjustable Scripture text size and line spacing in Bible Reader, with keyboard controls, reset and preferences remembered in this browser. See [reading comfort checks](docs/READING_COMFORT.md).
+- Adjustable Scripture text size and line spacing under Profile & Settings, linked from Bible Reader, with keyboard controls, reset and preferences remembered in this browser. See [reading comfort checks](docs/READING_COMFORT.md).
 - Private saved verses and guided memory practice with first-letter hints and temporary typed recall checks in **Study Tools**, with reference search, book/order filters, pagination, removal and export/restore. Save any available verse using the Bible Reader’s verse selector; practice keeps XP/streaks unchanged.
 - Private notes on saved verses, with explicit saving/deletion, protected in-memory drafts, concurrent-edit checks and export/restore. Notes stay separate from Scripture, earn no XP and are never shared with fellowship groups.
 - Reflection journal with prompts, saved entries, history/editing, and **20 XP** per daily reflection. Editing an entry never re-awards its reward.
