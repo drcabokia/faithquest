@@ -41,7 +41,7 @@ Follow [the integration runbook](SUPABASE_INTEGRATION.md) for exact commands and
 
 The dedicated `faithful-seeds/faithquest365-testing` project serves `https://faithquest365-testing.vercel.app` with Vercel Authentication for **All Deployments** and Node.js 22.x. Validated commit `7d947186ae6a58f0cd5b49247c8a793a6c11480a` is deployed and READY. Anonymous domain probes redirect to Vercel sign-in; authorized service health and account login pass, while journey/export APIs reject requests without a FaithQuest session. The existing Supabase development backend is deliberately shared. No automatic Git deployment, external tester invitation, paid upgrade or new migration was enabled; `main` remains unchanged.
 
-The owner confirmed configuring the exact Supabase hosted callback. Human hosted Google sign-in, persistence/privacy and extended session acceptance remain pending before expanding the pilot. See [deployment evidence and the testing sequence](DEPLOYMENT.md) and [CI/hosted validation](VALIDATION.md).
+The owner confirmed configuring the exact Supabase hosted callback and completing Google sign-in on the protected stable hostname, reaching the dashboard. Hosted persistence/privacy and extended session acceptance remain pending before expanding the pilot. See [deployment evidence and the testing sequence](DEPLOYMENT.md) and [CI/hosted validation](VALIDATION.md).
 
 ## Published milestones
 

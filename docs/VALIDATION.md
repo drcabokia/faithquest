@@ -1,6 +1,6 @@
 # Validation report
 
-The protected test release passes 255 automated tests and all 107 browser tests in GitHub CI. Hosted technical checks are recorded below; human hosted Google sign-in and the remaining session/recovery acceptance gates remain separate. Earlier sections preserve historical validation snapshots and their limits at that time.
+The protected test release passes 255 automated tests and all 107 browser tests in GitHub CI. Hosted technical checks and the owner's successful hosted Google sign-in are recorded below; remaining hosted persistence/privacy/session/recovery acceptance gates remain separate. Earlier sections preserve historical validation snapshots and their limits at that time.
 
 ## Protected Vercel test release — 22 October 2026
 
@@ -12,7 +12,7 @@ The exact commit was deployed from a clean Git source export to `https://faithqu
 
 Anonymous probes of the stable, generated and team-alias `/api/health` URLs each redirected to Vercel authentication (302). An authorized CLI health probe returned 200/`{"status":"ok"}`. The account login page returned 200 with Google enabled and no demo entry; journey/export APIs returned 401 without a FaithQuest session despite authorized Vercel access. These probes used Vercel's private automation bypass without exposing its value or disabling protection.
 
-The owner reports saving the exact hosted Supabase Site URL/callback while retaining localhost access. Real hosted Vercel/Google sign-in acceptance is pending. No external tester access was granted, no real account data was read/deleted, and no session revocation or migration was performed. Hosted persistence/privacy/session acceptance and the public-release gates remain in [the deployment guide](DEPLOYMENT.md).
+The owner reports saving the exact hosted Supabase Site URL/callback while retaining localhost access, then opening the protected stable hostname, completing Google sign-in and reaching the dashboard. This user-observed hosted OAuth pass remains separate from automated technical checks and does not establish persistence/privacy or session-expiry behavior. No external tester access was granted; automated probes did not read/delete real account data, revoke sessions or run migrations. Remaining hosted acceptance and public-release gates are in [the deployment guide](DEPLOYMENT.md).
 
 Executed locally on **16 October 2026**, Windows, Node.js 22.20.0. Browser checks used installed Microsoft Edge through Playwright, including a 390 × 844 mobile viewport and the Asia/Kuala_Lumpur timezone.
 

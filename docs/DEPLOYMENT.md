@@ -18,7 +18,7 @@ Hosted checks passed:
 - An authorized CLI probe returned HTTP 200 and `{"status":"ok"}` from `/api/health`, checking the public Supabase Auth/catalogue dependencies and enabled Google provider.
 - The authorized `/login` page returned HTTP 200 with the Google sign-in form and no demo entry. Without a FaithQuest session, `/api/journey` and `/api/account/export` both returned HTTP 401 even after passing Vercel protection.
 
-Authorized probes used Vercel's private automation protection bypass; the secret was not printed or committed, and access protection remains enabled. These probes do not establish a human Vercel/Google OAuth round trip. Owner hosted sign-in acceptance is pending. Complete the owner checks below before inviting testers; no external access invitation or shareable bypass link has been created.
+Authorized probes used Vercel's private automation protection bypass; the secret was not printed or committed, and access protection remains enabled. Separately, the owner opened the protected stable hostname, completed Google sign-in and confirmed that the dashboard opens. This user-observed hosted OAuth pass does not establish persistence, two-account privacy or session-expiry behavior. Complete the remaining owner checks below before inviting testers; no external access invitation or shareable bypass link has been created.
 
 The readiness review below preserves the earlier snapshot; its local-only/publication statements describe that review, not the current release work.
 
