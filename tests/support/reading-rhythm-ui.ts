@@ -83,6 +83,20 @@ export function readingRhythmUiTest(mode: "demo" | "account") {
         exact: true,
       }),
     ).toBeVisible();
+    await rhythm
+      .getByRole("button", { name: "Use grace for yesterday", exact: true })
+      .click();
+    // Native toggle events can coalesce when a user closes and reopens quickly.
+    await summary.evaluate((element) => {
+      if (!(element instanceof HTMLElement))
+        throw new Error("Expected summary");
+      element.click();
+      element.click();
+    });
+    await expect(rhythm.locator(".rhythm-calendar")).toBeVisible();
+    await expect(
+      rhythm.getByRole("group", { name: "Confirm grace day", exact: true }),
+    ).toHaveCount(0);
     expect(writes).toBe(0);
     expect(
       await page.evaluate(() => localStorage.getItem("faithquest365.demo.v1")),

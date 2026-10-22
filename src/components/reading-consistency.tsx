@@ -51,7 +51,7 @@ export function ReadingConsistency() {
           if (!event.currentTarget.open) setConfirmation(null);
         }}
       >
-        <summary>
+        <summary onClick={() => setConfirmation(null)}>
           <h2 className="rhythm-summary">
             <span>
               Your reading rhythm
