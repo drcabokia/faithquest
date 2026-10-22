@@ -3040,7 +3040,15 @@ test("account export uses the newest server snapshot and keeps it out of browser
   expect(
     await page.evaluate(() => localStorage.getItem("faithquest365.demo.v1")),
   ).toBeNull();
-  await expect(page.getByRole("status")).toContainText("Your export is ready");
+  const exportSection = page.locator("section").filter({
+    has: page.getByRole("heading", {
+      name: "Keep a copy of your journey",
+      exact: true,
+    }),
+  });
+  await expect(exportSection.getByRole("status")).toHaveText(
+    "Your export is ready. Check your downloads.",
+  );
 });
 
 test("a failed export stays on the account screen and produces no download", async ({
