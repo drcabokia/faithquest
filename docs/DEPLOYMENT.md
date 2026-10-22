@@ -1,5 +1,11 @@
 # Vercel external testing and deployment
 
+## Public information and branding — 22 October 2026
+
+The public homepage, Privacy Policy, Terms of Service and logo downloads are now available at `https://faithquest365-info.vercel.app`. This is a separate static project with no account API, application bundle or environment variables. The existing test application remains behind Vercel Authentication for All Deployments. See [public website guidance](PUBLIC_INFORMATION.md) for the exact Google branding fields, source files, operator/contact details and deployment evidence. Google brand/domain verification remains a separate owner step.
+
+Application/source commit `ce9b5a1a2deba70399e58badd1bc3f1ca4e9a5b8` passed [GitHub validation](https://github.com/drcabokia/faithquest/actions/runs/39806256343), including the public-site build, 255 automated tests and all 107 browser tests. The app adds matching `/privacy` and `/terms` routes, legal navigation on the landing/login/app footer and the shared SVG logo. Protected application deployment `dpl_NfTzwXsMttzv7baZvZafTDtg2rhq` is READY with authorized policy/login/health checks passing and anonymous protection retained. Full evidence is in the public website guide. The sections below preserve the earlier initial test-release snapshot.
+
 ## Protected test release — 22 October 2026
 
 The dedicated project is `faithful-seeds/faithquest365-testing`, on the existing Hobby plan, with the stable origin `https://faithquest365-testing.vercel.app`. Vercel Authentication was enabled for **All Deployments** at project creation and checked again after configuration. Node.js **22.x**, Next.js, `npm ci` and `npm run build` are selected. No paid service or plan change was enabled.

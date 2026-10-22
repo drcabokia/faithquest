@@ -6,7 +6,7 @@ The public information site is separate from the protected application. It conta
 
 The owner supplied **Titanium Overcomer** as the operator and **drchristinelee@gmail.com** as the public contact. `src/content/site.json` holds those details and the two deliberate origins. `src/content/legal.json` is the single source for both the app's legal routes and the static public documents.
 
-Use these values in Google Auth Platform → Branding → App domain after the public deployment is verified:
+Use these values in Google Auth Platform → Branding → App domain. All three were verified anonymously after deployment:
 
 | Google field                      | Value                                           |
 | --------------------------------- | ----------------------------------------------- |
@@ -39,4 +39,12 @@ Inspect the exact artifact with the pinned Vercel CLI's `deploy --dry --json`, s
 
 ## Validation
 
-Local static browser checks passed at 1440 px and 320 px for all three pages, including logo loading, no horizontal overflow, keyboard navigation to Privacy Policy, working contents anchors, zero script requests and 404 responses for account/private paths. The Vercel dry-run manifest contains exactly eleven files, about 56 KB, with no environment or application files. Hosted verification and protected-app link rollout are recorded after publication.
+Local static browser checks passed at 1440 px and 320 px for all three pages, including logo loading, no horizontal overflow, keyboard navigation to Privacy Policy, working contents anchors, zero script requests and 404 responses for account/private paths. The Vercel dry-run manifest contains exactly eleven files, about 56 KB, with no environment or application files. Six additional checks on the production account-mode app verified anonymous legal/login rendering, mobile layout, client navigation and no journey requests on those routes. The original development server was not restarted; an attempted read-only localhost probe found it unavailable, so these app checks used a separate temporary production server on port 3196, which was stopped afterward.
+
+The information site is published as deployment `dpl_6SWJntH5AoqNRr3t7EbJhHHRnjGT`, READY at `https://faithquest365-info.vercel.app`, from source `ce9b5a1a2deba70399e58badd1bc3f1ca4e9a5b8`. Anonymous HTTPS checks of the homepage, `/privacy`, `/terms` and both PNGs returned 200. Operator/contact text and script-free HTML were verified, along with the deployed CSP. The public project has zero environment variables. Its account, export, OAuth, dashboard and `.env.local` paths returned 404. The authenticated app's health URL still redirected anonymous visitors to Vercel authentication.
+
+The Google-upload PNG is 120 × 120, 3,637 bytes. The larger PNG is 512 × 512, 20,400 bytes. Both are below Google's 1 MB limit.
+
+The same source passed [GitHub CI](https://github.com/drcabokia/faithquest/actions/runs/39806256343): 255 automated tests, 107 browser tests, lint/application/Edge types, production build and the static information-site build. It is also deployed to the protected application as `dpl_NfTzwXsMttzv7baZvZafTDtg2rhq`, READY at `https://faithquest365-testing.vercel.app`, on Node.js 22.x. Authorized health, privacy, terms and login requests returned 200; operator/contact details, the Google form, policy links and the new logo path were verified. Export returned 401 without an application session. Anonymous privacy/terms/health requests on both its stable and generated domains redirected to Vercel authentication. No new Google sign-in or real-account data mutation was performed during this release; earlier owner sign-in evidence remains separate.
+
+Both projects record the same source SHA and have no automatic Git connection. No database/provider configuration, session, paid plan or private-test protection setting was changed. `main` remains unchanged; source and publication records are on the feature branch/draft PR.

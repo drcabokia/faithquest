@@ -2,6 +2,14 @@
 
 The protected test release passes 255 automated tests and all 107 browser tests in GitHub CI. Hosted technical checks and the owner's successful hosted Google sign-in are recorded below; remaining hosted persistence/privacy/session/recovery acceptance gates remain separate. Earlier sections preserve historical validation snapshots and their limits at that time.
 
+## Public policies, website and logo — 22 October 2026
+
+Source `ce9b5a1a2deba70399e58badd1bc3f1ca4e9a5b8` passed [GitHub CI](https://github.com/drcabokia/faithquest/actions/runs/39806256343): lint, application/Edge types, 255 tests across 22 files, production build, the new static information-site build, 35 demo browser tests and 72 isolated account browser tests. A fresh local account-mode `npm run check` also passed.
+
+Six desktop/mobile static-page checks and six anonymous production-app legal/login checks passed at 1440 px and 320 px. They cover logo loading, no horizontal overflow, keyboard/client navigation, anchor targets, script-free public pages and no account journey requests from legal/login pages. The public artifact's manifest contains only eleven intended files, about 56 KB. SVG plus 120 px/512 px PNG exports are available; both PNGs are below Google's 1 MB upload limit.
+
+The separate information deployment `dpl_6SWJntH5AoqNRr3t7EbJhHHRnjGT` is READY at `https://faithquest365-info.vercel.app`. Anonymous homepage/privacy/terms/logo requests returned 200, deployed CSP was verified, and account/export/OAuth/dashboard/environment-file paths returned 404. Its environment-variable count is zero. Protected application deployment `dpl_NfTzwXsMttzv7baZvZafTDtg2rhq` is also READY at the existing test hostname: authorized health/privacy/terms/login returned 200, the new links/logo and operator/contact details were verified, and export rejected a missing application session with 401. Anonymous privacy/terms/health requests on its stable/generated domains redirected to Vercel authentication. Public information does not enable public accounts or complete Google's brand/domain verification. See [publication evidence](PUBLIC_INFORMATION.md).
+
 ## Protected Vercel test release — 22 October 2026
 
 Release commit `7d947186ae6a58f0cd5b49247c8a793a6c11480a` passed [GitHub CI](https://github.com/drcabokia/faithquest/actions/runs/39756217817) on Ubuntu/Node.js 22: clean installation, lint, strict application and Edge Function types, 255 automated tests across 22 files, the production build, 35 demo Chromium tests and 72 isolated account Chromium tests. A local focused export-browser run timed out starting its isolated Windows server; it was inconclusive, not a pass. The complete Linux run subsequently passed that export test and both disclosure regressions.
