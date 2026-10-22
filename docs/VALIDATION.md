@@ -1,6 +1,18 @@
 # Validation report
 
-The current quiz-expansion milestone passes 220 automated tests, lint, strict application TypeScript and demo/account production builds. See the final section for current browser evidence and the limits of prior hosted evidence. Earlier sections preserve historical validation snapshots and their limits at that time.
+The protected test release passes 255 automated tests and all 107 browser tests in GitHub CI. Hosted technical checks are recorded below; human hosted Google sign-in and the remaining session/recovery acceptance gates remain separate. Earlier sections preserve historical validation snapshots and their limits at that time.
+
+## Protected Vercel test release — 22 October 2026
+
+Release commit `7d947186ae6a58f0cd5b49247c8a793a6c11480a` passed [GitHub CI](https://github.com/drcabokia/faithquest/actions/runs/39756217817) on Ubuntu/Node.js 22: clean installation, lint, strict application and Edge Function types, 255 automated tests across 22 files, the production build, 35 demo Chromium tests and 72 isolated account Chromium tests. A local focused export-browser run timed out starting its isolated Windows server; it was inconclusive, not a pass. The complete Linux run subsequently passed that export test and both disclosure regressions.
+
+Full-suite failures identified ambiguous prayer/export status selectors and a real reading-rhythm confirmation bug when close/reopen events coalesced. Selectors now wait for the saved prayer view or scope export feedback to its section. Summary activation clears the unconfirmed grace choice synchronously, with an additional rapid-toggle check in both browser modes. No schema, account command, backup format or reward behavior changed.
+
+The exact commit was deployed from a clean Git source export to `https://faithquest365-testing.vercel.app`, behind Vercel Authentication for All Deployments. Deployment `dpl_HfWXxHpxxosCyTLxTT7Wftd2gz7b` is READY, records Node.js 22.x and the release SHA, and completed the hosted Next.js 16.4.2 build. Five encrypted Production variables configure the existing Supabase development backend; no privileged credential or local environment file was uploaded.
+
+Anonymous probes of the stable, generated and team-alias `/api/health` URLs each redirected to Vercel authentication (302). An authorized CLI health probe returned 200/`{"status":"ok"}`. The account login page returned 200 with Google enabled and no demo entry; journey/export APIs returned 401 without a FaithQuest session despite authorized Vercel access. These probes used Vercel's private automation bypass without exposing its value or disabling protection.
+
+The owner reports saving the exact hosted Supabase Site URL/callback while retaining localhost access. Real hosted Vercel/Google sign-in acceptance is pending. No external tester access was granted, no real account data was read/deleted, and no session revocation or migration was performed. Hosted persistence/privacy/session acceptance and the public-release gates remain in [the deployment guide](DEPLOYMENT.md).
 
 Executed locally on **16 October 2026**, Windows, Node.js 22.20.0. Browser checks used installed Microsoft Edge through Playwright, including a 390 × 844 mobile viewport and the Asia/Kuala_Lumpur timezone.
 

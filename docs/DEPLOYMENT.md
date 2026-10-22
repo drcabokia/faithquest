@@ -1,5 +1,27 @@
 # Vercel external testing and deployment
 
+## Protected test release — 22 October 2026
+
+The dedicated project is `faithful-seeds/faithquest365-testing`, on the existing Hobby plan, with the stable origin `https://faithquest365-testing.vercel.app`. Vercel Authentication was enabled for **All Deployments** at project creation and checked again after configuration. Node.js **22.x**, Next.js, `npm ci` and `npm run build` are selected. No paid service or plan change was enabled.
+
+Only the five authenticated variables listed below are configured, encrypted and scoped to this project's Production environment. They deliberately use the existing Supabase development backend. Preview/development environments do not receive account configuration. The owner confirmed saving the exact hosted callback and Site URL in Supabase while retaining localhost access.
+
+The candidate source is commit `7d947186ae6a58f0cd5b49247c8a793a6c11480a` on `codex/study-tools-navigation`, published in [draft PR #1](https://github.com/drcabokia/faithquest/pull/1). The source export and Vercel upload inspection include 1,409 committed files, about 7 MB, excluding local environment files, credentials, private exports and dependencies. The project is not connected to automatic Git deployments; release uploads use the explicitly selected commit. `main` has not been merged or pushed by this release work.
+
+[GitHub validation passed](https://github.com/drcabokia/faithquest/actions/runs/39756217817) for that exact commit: 255 tests across 22 files, lint/application/Edge types, the production build, all 35 demo browser tests and all 72 isolated account browser tests. Full-suite validation caught ambiguous prayer/export status selectors and a real rapid-close/reopen disclosure bug; the selectors were scoped and grace confirmation now clears on summary activation, including coalesced native toggle events.
+
+Vercel deployment `dpl_HfWXxHpxxosCyTLxTT7Wftd2gz7b` is **READY** and aliased to the stable origin. The deployment records the exact release SHA and Node.js 22.x; hosted build logs confirm Next.js 16.4.2, `npm ci`, `npm run build` and successful build completion. Its inspector is [available to the owner](https://vercel.com/faithful-seeds/faithquest365-testing/HfWXxHpxxosCyTLxTT7Wftd2gz7b).
+
+Hosted checks passed:
+
+- Anonymous `/api/health` requests on the stable domain, generated deployment domain and team alias all returned HTTP 302 to Vercel authentication.
+- An authorized CLI probe returned HTTP 200 and `{"status":"ok"}` from `/api/health`, checking the public Supabase Auth/catalogue dependencies and enabled Google provider.
+- The authorized `/login` page returned HTTP 200 with the Google sign-in form and no demo entry. Without a FaithQuest session, `/api/journey` and `/api/account/export` both returned HTTP 401 even after passing Vercel protection.
+
+Authorized probes used Vercel's private automation protection bypass; the secret was not printed or committed, and access protection remains enabled. These probes do not establish a human Vercel/Google OAuth round trip. Owner hosted sign-in acceptance is pending. Complete the owner checks below before inviting testers; no external access invitation or shareable bypass link has been created.
+
+The readiness review below preserves the earlier snapshot; its local-only/publication statements describe that review, not the current release work.
+
 ## Readiness review — 22 October 2026
 
 Vercel is suitable for a small, access-controlled external test release after configuration and the owner checks below. This is a staging recommendation, not approval for a public production launch. No deployment, Git push, provider configuration change or paid service was performed during this review.

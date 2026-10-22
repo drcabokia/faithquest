@@ -2,19 +2,19 @@
 
 As of **22 October 2026**:
 
-| Phase                     | Outcome                                                                                                                                                                                               |
-| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Planning and setup        | Complete; documented architecture, strict Next.js/React application, checks and CI                                                                                                                    |
-| Functional demo           | Complete; canonical/Balanced 365-day plans, full WEB reader, reading position, XP, streaks, quizzes, reflections, achievements, settings/export                                                       |
-| Senior readability        | Complete; larger supporting text, completion/XP labels, badge descriptions, responsive wrapping and improved contrast                                                                                 |
-| Database commands         | Implemented; nineteen migrations, canonical/Balanced seeds, transactional rewards, reviewed quizzes/private solutions, server-earned achievements                                                     |
-| Authenticated integration | Enabled for local development; Google sign-in, SSR clients, session proxy, authenticated API and separate account persistence                                                                         |
-| Local validation          | 249 automated tests pass, including embedded PostgreSQL isolation, auth/export boundaries, private prayers and reading consistency; lint/types and demo/account builds passed                         |
-| Hosted acceptance         | Eighteen migrations confirmed; hosted isolation/rewards and user-observed login, persistence, two-account isolation, sign-out, offline retry and focus refresh passed; extended session checks remain |
+| Phase                     | Outcome                                                                                                                                                                |
+| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Planning and setup        | Complete; documented architecture, strict Next.js/React application, checks and CI                                                                                     |
+| Functional demo           | Complete; canonical/Balanced 365-day plans, full WEB reader, reading position, XP, streaks, quizzes, reflections, achievements, settings/export                        |
+| Senior readability        | Complete; larger supporting text, completion/XP labels, badge descriptions, responsive wrapping and improved contrast                                                  |
+| Database commands         | Implemented; nineteen migrations, canonical/Balanced seeds, transactional rewards, reviewed quizzes/private solutions, server-earned achievements                      |
+| Authenticated integration | Enabled locally and in a protected Vercel test project; Google sign-in, SSR clients, session proxy, authenticated API and separate account persistence                 |
+| Local and CI validation   | 255 automated tests and 107 browser tests pass in GitHub CI; lint, application/Edge types and production build passed                                                  |
+| Hosted acceptance         | Nineteen migrations confirmed; prior local-origin account acceptance and new Vercel technical checks passed; hosted Google/session/privacy acceptance remains separate |
 
 ## Current project connection
 
-The selected development project is `https://uiozbdsimvsvxjpalsro.supabase.co`. Its publishable key is configured only in ignored `.env.local`. The authenticated Supabase integration is connected. All nineteen migrations are applied, the public catalogue contains 66 books, and rollback-only hosted isolation/reward checks passed without resetting the database.
+The selected development project is `https://uiozbdsimvsvxjpalsro.supabase.co`. Its publishable key is configured in ignored `.env.local` and the protected Vercel test project's encrypted Production environment. The authenticated Supabase integration is connected. All nineteen migrations are applied, the public catalogue contains 66 books, and rollback-only hosted isolation/reward checks passed without resetting the database.
 
 Google is enabled, and this workspace uses `supabase` storage with development account access enabled. The user completed browser checks for initial sign-in, reading/reflection/quiz persistence, sign-out, independent-browser recovery, two-account isolation, offline saves and online retry, focus refresh, and all-device sign-out with saved-data recovery. Read-only database queries confirmed the separate account totals and absence of duplicate rewards without reading journal text. These results do not establish production readiness or replace the remaining token-expiry, direct revoked-token API and committed-save/lost-response checks. See [the integration evidence](SUPABASE_INTEGRATION.md). Google branding verification and public hosting are deferred until a domain/public website is available.
 
@@ -35,7 +35,13 @@ The user selected this next development milestone. Account-service outages are n
 3. Confirm account deletion with a disposable Google test account after the current renewal test; review backup/restore operations, gateway/IP abuse protection, alerts and production settings before enabling public production accounts.
 4. Add the public domain/site and complete Google branding verification at the later stage requested by the user.
 
-Follow [the integration runbook](SUPABASE_INTEGRATION.md) for exact commands and acceptance criteria. No paid AI service or Vercel deployment has been enabled. Recovery codes remain unread and excluded from Git; environment files and downloaded OAuth credentials are excluded from Git.
+Follow [the integration runbook](SUPABASE_INTEGRATION.md) for exact commands and acceptance criteria. The protected Hobby test deployment is recorded below; no paid service was enabled. Recovery codes remain unread and excluded from Git; environment files and downloaded OAuth credentials are excluded from Git.
+
+## Protected external test release
+
+The dedicated `faithful-seeds/faithquest365-testing` project serves `https://faithquest365-testing.vercel.app` with Vercel Authentication for **All Deployments** and Node.js 22.x. Validated commit `7d947186ae6a58f0cd5b49247c8a793a6c11480a` is deployed and READY. Anonymous domain probes redirect to Vercel sign-in; authorized service health and account login pass, while journey/export APIs reject requests without a FaithQuest session. The existing Supabase development backend is deliberately shared. No automatic Git deployment, external tester invitation, paid upgrade or new migration was enabled; `main` remains unchanged.
+
+The owner confirmed configuring the exact Supabase hosted callback. Human hosted Google sign-in, persistence/privacy and extended session acceptance remain pending before expanding the pilot. See [deployment evidence and the testing sequence](DEPLOYMENT.md) and [CI/hosted validation](VALIDATION.md).
 
 ## Published milestones
 
