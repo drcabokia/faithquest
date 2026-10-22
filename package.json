@@ -8,6 +8,8 @@
   "scripts": {
     "dev": "next dev --hostname 127.0.0.1",
     "build": "next build",
+    "build:brand": "node scripts/build-brand.mjs",
+    "build:public-site": "node scripts/build-public-site.mjs",
     "start": "next start --hostname 127.0.0.1",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",

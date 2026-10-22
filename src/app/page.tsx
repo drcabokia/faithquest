@@ -13,6 +13,7 @@ import {
 import { Logo } from "@/components/brand";
 import { JourneyArt } from "@/components/journey-art";
 import { Button } from "@/components/ui/button";
+import { LegalLinks } from "@/components/legal-links";
 export default function Home() {
   const account = storageMode() === "supabase";
   return (
@@ -159,6 +160,7 @@ export default function Home() {
       <footer className="landing-footer">
         <Logo />
         <span>Made for a daily walk, at your own pace.</span>
+        <LegalLinks />
         <Link href="/login">
           {account ? "About your account" : "About this demo"}{" "}
           <ArrowRight size={14} />

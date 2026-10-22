@@ -107,7 +107,7 @@ Complete the owner sign-in/privacy smoke checks before adding more testers. The 
 - Automatic encrypted off-site backups and a whole-project recovery rehearsal. Journey JSON exports do not recover Auth identities, provider settings or the entire service.
 - Operational abuse protection, monitoring/alert delivery, log-retention decisions, usage limits and a support process.
 - Independent editorial review for additional quizzes and Balanced. Chronological remains preview-only.
-- Public privacy information, Google branding and eventual domain/public-site arrangements. No privacy/terms page is currently implemented in the app.
+- Google brand/domain verification, operator review and maintenance of the new public privacy/terms information, and eventual public application/domain arrangements. The information-only site and logo exports are documented in [public website guidance](PUBLIC_INFORMATION.md); the test application remains protected.
 
 Pending real-user feature acceptance remains separate from this review. See [implementation status](IMPLEMENTATION_STATUS.md), [security](AUTH_AND_SECURITY.md) and [content provenance](CONTENT.md).
 

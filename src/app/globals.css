@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "../../public/brand/information.css";
 :root {
   color-scheme: light;
   --background: #f7f8f5;
@@ -382,6 +383,9 @@ em {
   color: var(--primary);
   white-space: nowrap;
 }
+.brand img {
+  flex-shrink: 0;
+}
 .brand > span {
   font-size: 1.375rem;
   font-weight: 600;
@@ -417,7 +421,8 @@ em {
 .sidebar .brand > span {
   font-size: 1.4375rem;
 }
-.sidebar .brand svg {
+.sidebar .brand svg,
+.sidebar .brand img {
   width: 38px;
   height: 38px;
 }
@@ -600,6 +605,7 @@ em {
 }
 .app-footer {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 14px;
@@ -2823,6 +2829,7 @@ select {
 }
 .landing-footer {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 24px;
@@ -2832,7 +2839,8 @@ select {
 .landing-footer .brand > span {
   font-size: 1.125rem;
 }
-.landing-footer .brand svg {
+.landing-footer .brand svg,
+.landing-footer .brand img {
   height: 32px;
   width: 32px;
 }
