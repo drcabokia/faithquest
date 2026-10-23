@@ -2847,7 +2847,7 @@ select {
 .landing-footer .brand small {
   font-size: 0.75rem;
 }
-.landing-footer > span {
+.landing-footer .footer-credit {
   font-size: 1rem;
   color: var(--muted);
 }
@@ -3678,7 +3678,7 @@ select {
     gap: 20px;
     padding: 22px 0;
   }
-  .landing-footer > span {
+  .landing-footer .footer-credit > span {
     display: none;
   }
   .landing-footer .brand > span {

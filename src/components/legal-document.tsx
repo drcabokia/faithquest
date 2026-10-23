@@ -3,6 +3,7 @@ import content from "@/content/legal.json";
 import site from "@/content/site.json";
 import { Logo } from "./brand";
 import { LegalLinks } from "./legal-links";
+import { SiteSignature } from "./site-signature";
 
 export function LegalDocument({ kind }: { kind: keyof typeof content }) {
   const document = content[kind];
@@ -69,6 +70,7 @@ export function LegalDocument({ kind }: { kind: keyof typeof content }) {
         </section>
       </main>
       <footer className="legal-footer">
+        <SiteSignature />
         <Link href="/">FaithQuest365 home</Link>
         <LegalLinks />
       </footer>

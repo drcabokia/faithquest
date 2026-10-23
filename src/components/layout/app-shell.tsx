@@ -26,6 +26,7 @@ import { useJourney } from "@/components/journey-provider";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { LegalLinks } from "@/components/legal-links";
+import { SiteSignature } from "@/components/site-signature";
 const navigation = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/reading-plan", label: "My Reading Plan", icon: Map },
@@ -193,7 +194,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           )}
           {children}
           <footer className="app-footer">
-            <span>Read. Discover. Grow in Faith.</span>
+            <span>
+              Read. Discover. Grow in Faith.
+              <SiteSignature />
+            </span>
             <LegalLinks />
             <span>
               {mode === "demo"
