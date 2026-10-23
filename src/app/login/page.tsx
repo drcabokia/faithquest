@@ -3,6 +3,8 @@ import { ArrowRight, ShieldCheck } from "lucide-react";
 import { Logo } from "@/components/brand";
 import { Button } from "@/components/ui/button";
 import { accountsEnabled, storageMode } from "@/lib/supabase/config";
+import { LegalLinks } from "@/components/legal-links";
+import { SiteSignature } from "@/components/site-signature";
 export default async function Login({
   searchParams,
 }: {
@@ -84,9 +86,13 @@ export default async function Login({
           </>
         )}
       </section>
-      <Link href="/" className="text-link">
-        Back to FaithQuest365
-      </Link>
+      <footer className="login-footer">
+        <LegalLinks />
+        <Link href="/" className="text-link">
+          Back to FaithQuest365
+        </Link>
+        <SiteSignature />
+      </footer>
     </main>
   );
 }

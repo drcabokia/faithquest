@@ -3,7 +3,10 @@ import "./globals.css";
 import { storageMode } from "@/lib/supabase/config";
 import { JourneyProvider } from "@/components/journey-provider";
 export const metadata: Metadata = {
-  icons: { icon: "/icon.svg" },
+  icons: {
+    icon: "/brand/faithquest365-mark.svg",
+    apple: "/brand/faithquest365-logo-512.png",
+  },
   title: {
     default: "FaithQuest365 · Read. Discover. Grow in Faith.",
     template: "%s | FaithQuest365",
