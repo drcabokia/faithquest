@@ -10,9 +10,9 @@ Use these values in Google Auth Platform → Branding → App domain. All three 
 
 | Google field                      | Value                                           |
 | --------------------------------- | ----------------------------------------------- |
-| Application home page             | `https://faithquest365-info.vercel.app/`        |
-| Application privacy policy link   | `https://faithquest365-info.vercel.app/privacy` |
-| Application terms of service link | `https://faithquest365-info.vercel.app/terms`   |
+| Application home page             | `https://faithquest365.app/`        |
+| Application privacy policy link   | `https://faithquest365.app/privacy` |
+| Application terms of service link | `https://faithquest365.app/terms`   |
 
 The name is **FaithQuest365**. Google still controls brand/domain verification and publishing; creating these pages does not guarantee approval. A `.vercel.app` hostname does not remove Google's ownership checks. Keep the existing Google-to-Supabase OAuth callback and protected app origin; this information website performs no OAuth itself.
 
