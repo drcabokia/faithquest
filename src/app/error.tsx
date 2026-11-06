@@ -1,18 +1,15 @@
 "use client";
 export default function ErrorPage({
-  reset,
+  retry,
 }: {
-  error: Error & { digest?: string };
-  reset: () => void;
+  error: unknown;
+  retry: () => void;
 }) {
   return (
     <main className="empty-state full-page">
       <h1>A pause along the path.</h1>
-      <p>
-        Something went wrong while opening this page. Your saved demo data has
-        not been cleared.
-      </p>
-      <button className="button button-primary" onClick={reset}>
+      <p>We couldn’t show this page. Please try opening it again.</p>
+      <button className="button button-primary" onClick={() => retry()}>
         Try again
       </button>
       <a href="/dashboard" className="text-link">

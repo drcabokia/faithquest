@@ -1,17 +1,18 @@
 # Reading comfort
 
-Bible Reader offers **Scripture text size** (Standard, Large, Extra large) and **Line spacing** (Comfortable, Relaxed), plus **Reset reading settings**. The controls apply immediately to the passage, including its inline verse paragraphs. Standard keeps the existing 22-pixel base size; Large uses 26 pixels and Extra large 30 pixels at the default browser font scale. Browser zoom still works.
+**Profile & Settings → Reading comfort** offers **Scripture text size** (Standard, Large, Extra large) and **Line spacing** (Comfortable, Relaxed), plus **Reset reading settings**. The controls apply immediately to Bible Reader, including inline verse paragraphs. The reader has a **Reading settings** link to this section; **Open Bible Reader** returns to the saved reading position. These device controls are separate from the account form and do not require **Save preferences**. Standard keeps the existing 22-pixel base size; Large uses 26 pixels and Extra large 30 pixels at the default browser font scale. Browser zoom still works.
 
 ## Try it without developer tools
 
-1. Open **Bible Reader** and wait for a chapter to load. In **Reading comfort**, choose **Extra large** and **Relaxed**. The Scripture words should become larger and more widely spaced. Verse numbers, saved-verse marks and the words themselves should remain available.
-2. Open **Next chapter**, visit **My Reading Plan**, then return to **Bible Reader**. Reload the page. Both choices should remain selected.
-3. Open FaithQuest in another tab in the same browser profile at the same address. Its reader should use the same settings. Choose **Reset reading settings** there: both tabs should return to Standard and Comfortable.
-4. Try the controls using Tab and the arrow keys. Focus should be visible, and you should be able to reach both selectors and the reset button without a mouse.
-5. Try a narrow phone window with Extra large and Relaxed. The controls and Scripture should wrap within the page; you should not need to scroll sideways.
-6. Confirm that changing the controls alone does not complete a chapter, save/remove a verse or award XP. Normal reading and completion controls should still work.
+1. Open **Bible Reader**, then select **Reading settings**. It should open **Profile & Settings** at **Reading comfort**. There should be one set of text-size/spacing controls in Settings and none above the passage.
+2. Choose **Extra large** and **Relaxed**. Select **Open Bible Reader**. The same passage should use larger, more widely spaced Scripture, with its words, verse numbers and saved-verse marks retained.
+3. Open **Next chapter**, then revisit **Reading settings**. Reload Settings. Both choices should remain selected. The **Save preferences** button belongs to journey preferences; reading comfort applies immediately.
+4. Open FaithQuest in another tab at the same address. Change a reading setting or use **Reset reading settings** in that tab's Settings. The first tab's controls and open reader should update too.
+5. At phone width, check Settings controls and the reader links fit without horizontal scrolling. In the reader, verify Extra large text wraps and chapter completion remains available. Try both light and dark appearance.
+6. Use Tab/Shift+Tab and the arrow keys to change the selects. Focus should be visible. **Reset reading settings** should restore Standard/Comfortable in both Settings and the reader.
+7. If this browser blocks storage, Settings should explain that choices apply for this visit. Internal navigation to the reader and back must retain the in-memory choice. A retry through a setting change/reset should clear the warning once storage is available.
 
-Report whether these checks pass; no screenshot of personal data or special account is needed. User acceptance remains pending until reported.
+These checks need no second account or developer tools. Use **Profile & Settings** from navigation to reach the controls directly.
 
 ## Where settings are remembered
 

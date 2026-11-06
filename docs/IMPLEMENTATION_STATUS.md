@@ -2,21 +2,25 @@
 
 As of **22 October 2026**:
 
-| Phase                     | Outcome                                                                                                                                                                                               |
-| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Planning and setup        | Complete; documented architecture, strict Next.js/React application, checks and CI                                                                                                                    |
-| Functional demo           | Complete; canonical/Balanced 365-day plans, full WEB reader, reading position, XP, streaks, quizzes, reflections, achievements, settings/export                                                       |
-| Senior readability        | Complete; larger supporting text, completion/XP labels, badge descriptions, responsive wrapping and improved contrast                                                                                 |
-| Database commands         | Implemented; nineteen migrations, canonical/Balanced seeds, transactional rewards, reviewed quizzes/private solutions, server-earned achievements                                                     |
-| Authenticated integration | Enabled for local development; Google sign-in, SSR clients, session proxy, authenticated API and separate account persistence                                                                         |
-| Local validation          | 249 automated tests pass, including embedded PostgreSQL isolation, auth/export boundaries, private prayers and reading consistency; lint/types and demo/account builds passed                         |
-| Hosted acceptance         | Eighteen migrations confirmed; hosted isolation/rewards and user-observed login, persistence, two-account isolation, sign-out, offline retry and focus refresh passed; extended session checks remain |
+| Phase                     | Outcome                                                                                                                                                                |
+| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Planning and setup        | Complete; documented architecture, strict Next.js/React application, checks and CI                                                                                     |
+| Functional demo           | Complete; canonical/Balanced 365-day plans, full WEB reader, reading position, XP, streaks, quizzes, reflections, achievements, settings/export                        |
+| Senior readability        | Complete; larger supporting text, completion/XP labels, badge descriptions, responsive wrapping and improved contrast                                                  |
+| Database commands         | Implemented; nineteen migrations, canonical/Balanced seeds, transactional rewards, reviewed quizzes/private solutions, server-earned achievements                      |
+| Authenticated integration | Enabled locally and in a protected Vercel test project; Google sign-in, SSR clients, session proxy, authenticated API and separate account persistence                 |
+| Local and CI validation   | 255 automated tests and 107 browser tests pass in GitHub CI; lint, application/Edge types and production build passed                                                  |
+| Hosted acceptance         | Nineteen migrations confirmed; prior local-origin account acceptance and new Vercel technical checks passed; hosted Google/session/privacy acceptance remains separate |
 
 ## Current project connection
 
-The selected development project is `https://uiozbdsimvsvxjpalsro.supabase.co`. Its publishable key is configured only in ignored `.env.local`. The authenticated Supabase integration is connected. All nineteen migrations are applied, the public catalogue contains 66 books, and rollback-only hosted isolation/reward checks passed without resetting the database.
+The selected development project is `https://uiozbdsimvsvxjpalsro.supabase.co`. Its publishable key is configured in ignored `.env.local` and the protected Vercel test project's encrypted Production environment. The authenticated Supabase integration is connected. All nineteen migrations are applied, the public catalogue contains 66 books, and rollback-only hosted isolation/reward checks passed without resetting the database.
 
-Google is enabled, and this workspace uses `supabase` storage with development account access enabled. The user completed browser checks for initial sign-in, reading/reflection/quiz persistence, sign-out, independent-browser recovery, two-account isolation, offline saves and online retry, focus refresh, and all-device sign-out with saved-data recovery. Read-only database queries confirmed the separate account totals and absence of duplicate rewards without reading journal text. These results do not establish production readiness or replace the remaining token-expiry, direct revoked-token API and committed-save/lost-response checks. See [the integration evidence](SUPABASE_INTEGRATION.md). Google branding verification and public hosting are deferred until a domain/public website is available.
+Google is enabled, and this workspace uses `supabase` storage with development account access enabled. The user completed browser checks for initial sign-in, reading/reflection/quiz persistence, sign-out, independent-browser recovery, two-account isolation, offline saves and online retry, focus refresh, and all-device sign-out with saved-data recovery. Read-only database queries confirmed the separate account totals and absence of duplicate rewards without reading journal text. These results do not establish production readiness or replace the remaining token-expiry, direct revoked-token API and committed-save/lost-response checks. See [the integration evidence](SUPABASE_INTEGRATION.md). An information-only website is now public, while the test application remains protected; Google brand/domain verification and public application launch remain separate.
+
+## Public information and branding
+
+The information-only website at `https://faithquest365-info.vercel.app` now provides the homepage, Privacy Policy, Terms of Service and SVG/PNG logo downloads needed for Google's branding form. Operator/contact details were supplied by the owner. This static project contains no account code or environment variables; the authenticated test app remains protected and now has matching legal routes, footer/login links and the shared logo. Source `ce9b5a1` passed full CI and is deployed to both projects. Public URLs, account-route separation and private-app protection were verified. Google verification and operator maintenance/legal review remain separate from technical publication. See [public website guidance](PUBLIC_INFORMATION.md).
 
 ## What the account implementation enforces
 
@@ -35,7 +39,13 @@ The user selected this next development milestone. Account-service outages are n
 3. Confirm account deletion with a disposable Google test account after the current renewal test; review backup/restore operations, gateway/IP abuse protection, alerts and production settings before enabling public production accounts.
 4. Add the public domain/site and complete Google branding verification at the later stage requested by the user.
 
-Follow [the integration runbook](SUPABASE_INTEGRATION.md) for exact commands and acceptance criteria. No paid AI service or Vercel deployment has been enabled. Recovery codes remain unread and excluded from Git; environment files and downloaded OAuth credentials are excluded from Git.
+Follow [the integration runbook](SUPABASE_INTEGRATION.md) for exact commands and acceptance criteria. The protected Hobby test deployment is recorded below; no paid service was enabled. Recovery codes remain unread and excluded from Git; environment files and downloaded OAuth credentials are excluded from Git.
+
+## Protected external test release
+
+The dedicated `faithful-seeds/faithquest365-testing` project serves `https://faithquest365-testing.vercel.app` with Vercel Authentication for **All Deployments** and Node.js 22.x. Validated commit `7d947186ae6a58f0cd5b49247c8a793a6c11480a` is deployed and READY. Anonymous domain probes redirect to Vercel sign-in; authorized service health and account login pass, while journey/export APIs reject requests without a FaithQuest session. The existing Supabase development backend is deliberately shared. No automatic Git deployment, external tester invitation, paid upgrade or new migration was enabled; `main` remains unchanged.
+
+The owner confirmed configuring the exact Supabase hosted callback and completing Google sign-in on the protected stable hostname, reaching the dashboard. Hosted persistence/privacy and extended session acceptance remain pending before expanding the pilot. See [deployment evidence and the testing sequence](DEPLOYMENT.md) and [CI/hosted validation](VALIDATION.md).
 
 ## Published milestones
 
@@ -178,3 +188,19 @@ Journal edits now use destination-generated UUID revisions checked inside the ac
 Migration `20261022054818_journal_save_protection.sql` is applied as the nineteenth matching hosted/local migration. Existing content/category/timestamp fingerprints are unchanged; hosted category/privacy and conflict drills pass inside BEGIN/ROLLBACK. Advisors introduce no new findings: intentional authenticated command-definer findings decrease from 19 to 18 after retiring two unguarded RPC grants and adding the guarded one. Automatic recovery never replays a mutation. Export version 1 and destination-preserving restore remain compatible. [Manual acceptance](JOURNAL_TOOLS.md#acceptance-checks-for-save-protection) is pending; earlier operational/editorial gates remain open.
 
 Verification: the full application check passes **255 automated tests in twenty-two files**, lint, strict types, frozen Edge checking and production builds. All **32 demo browser scenarios** pass. All **69 unique account browser scenarios** pass across the complete run and focused reruns; an initial local fixture connection reset on an unchanged reading-plan case passed on rerun without source changes. The additional journal case covers a conflict whose follow-up read fails. Desktop/phone conflict review was inspected in both themes with 320/390-pixel wrapping checks. The normal account build is restored and the user's development server remains healthy; original generated-file changes remain untouched.
+
+## Dashboard reading rhythm and comfort settings — 22 October 2026
+
+Reading Rhythm now opens as a compact summary on Dashboard and My Reading Plan. Existing eligibility/catch-up state supplies a short status; a native keyboard-accessible disclosure reveals the calendar, reading link and grace tools. Repeated status/policy wording is removed, and closing the disclosure cancels an unconfirmed dialog. No saved reading, grace, reward or backup policy changes.
+
+Reading comfort moves to a separate section in Profile & Settings with immediate device-only updates. A small Reading settings link in the reader opens that section, and Open Bible Reader returns through the saved position. There is one set of controls; the account preference Save button remains separate. Mobile links, form layout, keyboard focus and preference synchronization are included in browser verification. [Rhythm checks](READING_CONSISTENCY.md) and [comfort checks](READING_COMFORT.md) are updated; user acceptance is pending.
+
+Verification: 255 automated tests across twenty-two files, lint, strict app/Edge checks and production builds pass. All fourteen targeted browser cases pass (eight account and six production-demo). The checks cover keyboard disclosure behavior, cancellation of hidden unconfirmed dialogs, unchanged grace/catch-up actions, settings-to-reader navigation, cross-tab preference updates, reset and blocked/invalid storage. The initial Windows unit timeouts and one unfinished account navigation passed on rerun without weakening the existing safeguards. See [validation evidence](VALIDATION.md#compact-dashboard-rhythm-and-reading-settings-validation).
+
+## Compact saved verses and selected practice — 22 October 2026
+
+Study Tools now uses a compact list with Scripture previews and private-note/draft indicators. Expand a row for the full verse, contextual reading, note editor and removal. Optional instructions sit under How practice works; per-card hide/show is consolidated into guided practice. Select one to five verses across filters/pages, with a visible selected-reference queue, deselection and Clear selection. Practice follows selection order rather than automatically choosing the first matches.
+
+Returning from practice preserves search/book/order/page, expanded rows, selected references and private drafts, with keyboard focus restored. Continue note reopens a collapsed or filtered draft and focuses writing. Leaving the route or reloading clears temporary selections/recall. Existing save, concurrent-note protection, export/restore, XP and account privacy behavior remains unchanged. No migration or dependency change is needed. [Manual checks](STUDY_TOOLS.md) cover the revised flow; user acceptance is pending.
+
+Verification: the full application check passes 255 automated tests across twenty-two files, lint, strict app/Edge types and the account production build. All twenty-one unique targeted browser scenarios pass across the main runs and focused follow-ups: twelve account and nine production-demo. The initial book-filter assumption and parallel-tab navigation setup are corrected without relaxing data-protection assertions. Desktop and 320-pixel light/dark views were inspected; [validation evidence](VALIDATION.md#compact-saved-verse-list-and-selected-practice-validation) records the checks and remaining limits.

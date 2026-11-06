@@ -13,6 +13,10 @@ import {
 import { Logo } from "@/components/brand";
 import { JourneyArt } from "@/components/journey-art";
 import { Button } from "@/components/ui/button";
+import { LegalLinks } from "@/components/legal-links";
+import { SiteSignature } from "@/components/site-signature";
+import { publicMetadata } from "@/lib/public-metadata";
+export const metadata = publicMetadata("/", "A daily walk in the Word");
 export default function Home() {
   const account = storageMode() === "supabase";
   return (
@@ -24,7 +28,7 @@ export default function Home() {
         <Logo />
         <nav aria-label="Landing navigation">
           <a href="#the-journey">The journey</a>
-          <a href="#features">Why FaithQuest?</a>
+          <a href="#features">Why FaithQuest365?</a>
           <Button asChild variant="secondary" size="sm">
             <Link href="/login">
               Get started <ArrowRight size={15} />
@@ -158,7 +162,11 @@ export default function Home() {
       </main>
       <footer className="landing-footer">
         <Logo />
-        <span>Made for a daily walk, at your own pace.</span>
+        <div className="footer-credit">
+          <span>Made for a daily walk, at your own pace.</span>
+          <SiteSignature />
+        </div>
+        <LegalLinks />
         <Link href="/login">
           {account ? "About your account" : "About this demo"}{" "}
           <ArrowRight size={14} />

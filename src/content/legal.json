@@ -1,0 +1,204 @@
+{
+  "privacy": {
+    "title": "Privacy Policy",
+    "description": "How FaithQuest365 handles your account, reading progress and private reflections.",
+    "intro": "FaithQuest365 is a Bible reading and reflection service. This policy explains the information used by our public information website and our account-based test application, and the choices you have about it.",
+    "sections": [
+      {
+        "id": "information",
+        "title": "Information we collect",
+        "paragraphs": [
+          "When you choose Continue with Google, Google and our authentication provider, Supabase, provide and store your Google account identifier, email address and basic profile information, including your name and profile picture if supplied. We use your name to suggest an initial display name, which you can change in Settings. We do not receive your Google password.",
+          "Google sign-in requests only the openid, email and profile permissions. FaithQuest365 does not request access to your Gmail messages, Google Drive files, contacts or calendar."
+        ],
+        "items": [
+          "Account preferences, including display name, time zone, journey start date, theme and selected reading plan.",
+          "Reading progress and dates, quiz answers, participation points, achievements, challenges and optional grace dates.",
+          "Content you choose to save, including journal entries and their categories, prayer requests and follow-ups, saved verse references and private notes.",
+          "Private fellowship group details and memberships when you choose to create or join a group.",
+          "Session and security information needed to authenticate requests, limit abuse and recover from errors. Hosting and authentication providers may process IP addresses, browser/device information, request times and technical logs.",
+          "Messages and contact details you send when requesting support."
+        ]
+      },
+      {
+        "id": "purposes",
+        "title": "How we use information",
+        "paragraphs": [
+          "We use this information to sign you in, keep your journey associated with your account, synchronize saved progress across devices, provide the features you select, protect accounts, investigate service problems and respond to your requests.",
+          "We do not sell your personal information, use it for targeted advertising, or send private journal or prayer content to an AI service for training. Our use and transfer of information received from Google APIs follows the Google API Services User Data Policy, including its Limited Use requirements where applicable."
+        ],
+        "links": [
+          {
+            "label": "Google API Services User Data Policy",
+            "href": "https://developers.google.com/terms/api-services-user-data-policy"
+          }
+        ]
+      },
+      {
+        "id": "private-content",
+        "title": "Your private content and optional sharing",
+        "paragraphs": [
+          "Saved journals, prayer requests, follow-ups and verse notes are private to your account within the application. Other readers and fellowship group members cannot browse these entries. Joining a fellowship group is optional; its participants can see the group information, members' display names and rounded reading-plan completion percentages described when you join. Joining does not share your journal, prayers or private notes.",
+          "Your entries may reveal religious beliefs or other sensitive information. Only enter information you are comfortable storing with this service, and avoid including another person's identifying or sensitive information without their permission. Private account controls are not end-to-end encryption. The operator and authorized service providers may need limited access to operate the service, resolve a support request, investigate abuse or meet a legal obligation."
+        ]
+      },
+      {
+        "id": "providers",
+        "title": "Service providers and disclosures",
+        "paragraphs": [
+          "We use Google for sign-in, Supabase for authentication and account data storage, and Vercel for website/application hosting and access protection. These providers process information needed to deliver their services. The protected test application also requires Vercel access, which is separate from your FaithQuest365 Google sign-in.",
+          "Information may also be disclosed when you ask us to do so, when reasonably necessary to protect accounts or investigate misuse, or when required by applicable law. Providers may process information in countries other than your own; choosing a database region does not mean all support, security and service metadata stays in that region."
+        ],
+        "links": [
+          {
+            "label": "Google Privacy Policy",
+            "href": "https://policies.google.com/privacy"
+          },
+          {
+            "label": "Supabase Privacy Notice",
+            "href": "https://supabase.com/privacy"
+          },
+          {
+            "label": "Vercel Privacy Policy",
+            "href": "https://vercel.com/legal/privacy-policy"
+          }
+        ]
+      },
+      {
+        "id": "browser-storage",
+        "title": "Cookies, browser storage and drafts",
+        "paragraphs": [
+          "Account sign-in uses cookies or similar authentication storage to maintain and refresh your session. Vercel may also set cookies for its deployment access check. We do not add advertising trackers or third-party visitor analytics to the public information pages.",
+          "Reading comfort preferences and reader position may be remembered in this browser. Browser-only demo mode stores its journey in local storage on that device; it is separate from an authenticated account and is not automatically uploaded or imported. Clear that browser's site data to remove its demo data and preferences.",
+          "In account mode, unsaved journal, prayer and verse-note drafts are held temporarily in application memory while you navigate. They are not included in exports as saved entries, and a reload or closing the page can lose them. Account progress and private entries are not intentionally persisted in local storage as a fallback. Downloaded exports are separate files under your control."
+        ]
+      },
+      {
+        "id": "retention",
+        "title": "Retention and account deletion",
+        "paragraphs": [
+          "We keep saved account information while your account remains active, unless you delete individual content or your account. In Profile & Settings, you can export your account data and review account deletion. Deletion requires explicit confirmation and a recent Google sign-in; a failed or uncertain request must not be treated as a completed deletion.",
+          "After successful deletion, your live FaithQuest365 profile and associated personal journey data are removed, your memberships are removed and groups you own are closed. Other members keep their own personal journeys. This does not delete your Google account. Signing in again creates a new FaithQuest365 account.",
+          "Copies you downloaded or shared are not erased by account deletion. Limited technical, security or backup records held by service providers may remain under their retention processes or where required by law; we do not promise immediate removal from every provider log or backup. The test service does not guarantee that lost or deleted entries can be recovered."
+        ]
+      },
+      {
+        "id": "choices",
+        "title": "Your choices and requests",
+        "paragraphs": [
+          "You can update available profile preferences, edit or remove supported personal entries, export saved account data, leave a fellowship group, sign out of all devices or delete your account through Settings. You can also remove FaithQuest365's connection in your Google Account; removing that connection does not by itself delete your saved FaithQuest365 account.",
+          "Depending on the law that applies to you, you may have rights to access, correct, delete or obtain a copy of your information, or to object to or restrict certain processing. Contact the operator using the address below. We may need to verify your identity before acting. Please do not email passwords, sign-in codes or a complete private journal."
+        ],
+        "links": [
+          {
+            "label": "Manage your Google Account connections",
+            "href": "https://myaccount.google.com/connections"
+          }
+        ]
+      },
+      {
+        "id": "security",
+        "title": "Security and test-release limitations",
+        "paragraphs": [
+          "We use HTTPS, authenticated requests and account-specific data access controls. No internet service can guarantee absolute security. Protect your Google and Vercel accounts, sign out on shared devices, keep exports private and report suspected unauthorized access promptly.",
+          "FaithQuest365 is currently being tested. Its hosted test application uses the existing development backend, so local development and hosted testing can access the same account records. Use sample content during testing and keep your own private exports of anything you want to retain."
+        ]
+      },
+      {
+        "id": "children",
+        "title": "Children and consent",
+        "paragraphs": [
+          "FaithQuest365 is not directed to young children. Use of the account service requires the ability to provide valid consent or the permission required under the law that applies to you. If you believe a child has supplied personal information without the required permission, contact us so we can investigate and address it."
+        ]
+      },
+      {
+        "id": "changes",
+        "title": "Changes to this policy",
+        "paragraphs": [
+          "We will update the date on this page when this policy changes. Material changes to how we use personal information will be communicated through the service or another appropriate channel. If a new use requires your consent, we will seek it before that use begins."
+        ]
+      }
+    ]
+  },
+  "terms": {
+    "title": "Terms of Service",
+    "description": "The terms for using FaithQuest365's Bible reading, reflection and study tools.",
+    "intro": "These terms govern use of FaithQuest365's information website and Bible reading application. By using the service, you agree to these terms. If you do not agree, please stop using the service. The Privacy Policy explains how personal information is handled.",
+    "sections": [
+      {
+        "id": "service",
+        "title": "About the service",
+        "paragraphs": [
+          "FaithQuest365 provides Bible reading plans, Scripture reading, quizzes, personal reflection tools, saved verses, optional reading challenges and private fellowship groups. The application is currently a test release. Features, content and availability may change as development continues.",
+          "The service supports personal study and reflection. Participation points, streaks and achievements are encouragement tools, not a measure of spiritual worth. Quizzes, plan ordering and study material can contain mistakes or require further editorial review."
+        ]
+      },
+      {
+        "id": "accounts",
+        "title": "Accounts and access",
+        "paragraphs": [
+          "You must be able to enter into these terms, or have the permission and supervision required under applicable law. Provide accurate information where requested and protect the accounts and devices you use to sign in. Do not share session cookies, sign-in codes, invitation codes or private exports publicly.",
+          "Google sign-in is used for FaithQuest365 accounts. Access to the protected test deployment may also require separate Vercel approval. Access is limited to approved testing and does not grant authority to invite others, administer the service or access another person's records."
+        ]
+      },
+      {
+        "id": "acceptable-use",
+        "title": "Respectful and permitted use",
+        "paragraphs": [
+          "Use the service lawfully and respectfully. In particular:"
+        ],
+        "items": [
+          "Do not attempt to bypass access controls, impersonate another person or read, alter or delete someone else's data.",
+          "Do not introduce malware, overload the service, scrape private information or automate abusive requests.",
+          "Do not submit unlawful, threatening or harassing content, or personal information about others without the necessary permission.",
+          "Use fellowship groups only with the participants' consent. Keep group invitations private and respect a member's decision to leave."
+        ]
+      },
+      {
+        "id": "your-content",
+        "title": "Your entries and responsibility for backups",
+        "paragraphs": [
+          "You retain any rights you have in your journal entries, prayers, notes and other original content. You give the operator permission to store, process, back up and display that content only as needed to provide the features you choose, operate the service and meet legal obligations, as described in the Privacy Policy.",
+          "You are responsible for what you submit and for having permission to include another person's information. Keep private exports of information you want to retain. Test-service availability, data preservation and recovery are not guaranteed. Unsaved drafts may be lost when you reload or leave the application."
+        ]
+      },
+      {
+        "id": "scripture",
+        "title": "Scripture and other materials",
+        "paragraphs": [
+          "The Scripture reader uses the World English Bible Classic text, which its publisher dedicates to the public domain. The World English Bible name identifies that translation; it must not be used to describe altered wording as though it were the original translation.",
+          "Other service materials, software and the FaithQuest365 identity may be subject to separate rights or licenses. These terms do not give you ownership of them. Third-party links and services remain subject to their own terms."
+        ],
+        "links": [
+          {
+            "label": "World English Bible copyright information",
+            "href": "https://ebible.org/eng-web/copyright.htm"
+          }
+        ]
+      },
+      {
+        "id": "availability",
+        "title": "Availability and limitations",
+        "paragraphs": [
+          "We aim to provide a useful service, but do not promise uninterrupted access, error-free content or suitability for a particular purpose. Test features may be changed or withdrawn. Nothing in the service replaces professional medical, mental-health, legal or other qualified advice, or emergency assistance.",
+          "To the extent permitted by applicable law, the service is provided as available without additional warranties, and the operator is not responsible for indirect or consequential loss arising from its use or unavailability. These terms do not exclude or limit liability or consumer rights that cannot lawfully be excluded or limited."
+        ]
+      },
+      {
+        "id": "ending-use",
+        "title": "Ending access and deleting an account",
+        "paragraphs": [
+          "You can stop using FaithQuest365 at any time. Account export and deletion controls are available in Profile & Settings. Account deletion is permanent for live personal journey records and does not remove copies you downloaded or shared, or delete your Google account.",
+          "We may restrict or suspend access when reasonably necessary to address misuse, protect users, comply with law or maintain the test service. Where practicable, we will explain the reason and provide a way to contact us."
+        ]
+      },
+      {
+        "id": "updates",
+        "title": "Changes and questions",
+        "paragraphs": [
+          "We may update these terms as the service develops. The latest version and its date will be available on this page. We will communicate material changes through the service or another appropriate channel. Contact the operator below with questions or concerns; nothing here limits rights provided by applicable law."
+        ]
+      }
+    ]
+  }
+}

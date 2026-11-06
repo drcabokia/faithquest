@@ -44,10 +44,27 @@ vi.mock("@supabase/ssr", () => ({
   createServerClient: (
     _url: unknown,
     _key: unknown,
-    options: { cookies: { setAll: (items: typeof mocks.cookies) => void } },
+    options: {
+      cookies: {
+        setAll: (
+          items: typeof mocks.cookies,
+          headers?: Record<string, string>,
+        ) => void;
+      };
+    },
   ) => ({
     rpc: () => mocks.session(),
     auth: {
+      exchangeCodeForSession: async (code: string) => {
+        if (mocks.cookies.length)
+          options.cookies.setAll(mocks.cookies, {
+            "Cache-Control": "private, no-store, max-age=0",
+            Pragma: "no-cache",
+            Expires: "0",
+          });
+        return mocks.exchange(code);
+      },
+      getUser: mocks.getUser,
       getClaims: async () => {
         if (mocks.cookies.length) options.cookies.setAll(mocks.cookies);
         return mocks.claims();
@@ -731,6 +748,100 @@ describe("Google OAuth and session refresh", () => {
       "https://faithquest.test/login?error=signin",
     );
   });
+  it("copies every exchanged cookie chunk and its attributes onto the dashboard redirect", async () => {
+    mocks.exchange.mockResolvedValue({ error: null });
+    mocks.cookies = [
+      {
+        name: "sb-session.0",
+        value: "synthetic-chunk-one",
+        options: {
+          path: "/",
+          secure: true,
+          httpOnly: true,
+          sameSite: "lax",
+          maxAge: 3600,
+        },
+      },
+      {
+        name: "sb-session.1",
+        value: "synthetic-chunk-two",
+        options: {
+          path: "/",
+          secure: true,
+          httpOnly: true,
+          sameSite: "lax",
+          maxAge: 3600,
+        },
+      },
+      {
+        name: "sb-session-code-verifier",
+        value: "",
+        options: { path: "/", maxAge: 0 },
+      },
+    ];
+    const response = await callback(
+      new NextRequest("https://faithquest.test/auth/callback?code=fixture"),
+    );
+    expect(response.headers.get("location")).toBe(
+      "https://faithquest.test/dashboard",
+    );
+    for (const cookie of mocks.cookies)
+      expect(response.cookies.get(cookie.name)).toMatchObject({
+        name: cookie.name,
+        value: cookie.value,
+        ...cookie.options,
+      });
+    expect(response.headers.get("cache-control")).toContain("no-store");
+    expect(response.headers.get("pragma")).toBe("no-cache");
+    expect(response.headers.get("expires")).toBe("0");
+  });
+  it("preserves PKCE cleanup cookies on a failed exchange and never accepts a caller redirect", async () => {
+    mocks.exchange.mockResolvedValue({
+      error: new Error("Synthetic rejected code"),
+    });
+    mocks.cookies = [
+      {
+        name: "sb-session-code-verifier",
+        value: "",
+        options: { path: "/", maxAge: 0 },
+      },
+    ];
+    const response = await callback(
+      new NextRequest(
+        "https://faithquest.test/auth/callback?code=rejected&next=https://attacker.test",
+      ),
+    );
+    expect(response.headers.get("location")).toBe(
+      "https://faithquest.test/login?error=signin",
+    );
+    expect(response.cookies.get("sb-session-code-verifier")?.maxAge).toBe(0);
+    expect(mocks.getUser).not.toHaveBeenCalled();
+  });
+  it("requires verified identity after exchange and does not exchange a missing code", async () => {
+    mocks.exchange.mockResolvedValue({ error: null });
+    mocks.getUser.mockResolvedValue({
+      data: { user: null },
+      error: new AuthApiError(
+        "Synthetic identity rejection",
+        401,
+        "session_not_found",
+      ),
+    });
+    expect(
+      (
+        await callback(
+          new NextRequest("https://faithquest.test/auth/callback?code=fixture"),
+        )
+      ).headers.get("location"),
+    ).toBe("https://faithquest.test/login?error=signin");
+    mocks.exchange.mockClear();
+    expect(
+      (
+        await callback(new NextRequest("https://faithquest.test/auth/callback"))
+      ).headers.get("location"),
+    ).toBe("https://faithquest.test/login?error=signin");
+    expect(mocks.exchange).not.toHaveBeenCalled();
+  });
   it("retains refreshed cookies when redirecting an unauthenticated page", async () => {
     mocks.claims.mockResolvedValue({
       data: null,
@@ -800,7 +911,15 @@ describe("Google OAuth and session refresh", () => {
     expect(response.headers.get("location")).toBeNull();
     expect(response.cookies.get("sb-refresh")?.value).toBe("retained-token");
     expect(response.headers.get("cache-control")).toContain("no-store");
-    expect(await response.text()).not.toContain("Private Reader");
+    expect(response.headers.get("content-type")).toContain("text/html");
+    expect(response.headers.get("retry-after")).toBe("5");
+    const html = await response.text();
+    expect(html).toContain("/brand/faithquest365-mark.svg");
+    expect(html).toContain("Try again</button>");
+    expect(html).toContain(
+      `Reference: ${response.headers.get("x-request-id")}`,
+    );
+    expect(html).not.toContain("Private Reader");
   });
   it("keeps a thrown proxy connection failure retryable", async () => {
     mocks.claims.mockRejectedValue(new TypeError("fetch failed"));

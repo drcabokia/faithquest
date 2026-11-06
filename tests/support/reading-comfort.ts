@@ -1,10 +1,33 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 
 const KEY = "faithquest365.reader-preferences.v1";
+const comfort = (page: Page) =>
+  page.getByRole("region", { name: "Reading comfort", exact: true });
+const size = (page: Page) =>
+  comfort(page).getByLabel("Scripture text size", { exact: true });
+const spacing = (page: Page) =>
+  comfort(page).getByLabel("Line spacing", { exact: true });
+const reset = (page: Page) =>
+  comfort(page).getByRole("button", {
+    name: "Reset reading settings",
+    exact: true,
+  });
+const settings = async (page: Page) => {
+  await page
+    .getByRole("link", { name: "Reading settings", exact: true })
+    .click();
+  await expect(page).toHaveURL(/\/profile#reading-comfort$/);
+};
+const reader = async (page: Page) => {
+  await comfort(page)
+    .getByRole("link", { name: "Open Bible Reader", exact: true })
+    .click();
+  await expect(page).toHaveURL(/\/bible$/);
+};
 
-// Run the same browser behavior against both production demo and isolated accounts.
+// The controls live only in Settings; Scripture still subscribes on the reader.
 export function readingComfortTests() {
-  test("reading comfort persists, responds to keyboard and synchronizes tabs without saving progress", async ({
+  test("reading comfort in settings persists, supports keyboard and synchronizes tabs without saving progress", async ({
     page,
     context,
   }) => {
@@ -12,79 +35,88 @@ export function readingComfortTests() {
     await expect(
       page.getByRole("button", { name: "Mark chapter as read", exact: true }),
     ).toBeEnabled();
-    const comfort = page.getByRole("region", {
-      name: "Reading comfort",
-      exact: true,
-    });
-    const size = comfort.getByLabel("Scripture text size", { exact: true });
-    const spacing = comfort.getByLabel("Line spacing", { exact: true });
-    const source = await page.locator("#verse-1").innerText();
-    const baseline = await page.evaluate(() =>
-      localStorage.getItem("faithquest365.demo.v1"),
-    );
-    const posts: string[] = [];
-    page.on("request", (request) => {
-      if (request.method() === "POST") posts.push(request.url());
-    });
+    await expect(comfort(page)).toHaveCount(0);
     await expect(page.locator(".scripture-text")).toHaveCSS(
       "font-size",
       "22px",
     );
-    await size.focus();
-    await expect(size).toBeFocused();
-    await expect(size).toHaveCSS("outline-style", "solid");
-    await size.press("End");
-    await size.press("Enter");
-    await expect(size).toHaveValue("extra-large");
-    await spacing.selectOption("relaxed");
-    await expect(page.locator(".scripture-text")).toHaveCSS(
-      "font-size",
-      "30px",
+    const source = await page.locator("#verse-1").innerText();
+    const baseline = await page.evaluate(() =>
+      localStorage.getItem("faithquest365.demo.v1"),
     );
-    // The inline verse paragraph previously fixed its own line height. Check the text itself.
-    await expect(page.locator("#verse-1")).toHaveCSS("line-height", "67.5px");
-    await expect(page.locator("#verse-1")).toHaveText(source);
+    await settings(page);
+    await expect(page).toHaveURL(/\/profile#reading-comfort$/);
+    await expect(comfort(page)).toBeInViewport();
+    await expect(comfort(page)).toHaveCount(1);
+    const posts: string[] = [];
+    page.on("request", (request) => {
+      if (request.method() === "POST") posts.push(request.url());
+    });
+    await size(page).focus();
+    await expect(size(page)).toBeFocused();
+    await expect(size(page)).toHaveCSS("outline-style", "solid");
+    await size(page).press("End");
+    await size(page).press("Enter");
+    await expect(size(page)).toHaveValue("extra-large");
+    await spacing(page).selectOption("relaxed");
     expect(posts).toEqual([]);
     expect(
       await page.evaluate(() => localStorage.getItem("faithquest365.demo.v1")),
     ).toBe(baseline);
-
+    await reader(page);
+    await expect(comfort(page)).toHaveCount(0);
+    await expect(page.locator(".reader-title h2")).toHaveText("Genesis 1");
+    await expect(page.locator(".scripture-text")).toHaveCSS(
+      "font-size",
+      "30px",
+    );
+    await expect(page.locator("#verse-1")).toHaveCSS("line-height", "67.5px");
+    await expect(page.locator("#verse-1")).toHaveText(source);
     await page.getByRole("link", { name: "Next chapter", exact: true }).click();
     await expect(page.locator(".reader-title h2")).toHaveText("Genesis 2");
     await expect(page.locator(".scripture-text")).toHaveCSS(
       "font-size",
       "30px",
     );
-    await page
-      .getByRole("navigation", { name: "Main navigation" })
-      .getByRole("link", { name: "My Reading Plan", exact: true })
-      .click();
-    await page
-      .getByRole("navigation", { name: "Main navigation" })
-      .getByRole("link", { name: "Bible Reader", exact: true })
-      .click();
-    await expect(size).toHaveValue("extra-large");
+    await settings(page);
+    await expect(size(page)).toHaveValue("extra-large");
     await page.reload();
-    await expect(size).toHaveValue("extra-large");
-    await expect(spacing).toHaveValue("relaxed");
-
+    await expect(size(page)).toHaveValue("extra-large");
+    await expect(spacing(page)).toHaveValue("relaxed");
     const other = await context.newPage();
     await other.goto("/bible?day=1&book=GEN&chapter=1");
-    await expect(
-      other.getByLabel("Scripture text size", { exact: true }),
-    ).toHaveValue("extra-large");
-    await other
-      .getByRole("button", { name: "Reset reading settings", exact: true })
-      .click();
-    await expect(size).toHaveValue("standard");
-    await expect(spacing).toHaveValue("comfortable");
+    await expect(other.locator(".scripture-text")).toHaveCSS(
+      "font-size",
+      "30px",
+    );
+    await reset(page).click();
+    await expect(other.locator(".scripture-text")).toHaveCSS(
+      "font-size",
+      "22px",
+    );
+    await expect(other.locator("#verse-1")).toHaveCSS("line-height", "42.9px");
+    await other.goto("/profile#reading-comfort");
+    await size(other).selectOption("large");
+    await expect(size(page)).toHaveValue("large");
+    await reset(other).click();
+    await expect(size(page)).toHaveValue("standard");
+    await expect(spacing(page)).toHaveValue("comfortable");
     await other.close();
     expect(
       await page.evaluate((key) => localStorage.getItem(key), KEY),
     ).toBeNull();
-    await size.selectOption("extra-large");
-    await spacing.selectOption("relaxed");
+    await size(page).selectOption("extra-large");
+    await spacing(page).selectOption("relaxed");
     await page.setViewportSize({ width: 320, height: 844 });
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth,
+      ),
+    ).toBe(true);
+    await comfort(page).screenshot({
+      path: ".cache/reading-comfort-settings-mobile.png",
+    });
+    await reader(page);
     await expect(page.locator(".scripture-text")).toHaveCSS(
       "font-size",
       "30px",
@@ -94,28 +126,27 @@ export function readingComfortTests() {
         () => document.documentElement.scrollWidth <= innerWidth,
       ),
     ).toBe(true);
-    await comfort.screenshot({ path: ".cache/reading-comfort-mobile.png" });
     await page
       .locator(".reader-title")
-      .evaluate((element) =>
-        element.scrollIntoView({ block: "start", behavior: "instant" }),
+      .evaluate((el) =>
+        el.scrollIntoView({ block: "start", behavior: "instant" }),
       );
     await page.screenshot({
       path: ".cache/reading-comfort-scripture-mobile.png",
     });
-    await comfort
-      .getByRole("button", { name: "Reset reading settings", exact: true })
-      .click();
+    await settings(page);
+    await reset(page).click();
+    await reader(page);
     await expect(page.locator("#verse-1")).toHaveCSS("line-height", "42.9px");
   });
 
-  test("unavailable reading storage keeps choices during navigation and supports an explicit retry", async ({
+  test("unavailable reading storage keeps settings choices during navigation and supports an explicit retry", async ({
     page,
   }) => {
     await page.addInitScript((key) => {
-      const get = Storage.prototype.getItem;
-      const set = Storage.prototype.setItem;
-      const remove = Storage.prototype.removeItem;
+      const get = Storage.prototype.getItem,
+        set = Storage.prototype.setItem,
+        remove = Storage.prototype.removeItem;
       const win = window as typeof window & { blockReadingStorage: boolean };
       win.blockReadingStorage = true;
       Storage.prototype.getItem = function (name) {
@@ -135,36 +166,31 @@ export function readingComfortTests() {
       };
     }, KEY);
     await page.goto("/bible?day=1&book=GEN&chapter=1");
-    const comfort = page.getByRole("region", {
-      name: "Reading comfort",
-      exact: true,
-    });
-    await expect(comfort.getByRole("status")).toContainText(
+    await settings(page);
+    await expect(comfort(page).getByRole("status")).toContainText(
       "could not remember",
     );
-    await comfort
-      .getByLabel("Scripture text size", { exact: true })
-      .selectOption("large");
+    await size(page).selectOption("large");
+    await reader(page);
     await expect(page.locator(".scripture-text")).toHaveCSS(
       "font-size",
       "26px",
     );
     await page.getByRole("link", { name: "Next chapter", exact: true }).click();
     await expect(page.locator(".reader-title h2")).toHaveText("Genesis 2");
-    await expect(
-      comfort.getByLabel("Scripture text size", { exact: true }),
-    ).toHaveValue("large");
-    await expect(comfort.getByRole("status")).toContainText(
+    await settings(page);
+    await expect(size(page)).toHaveValue("large");
+    await expect(comfort(page).getByRole("status")).toContainText(
       "could not remember",
     );
-    await comfort
-      .getByRole("button", { name: "Reset reading settings", exact: true })
-      .click();
+    await reset(page).click();
+    await reader(page);
     await expect(page.locator(".scripture-text")).toHaveCSS(
       "font-size",
       "22px",
     );
-    await expect(comfort.getByRole("status")).toContainText(
+    await settings(page);
+    await expect(comfort(page).getByRole("status")).toContainText(
       "could not remember",
     );
     await page.evaluate(() => {
@@ -172,10 +198,8 @@ export function readingComfortTests() {
         window as typeof window & { blockReadingStorage: boolean }
       ).blockReadingStorage = false;
     });
-    await comfort
-      .getByLabel("Scripture text size", { exact: true })
-      .selectOption("large");
-    await expect(comfort.getByRole("status")).toHaveText(
+    await size(page).selectOption("large");
+    await expect(comfort(page).getByRole("status")).toHaveText(
       "Remembered in this browser on this device.",
     );
     expect(
@@ -185,7 +209,7 @@ export function readingComfortTests() {
     ).toEqual({ version: 1, textSize: "large", lineSpacing: "comfortable" });
   });
 
-  test("invalid reading preferences use defaults without overwriting the stored value until a choice", async ({
+  test("invalid reading preferences use defaults without overwriting the stored value until a settings choice", async ({
     page,
   }) => {
     const invalid = JSON.stringify({
@@ -198,29 +222,29 @@ export function readingComfortTests() {
       { key: KEY, invalid },
     );
     await page.goto("/bible?day=1&book=GEN&chapter=1");
-    const comfort = page.getByRole("region", {
-      name: "Reading comfort",
-      exact: true,
-    });
-    await expect(comfort.getByRole("status")).toContainText(
-      "could not be read",
-    );
     await expect(page.locator(".scripture-text")).toHaveCSS(
       "font-size",
       "22px",
     );
     await expect(page.locator("#verse-1")).toHaveCSS("line-height", "42.9px");
+    await settings(page);
+    await expect(comfort(page).getByRole("status")).toContainText(
+      "could not be read",
+    );
     expect(await page.evaluate((key) => localStorage.getItem(key), KEY)).toBe(
       invalid,
     );
-    await comfort
-      .getByRole("button", { name: "Reset reading settings", exact: true })
-      .click();
-    await expect(comfort.getByRole("status")).toHaveText(
+    await reset(page).click();
+    await expect(comfort(page).getByRole("status")).toHaveText(
       "Remembered in this browser on this device.",
     );
     expect(
       await page.evaluate((key) => localStorage.getItem(key), KEY),
     ).toBeNull();
+    await reader(page);
+    await expect(page.locator(".scripture-text")).toHaveCSS(
+      "font-size",
+      "22px",
+    );
   });
 }

@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { ReadingComfort } from "./bible/reading-comfort";
 import { PLAN_DETAILS, planId } from "@/services/reading-plan";
 import { useState } from "react";
 import {
@@ -193,10 +194,13 @@ export function ProfileScreen() {
         description="Your preferences, your progress, your next faithful step."
       />
       <div className="profile-layout">
-        <ProfileForm
-          key={`${state.profile.name}-${state.profile.theme}-${state.profile.startDate}`}
-          initial={state.profile}
-        />
+        <div className="profile-preferences">
+          <ReadingComfort />
+          <ProfileForm
+            key={`${state.profile.name}-${state.profile.theme}-${state.profile.startDate}`}
+            initial={state.profile}
+          />
+        </div>
         <aside>
           <section className="card profile-card">
             <span className="avatar avatar-large">

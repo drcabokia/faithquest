@@ -36,9 +36,12 @@ import {
 import { addDays, displayDate } from "@/lib/dates";
 import { questionsForDay } from "@/services/plan-quizzes";
 import psalm from "../../../public/bible/PSA/119.json";
+import { isFirstJourney } from "@/lib/first-run";
+import { FirstJourney } from "./first-journey";
 export function Dashboard() {
   const { state, today } = useJourney();
   if (!state) return <JourneyLoading />;
+  if (isFirstJourney(state)) return <FirstJourney />;
   const day = currentDay(state.profile.startDate, today),
     mission = getPlan(planId(state))[day - 1],
     completed = Object.keys(state.days).length,

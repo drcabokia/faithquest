@@ -1,6 +1,7 @@
 "use client";
 
 import { useId } from "react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useReadingPreferences } from "./reading-preferences";
 
@@ -12,14 +13,21 @@ export function ReadingComfort() {
   const sizeId = id + "-size";
   const spacingId = id + "-spacing";
   return (
-    <section className="reading-comfort card" aria-labelledby={headingId}>
+    <section
+      id="reading-comfort"
+      tabIndex={-1}
+      className="reading-comfort card"
+      aria-labelledby={headingId}
+    >
       <div>
         <h2 id={headingId}>Reading comfort</h2>
         <p id={descriptionId} className="small muted">
-          Adjust Scripture text. These settings are shared by anyone using this
-          browser.
+          Changes apply immediately for everyone using this browser.
         </p>
       </div>
+      <Link className="text-link" href="/bible">
+        Open Bible Reader
+      </Link>
       <div
         className="reading-comfort-controls"
         aria-describedby={descriptionId}

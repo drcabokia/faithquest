@@ -172,6 +172,16 @@ export function ReadingPlan() {
             <BookOpen />
             <h3>No readings found</h3>
             <p>Try a different book name or completion filter.</p>
+            <Button
+              variant="secondary"
+              onClick={() => {
+                setSearch("");
+                setFilter("all");
+                setPage(0);
+              }}
+            >
+              Show all readings
+            </Button>
           </div>
         )}
       </div>

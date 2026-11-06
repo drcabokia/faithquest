@@ -1,6 +1,5 @@
 "use client";
 import Link from "next/link";
-import { ReadingComfort } from "./reading-comfort";
 import { useReadingPreferences } from "./reading-preferences";
 import { useVerseNoteDrafts } from "../verse-note-drafts";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -399,11 +398,15 @@ export function Reader() {
             ))}
           </select>
         </label>
-        <Link href="/reading-plan" className="text-link">
-          My reading plan <ChevronRight size={15} />
-        </Link>
+        <div className="reader-tools">
+          <Link href="/reading-plan" className="text-link">
+            My reading plan <ChevronRight size={15} />
+          </Link>
+          <Link href="/profile#reading-comfort" className="text-link">
+            Reading settings <ChevronRight size={15} />
+          </Link>
+        </div>
       </div>
-      <ReadingComfort />
       <ChapterReader
         key={`${book.id}.${chapter}`}
         book={book.id}

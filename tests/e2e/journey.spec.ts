@@ -1,11 +1,32 @@
+import {
+  openSavedVerse,
+  selectPracticeVerses,
+  studyListFlowTests,
+} from "../support/study-list-flow";
+import { readingRhythmUiTest } from "../support/reading-rhythm-ui";
 import { journalConflictTests } from "../support/journal-conflicts";
 import { prayerListFlowTest } from "../support/prayer-list-flow";
 import { readingComfortTests } from "../support/reading-comfort";
+import { brandingTest } from "../support/branding";
+import { publicSeoTest } from "../support/public-seo";
+import { quizBadgeTest, mobileNavigationTest } from "../support/navigation";
+import { firstRunTest } from "../support/first-run";
+import {
+  emptyJourneyTest,
+  renderingRecoveryTest,
+} from "../support/journey-states";
 import { test, expect } from "@playwright/test";
 import { readFile } from "node:fs/promises";
 import { addDays, dateInZone } from "../../src/lib/dates";
 import { PLAN } from "../../src/services/reading-plan";
 const KEY = "faithquest365.demo.v1";
+brandingTest();
+publicSeoTest();
+quizBadgeTest();
+mobileNavigationTest();
+firstRunTest();
+emptyJourneyTest("demo");
+renderingRecoveryTest();
 test("parallel demo grace claims preserve only one explicit date and no reading credit", async ({
   page,
   context,
@@ -36,8 +57,10 @@ test("parallel demo grace claims preserve only one explicit date and no reading 
     { prior },
   );
   await page.goto("/dashboard");
+  await page.locator(".rhythm-disclosure > summary").click();
   const other = await context.newPage();
   await other.goto("/dashboard");
+  await other.locator(".rhythm-disclosure > summary").click();
   await page
     .getByRole("button", { name: "Use grace for yesterday", exact: true })
     .click();
@@ -79,6 +102,7 @@ test("parallel demo grace claims preserve only one explicit date and no reading 
   expect(stored.days).toEqual({ "1": prior });
   expect(stored.rewards).toEqual({ "reading:1": { amount: 50, date: prior } });
   await other.reload();
+  await other.locator(".rhythm-disclosure > summary").click();
   await expect(other.locator(".grace-history li")).toHaveCount(1);
 });
 test("grace history uses bounded pages and actual reading remains separate on a phone", async ({
@@ -113,6 +137,7 @@ test("grace history uses bounded pages and actual reading remains separate on a 
   );
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/dashboard");
+  await page.locator(".rhythm-disclosure > summary").click();
   await expect(page.locator(".grace-history li")).toHaveCount(10);
   await page
     .getByRole("button", { name: "Next grace page", exact: true })
@@ -183,10 +208,18 @@ test("demo prayers keep drafts private and persist explicit requests, statuses a
   await page
     .getByRole("button", { name: "Save prayer request", exact: true })
     .click();
+  const prayerEditor = page.getByRole("region", {
+    name: "Prayer editor",
+    exact: true,
+  });
   await expect(
-    page
-      .getByRole("region", { name: "Prayer editor", exact: true })
-      .getByText("Archived", { exact: true }),
+    prayerEditor.getByRole("button", {
+      name: "Edit prayer request",
+      exact: true,
+    }),
+  ).toBeEnabled();
+  await expect(
+    prayerEditor.getByRole("paragraph").filter({ hasText: /^Archived$/ }),
   ).toBeVisible();
   await page.reload();
   await page
@@ -363,7 +396,7 @@ test("demo verse notes keep drafts private and persist only explicit saves", asy
   await page
     .getByRole("link", { name: "My saved verses", exact: true })
     .click();
-  const card = page.getByRole("article", { name: "John 3:16", exact: true });
+  const card = await openSavedVerse(page);
   await card
     .getByRole("button", { name: "Add private note", exact: true })
     .click();
@@ -379,6 +412,7 @@ test("demo verse notes keep drafts private and persist only explicit saves", asy
   await page
     .getByRole("link", { name: "Return to Study Tools", exact: true })
     .click();
+  await openSavedVerse(page);
   await expect(
     card.getByLabel("Private note for John 3:16", { exact: true }),
   ).toHaveValue(text);
@@ -387,6 +421,7 @@ test("demo verse notes keep drafts private and persist only explicit saves", asy
     .click();
   await expect(card.locator(".personal-note-text")).toHaveText(text);
   await page.reload();
+  await openSavedVerse(page);
   await expect(card.locator(".personal-note-text")).toHaveText(text);
   await expect(
     card.getByRole("button", { name: "Remove", exact: true }),
@@ -426,6 +461,7 @@ test("demo verse notes keep drafts private and persist only explicit saves", asy
     }),
   ).toBeVisible();
   await page.goto("/study");
+  await openSavedVerse(page);
   await expect(card.locator(".personal-note-text")).toHaveText(text);
 });
 
@@ -442,12 +478,15 @@ test("parallel demo note editors require review before replacing another tab's s
   await page
     .getByRole("link", { name: "My saved verses", exact: true })
     .click();
+  await expect(page).toHaveURL(/\/study$/, { timeout: 15000 });
   const other = await context.newPage();
   await other.goto("/study");
-  for (const p of [page, other])
+  for (const p of [page, other]) {
+    await openSavedVerse(p);
     await p
       .getByRole("button", { name: "Add private note", exact: true })
       .click();
+  }
   await page
     .getByLabel("Private note for John 3:16", { exact: true })
     .fill("First tab's synthetic note.");
@@ -519,7 +558,7 @@ async function seedPracticeVerses(page: import("@playwright/test").Page) {
     KEY,
   );
   await page.goto("/study");
-  await expect(page.locator(".saved-verse-card")).toHaveCount(12);
+  await expect(page.locator(".saved-verse-row")).toHaveCount(12);
 }
 
 test("guided demo recall respects filters and discards typing without changing stored progress", async ({
@@ -528,6 +567,7 @@ test("guided demo recall respects filters and discards typing without changing s
   await seedPracticeVerses(page);
   await page.getByLabel("Book", { exact: true }).selectOption("JHN");
   const baseline = await page.evaluate((key) => localStorage.getItem(key), KEY);
+  await selectPracticeVerses(page, "John 3:16");
   await page
     .getByRole("button", { name: "Start practice", exact: true })
     .click();
@@ -557,6 +597,7 @@ test("guided demo recall respects filters and discards typing without changing s
   expect(await page.evaluate((key) => localStorage.getItem(key), KEY)).toBe(
     baseline,
   );
+  await selectPracticeVerses(page, "John 3:16");
   await page
     .getByRole("button", { name: "Start practice", exact: true })
     .click();
@@ -578,6 +619,7 @@ test("guided demo recall respects filters and discards typing without changing s
   await practice
     .getByRole("button", { name: "Return to saved verses", exact: true })
     .click();
+  await selectPracticeVerses(page, "John 3:16");
   await page
     .getByRole("button", { name: "Start practice", exact: true })
     .click();
@@ -592,6 +634,8 @@ test("guided demo recall respects filters and discards typing without changing s
   await page.goBack();
   await expect(page).toHaveURL(/\/study$/);
   await expect(practice).toHaveCount(0);
+  await page.getByLabel("Book", { exact: true }).selectOption("JHN");
+  await selectPracticeVerses(page, "John 3:16");
   await page
     .getByRole("button", { name: "Start practice", exact: true })
     .click();
@@ -606,16 +650,24 @@ test("guided demo recall respects filters and discards typing without changing s
   );
 });
 
-test("guided queues use the first five sorted matches across collection pages and disable empty starts", async ({
+test("guided queues use five explicitly selected verses across collection pages and disable empty starts", async ({
   page,
 }) => {
   await seedPracticeVerses(page);
   await page.getByLabel("Order", { exact: true }).selectOption("bible");
   await page.getByRole("button", { name: "Next page", exact: true }).click();
-  await expect(page.locator(".saved-verse-card h2")).toHaveText("John 3:16");
+  await expect(page.locator(".saved-verse-row h2")).toHaveText("John 3:16");
+  await selectPracticeVerses(page, "John 3:16");
   await page
-    .getByLabel("Verses per practice", { exact: true })
-    .selectOption("5");
+    .getByRole("button", { name: "Previous page", exact: true })
+    .click();
+  await selectPracticeVerses(
+    page,
+    "Genesis 1:1",
+    "Genesis 1:2",
+    "Genesis 1:3",
+    "Genesis 1:4",
+  );
   await page
     .getByRole("button", { name: "Start practice", exact: true })
     .click();
@@ -623,17 +675,23 @@ test("guided queues use the first five sorted matches across collection pages an
     name: "Guided memory practice",
     exact: true,
   });
-  for (let verse = 1; verse <= 5; verse++) {
+  for (const [index, label] of [
+    "John 3:16",
+    "Genesis 1:1",
+    "Genesis 1:2",
+    "Genesis 1:3",
+    "Genesis 1:4",
+  ].entries()) {
     await expect(
       practice.getByRole("heading", {
-        name: `Genesis 1:${verse}`,
+        name: label,
         exact: true,
       }),
     ).toBeVisible();
-    await expect(practice).toContainText(`VERSE ${verse} OF 5`);
+    await expect(practice).toContainText(`VERSE ${index + 1} OF 5`);
     await practice
       .getByRole("button", {
-        name: verse === 5 ? "Finish practice" : "Next verse",
+        name: index === 4 ? "Finish practice" : "Next verse",
         exact: true,
       })
       .click();
@@ -647,6 +705,13 @@ test("guided queues use the first five sorted matches across collection pages an
   await page
     .getByLabel("Find a reference", { exact: true })
     .fill("no such reference");
+  // Filtering does not silently replace the explicitly selected queue.
+  await expect(
+    page.getByRole("button", { name: "Start practice", exact: true }),
+  ).toBeEnabled();
+  await page
+    .getByRole("button", { name: "Clear selection", exact: true })
+    .click();
   await expect(
     page.getByRole("button", { name: "Start practice", exact: true }),
   ).toBeDisabled();
@@ -809,13 +874,10 @@ test("demo fellowship clearly requires account mode and creates no fake groups o
   await expect(page).toHaveURL(/\/reading-plan$/);
   expect(groupRequests).toBe(0);
 });
-test("a demo challenge joins from the dashboard, counts a completed mission once and fits a phone", async ({
+test("a demo challenge counts a completed mission once and fits a phone", async ({
   page,
 }) => {
-  await page.goto("/dashboard");
-  await page
-    .getByRole("link", { name: /Start a seven-day reading challenge/ })
-    .click();
+  await page.goto("/challenges");
   await page
     .getByRole("button", { name: "Start seven-day challenge", exact: true })
     .click();
@@ -1119,18 +1181,19 @@ test("saved verse pages and book filters remain consistent after the last matchi
     { key: KEY, stamp },
   );
   await page.goto("/study");
-  await expect(page.locator(".saved-verse-card")).toHaveCount(12);
-  await expect(page.locator(".saved-verse-card h2").first()).toHaveText(
+  await expect(page.locator(".saved-verse-row")).toHaveCount(12);
+  await expect(page.locator(".saved-verse-row h2").first()).toHaveText(
     "John 3:16",
   );
   await page.getByRole("button", { name: "Next page", exact: true }).click();
-  await expect(page.locator(".saved-verse-card")).toHaveCount(1);
+  await expect(page.locator(".saved-verse-row")).toHaveCount(1);
   await page.getByLabel("Order", { exact: true }).selectOption("bible");
-  await expect(page.locator(".saved-verse-card h2").first()).toHaveText(
+  await expect(page.locator(".saved-verse-row h2").first()).toHaveText(
     "Genesis 1:1",
   );
   await page.getByLabel("Book", { exact: true }).selectOption("JHN");
-  await expect(page.locator(".saved-verse-card")).toHaveCount(1);
+  await expect(page.locator(".saved-verse-row")).toHaveCount(1);
+  await openSavedVerse(page);
   await page
     .getByRole("article", { name: "John 3:16", exact: true })
     .getByRole("button", { name: "Remove", exact: true })
@@ -1140,7 +1203,7 @@ test("saved verse pages and book filters remain consistent after the last matchi
   ).toBeVisible();
   await expect(page.getByLabel("Book", { exact: true })).toHaveValue("JHN");
   await page.getByLabel("Book", { exact: true }).selectOption("");
-  await expect(page.locator(".saved-verse-card")).toHaveCount(12);
+  await expect(page.locator(".saved-verse-row")).toHaveCount(12);
 });
 test("saved verses offer private memory practice, reference filtering and mobile removal", async ({
   page,
@@ -1154,13 +1217,13 @@ test("saved verses offer private memory practice, reference filtering and mobile
   await page
     .getByRole("link", { name: "My saved verses", exact: true })
     .click();
-  const card = page.getByRole("article", { name: "John 3:16", exact: true });
+  const card = await openSavedVerse(page);
   await expect(card.locator("blockquote")).toContainText(
     "For God so loved the world",
   );
-  await card.getByRole("button", { name: "Hide verse to practise" }).click();
+  await card.locator(".saved-verse-details > summary").click();
   await expect(card.locator("blockquote")).toHaveCount(0);
-  await card.getByRole("button", { name: "Show verse" }).click();
+  await openSavedVerse(page);
   await page.getByLabel("Find a reference", { exact: true }).fill("Genesis");
   await expect(
     page.getByRole("heading", { name: "No matching saved verses" }),
@@ -1174,6 +1237,7 @@ test("saved verses offer private memory practice, reference filtering and mobile
     fullPage: true,
   });
   await page.reload();
+  await openSavedVerse(page);
   await expect(card.locator("blockquote")).toBeVisible();
   expect(
     (await page.evaluate((key) => JSON.parse(localStorage.getItem(key)!), KEY))
@@ -1350,10 +1414,13 @@ test("complete a mission, earn rewards once, save/edit a reflection, and retain 
   );
   await page.getByRole("link", { name: "Begin your journey" }).click();
   await expect(page.getByRole("heading", { level: 1 })).toContainText(
-    "Welcome back",
+    "Welcome to FaithQuest365",
   );
   await page
-    .getByRole("link", { name: "Continue reading", exact: true })
+    .getByRole("link", { name: "Start reading plan", exact: true })
+    .click();
+  await page
+    .getByRole("link", { name: "Open next mission", exact: true })
     .click();
   for (let chapter = 1; chapter <= 3; chapter++) {
     await expect(page.locator(".reader-title h2")).toHaveText(
@@ -1457,7 +1524,7 @@ test("mobile navigation, all feature routes, and persistent dark theme", async (
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/dashboard");
   await expect(page.getByRole("heading", { level: 1 })).toContainText(
-    "Welcome back",
+    "Welcome to FaithQuest365",
   );
   for (const label of [
     "My Reading Plan",
@@ -1468,7 +1535,7 @@ test("mobile navigation, all feature routes, and persistent dark theme", async (
     "Community",
   ]) {
     await page
-      .getByRole("button", { name: "Open navigation", exact: true })
+      .getByRole("button", { name: "More navigation", exact: true })
       .click();
     await page.getByRole("link", { name: label, exact: true }).click();
     await expect(page.locator("#main-content h1")).toBeVisible();
@@ -1486,7 +1553,7 @@ test("mobile navigation, all feature routes, and persistent dark theme", async (
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
   await page.goto("/dashboard");
   await expect(page.getByRole("heading", { level: 1 })).toContainText(
-    "Welcome back",
+    "Welcome to FaithQuest365",
   );
   await page.screenshot({
     path: ".cache/qa/dashboard-mobile-dark.png",
@@ -1569,3 +1636,7 @@ readingComfortTests();
 prayerListFlowTest("demo");
 
 journalConflictTests("demo");
+
+readingRhythmUiTest("demo");
+
+studyListFlowTests("demo");

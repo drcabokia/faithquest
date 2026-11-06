@@ -1,6 +1,6 @@
 # Reading consistency and optional grace days
 
-Implemented in demo and development accounts on 18 October 2026. **Your reading rhythm** appears on Dashboard and My Reading Plan. A public domain is not required.
+Implemented in demo and development accounts on 18 October 2026. **Your reading rhythm** appears on Dashboard and My Reading Plan as a compact, initially collapsed summary. Select **View details** (or focus the summary and press Enter/Space) to see catch-up links, the calendar and grace controls. A public domain is not required.
 
 ## Policy
 
@@ -14,14 +14,14 @@ Implemented in demo and development accounts on 18 October 2026. **Your reading 
 
 ## Browser checks without developer tools
 
-1. Open **Dashboard** and find **Your reading rhythm**. Check **Next unfinished mission**, then select **Continue next unfinished mission**. It should open the earliest unfinished day and its first unread chapter. Read and complete the mission normally: its completion date is today, and the usual reward is awarded only once. Repeat from **My Reading Plan**. If all 365 missions are finished, the section should say so.
+1. Open **Dashboard** and find **Your reading rhythm**. Select **View details**, check **Next unfinished mission**, then select **Continue Day …**. It should open the earliest unfinished day and its first unread chapter. Read and complete the mission normally: its completion date is today, and the usual reward is awarded only once. Repeat from **My Reading Plan**. If all 365 missions are finished, the section should say so.
 2. Review the seven-date calendar and its timezone. Partial chapter reading is not a completed mission. Saved grace dates have a distinct label and dashed border; they do not fill a mission or challenge date.
-3. If **Use grace for yesterday** is available, select it and then **Cancel grace**. No date or reward should be added. Repeat and choose **Confirm grace day**: yesterday should appear in saved grace history. XP, completed missions and badges should remain unchanged. Refresh: the date should remain and another claim for it should be unavailable.
+3. If **Use grace for yesterday** is available, select it and then **Cancel grace**. No date or reward should be added. Repeat and choose **Confirm grace day**: yesterday should appear in saved grace history. XP, completed missions and badges should remain unchanged. Refresh and expand Reading Rhythm again: the date should remain and another claim for it should be unavailable.
 4. If the option is unavailable, read its explanation. You can still test catch-up, calendar and phone layout immediately. To qualify naturally, complete a mission on one date, miss the next date and return the following date. A recent grace may also mean the 30-day cooldown has not elapsed. Automated fixtures cover these rules without changing a real account's history or the computer clock.
 5. Export a fresh private backup from **Profile & Settings**. Selecting the file for restore should preview missing grace dates alongside activity. On the same up-to-date journey, zero missing grace dates is expected. Cancel if nothing needs recovery. Do not delete or reset real progress to manufacture a missing record; isolated fixtures already verify grace-only recovery and merged-history rejection.
-6. Optional with two tabs on the same account: open an eligible grace confirmation in both and confirm. Only one saved date should remain, with no new XP. If a tab becomes stale, return focus or use **Check saved progress**; it should display the saved result or a safe eligibility explanation.
+6. Optional with two tabs on the same account: expand Reading Rhythm, open an eligible grace confirmation in both and confirm. Only one saved date should remain, with no new XP. If a tab becomes stale, return focus or use **Check saved progress**; it should display the saved result or a safe eligibility explanation.
 7. Optional network check while eligible: disconnect, confirm, reconnect and use **Check saved progress** before trying again. The first request may have committed. Recovery reads current progress; it never automatically replays a claim. An uncertain response does not justify claiming a different date.
-8. At phone width, check calendar wrapping, catch-up links, confirmation buttons and history paging. Try light/dark appearance through existing settings. No horizontal scrolling should be needed.
+8. Collapse the card with a confirmation open, then reopen it. The unconfirmed dialog should be dismissed without saving a grace date. At phone width, check the collapsed summary, expanded calendar, catch-up link, confirmation buttons and history paging. Try light/dark appearance through existing settings. No horizontal scrolling should be needed.
 
 Use sample data where appropriate, and keep personal JSON exports private. They include other saved journal/prayer content as well as grace dates. Actual account browser acceptance is a separate user check; automated fixtures do not establish that acceptance.
 
