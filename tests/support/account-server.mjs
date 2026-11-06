@@ -186,6 +186,7 @@ let limits = {};
 let failRpc = 0;
 let rpcUnavailable = false;
 let authUnavailable = false;
+let exchangeCalls = 0;
 let rpcCalls = 0;
 let restoreCalls = 0;
 let sessionRevoked = false;
@@ -222,6 +223,7 @@ const server = createServer(async (request, response) => {
         failRpc = 0;
         rpcUnavailable = false;
         authUnavailable = false;
+        exchangeCalls = 0;
         rpcCalls = 0;
         restoreCalls = 0;
         sessionRevoked = false;
@@ -278,6 +280,7 @@ const server = createServer(async (request, response) => {
         lastSignoutScope,
         deletionCalls,
         accountDeleted,
+        exchangeCalls,
       });
     }
     if (path === "/functions/v1/delete-account") {
@@ -296,6 +299,32 @@ const server = createServer(async (request, response) => {
       sessionRevoked = true;
       state = initialSnapshot();
       return send(200, { deleted: true });
+    }
+    if (path === "/auth/v1/token") {
+      exchangeCalls++;
+      const grant = new URL(
+        request.url,
+        "http://127.0.0.1:43191",
+      ).searchParams.get("grant_type");
+      if (
+        grant !== "pkce" ||
+        body.auth_code !== "fixture-valid-code" ||
+        body.code_verifier !== "fixture-pkce-verifier"
+      )
+        return send(400, {
+          error: "invalid_grant",
+          error_description: "Synthetic code rejected",
+        });
+      const session = JSON.parse(
+        Buffer.from(
+          sessionCookie().slice("base64-".length),
+          "base64url",
+        ).toString(),
+      );
+      return send(200, {
+        ...session,
+        provider_token: "synthetic-".repeat(330),
+      });
     }
     if (path === "/auth/v1/user") {
       if (accountDeleted)

@@ -16,6 +16,65 @@ import { addDays, dateInZone } from "../../src/lib/dates";
 const control = "http://127.0.0.1:43191/__control";
 brandingTest();
 publicSeoTest();
+async function pkceOnly(context: import("@playwright/test").BrowserContext) {
+  await context.clearCookies();
+  await context.addCookies([
+    {
+      name: "sb-127-auth-token-code-verifier",
+      value:
+        "base64-" +
+        Buffer.from(JSON.stringify("fixture-pkce-verifier")).toString(
+          "base64url",
+        ),
+      url: "http://127.0.0.1:3191",
+      sameSite: "Lax",
+    },
+  ]);
+}
+test("Google callback sets chunked session cookies before its first dashboard load", async ({
+  page,
+  context,
+  request,
+}) => {
+  await pkceOnly(context);
+  const response = await page.goto(
+    "/auth/callback?code=fixture-valid-code&next=https://attacker.test",
+  );
+  expect(response?.status()).toBe(200);
+  await expect(page).toHaveURL(/\/dashboard$/);
+  await expect(page.locator(".sidebar-profile strong")).toHaveText(
+    "Fixture Reader",
+  );
+  const cookies = await context.cookies();
+  expect(cookies.some((cookie) => cookie.name === "sb-127-auth-token.0")).toBe(
+    true,
+  );
+  expect(cookies.some((cookie) => cookie.name === "sb-127-auth-token.1")).toBe(
+    true,
+  );
+  expect(
+    cookies.some((cookie) => cookie.name === "sb-127-auth-token-code-verifier"),
+  ).toBe(false);
+  expect(
+    (await (await request.post(control, { data: {} })).json()).exchangeCalls,
+  ).toBe(1);
+});
+test("Google callback rejects invalid codes without entering the dashboard", async ({
+  page,
+  context,
+}) => {
+  await pkceOnly(context);
+  await page.goto("/auth/callback?code=fixture-invalid-code");
+  await expect(page).toHaveURL(/\/login\?error=signin$/);
+  await expect(page.locator(".login-card").getByRole("alert")).toContainText(
+    "Sign-in could not be completed",
+  );
+  expect(
+    (await context.cookies()).some((cookie) =>
+      /^sb-127-auth-token(?:\.\d+)?$/.test(cookie.name),
+    ),
+  ).toBe(false);
+});
 async function graceFixture(
   request: import("@playwright/test").APIRequestContext,
 ) {
