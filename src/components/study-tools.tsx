@@ -193,11 +193,12 @@ export function StudyTools() {
       const valid = current.filter(
         (item) => state.savedVerses?.[item.key] === item.savedAt,
       );
-      return valid.some((item) => item.key === key)
-        ? valid.filter((item) => item.key !== key)
-        : valid.length < 5
-          ? [...valid, { key, savedAt: state.savedVerses![key] }]
-          : valid;
+      if (valid.some((item) => item.key === key)) {
+        return valid.filter((item) => item.key !== key);
+      }
+      const savedAt = state.savedVerses?.[key];
+      if (!savedAt || valid.length >= 5) return valid;
+      return [...valid, { key, savedAt }];
     });
   const expand = (key: string, open: boolean) =>
     setExpandedKeys((current) =>
