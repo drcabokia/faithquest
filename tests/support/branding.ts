@@ -13,7 +13,7 @@ export function brandingTest() {
     await page.setViewportSize({ width: 320, height: 740 });
     await page.goto("/journal");
     await page
-      .getByRole("button", { name: "Open navigation", exact: true })
+      .getByRole("button", { name: "More navigation", exact: true })
       .click();
     const logo = page.locator(".sidebar .brand");
     await expect(logo).toBeVisible();

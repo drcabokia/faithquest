@@ -1,7 +1,13 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react";
 import {
   LayoutDashboard,
   Map,
@@ -14,7 +20,6 @@ import {
   ArrowUpRight,
   Menu,
   X,
-  Sprout,
   Sun,
   Moon,
   Bookmark,
@@ -27,32 +32,103 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { LegalLinks } from "@/components/legal-links";
 import { SiteSignature } from "@/components/site-signature";
-const navigation = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/reading-plan", label: "My Reading Plan", icon: Map },
-  { href: "/bible", label: "Bible Reader", icon: BookOpen },
-  { href: "/challenges", label: "Reading Challenges", icon: Flag },
-  { href: "/study", label: "Study Tools", icon: Bookmark },
-  { href: "/quiz", label: "Daily Quiz", icon: CircleHelp },
-  { href: "/prayers", label: "Prayer Requests", icon: Heart },
-  { href: "/journal", label: "Reflection Journal", icon: NotebookPen },
-  { href: "/achievements", label: "Achievements", icon: Award },
-  { href: "/community", label: "Community", icon: Users },
+const navigationGroups = [
+  {
+    label: "Daily walk",
+    items: [
+      { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+      { href: "/reading-plan", label: "My Reading Plan", icon: Map },
+      { href: "/bible", label: "Bible Reader", icon: BookOpen },
+      { href: "/quiz", label: "Daily Quiz", icon: CircleHelp },
+    ],
+  },
+  {
+    label: "Reflect & study",
+    items: [
+      { href: "/journal", label: "Reflection Journal", icon: NotebookPen },
+      { href: "/prayers", label: "Prayer Requests", icon: Heart },
+      { href: "/study", label: "Study Tools", icon: Bookmark },
+    ],
+  },
+  {
+    label: "Encouragement",
+    items: [
+      { href: "/challenges", label: "Reading Challenges", icon: Flag },
+      { href: "/achievements", label: "Achievements", icon: Award },
+      { href: "/community", label: "Community", icon: Users },
+    ],
+  },
 ];
+const navigation = navigationGroups.flatMap((group) => group.items);
+const quickNavigation = [
+  { href: "/dashboard", label: "Home", icon: LayoutDashboard },
+  { href: "/bible", label: "Read", icon: BookOpen },
+  { href: "/quiz", label: "Quiz", icon: CircleHelp },
+  { href: "/journal", label: "Journal", icon: NotebookPen },
+];
+const mobileQuery = "(max-width: 767px)";
+function subscribeMobile(change: () => void) {
+  const media = window.matchMedia(mobileQuery);
+  media.addEventListener("change", change);
+  return () => media.removeEventListener("change", change);
+}
+const mobileSnapshot = () => window.matchMedia(mobileQuery).matches;
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const mobile = useSyncExternalStore(
+    subscribeMobile,
+    mobileSnapshot,
+    () => false,
+  );
+  const sidebar = useRef<HTMLElement>(null);
+  const opener = useRef<HTMLButtonElement>(null);
+  const closeNavigation = useCallback(() => {
+    setOpen(false);
+    requestAnimationFrame(() => opener.current?.focus());
+  }, []);
+  const openNavigation = (event: React.MouseEvent<HTMLButtonElement>) => {
+    opener.current = event.currentTarget;
+    setOpen(true);
+  };
   const { state, error, profile, mode, refresh, busy } = useJourney();
   useEffect(() => {
+    if (!open || !mobile) return;
+    sidebar.current?.querySelector<HTMLButtonElement>(".mobile-close")?.focus();
+    const overflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape" && open) {
-        setOpen(false);
-        document.querySelector<HTMLButtonElement>(".mobile-menu")?.focus();
+      if (event.key === "Escape") {
+        event.preventDefault();
+        closeNavigation();
+      }
+      if (event.key === "Tab") {
+        const controls = [
+          ...(sidebar.current?.querySelectorAll<HTMLElement>(
+            "a[href], button:not([disabled]), [tabindex='0']",
+          ) ?? []),
+        ].filter((element) => element.getClientRects().length > 0);
+        const first = controls[0],
+          last = controls.at(-1);
+        if (!first || !last) return;
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last.focus();
+        } else if (
+          (!event.shiftKey && document.activeElement === last) ||
+          !sidebar.current?.contains(document.activeElement)
+        ) {
+          event.preventDefault();
+          first.focus();
+        }
       }
     };
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [open]);
+    return () => {
+      document.body.style.overflow = overflow;
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [open, mobile, closeNavigation]);
   const current =
     navigation.find((n) => n.href === pathname)?.label ?? "Profile & Settings";
   return (
@@ -63,50 +139,60 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       {open && (
         <button
           className="sidebar-backdrop"
-          aria-label="Close navigation"
-          onClick={() => setOpen(false)}
+          aria-label="Dismiss navigation"
+          tabIndex={-1}
+          onClick={closeNavigation}
         />
       )}
-      <aside className={cn("sidebar", open && "sidebar-open")}>
+      <aside
+        id="journey-navigation"
+        ref={sidebar}
+        className={cn("sidebar", open && "sidebar-open")}
+        inert={mobile && !open}
+        role={mobile && open ? "dialog" : undefined}
+        aria-modal={mobile && open ? true : undefined}
+        aria-label="Journey navigation"
+      >
         <div className="sidebar-brand">
           <Logo />
           <button
             className="mobile-close icon-control"
             aria-label="Close navigation"
-            onClick={() => setOpen(false)}
+            onClick={closeNavigation}
           >
             <X size={20} />
           </button>
         </div>
-        <span className="nav-caption">YOUR JOURNEY</span>
         <nav aria-label="Main navigation">
-          {navigation.map(({ href, label, icon: Icon }) => (
-            <Link
-              onClick={() => setOpen(false)}
-              aria-current={pathname === href ? "page" : undefined}
-              href={href}
-              key={href}
-              className={cn("nav-link", pathname === href && "active")}
+          {navigationGroups.map((group) => (
+            <div
+              className="nav-section"
+              role="group"
+              aria-label={group.label}
+              key={group.label}
             >
-              <Icon size={19} strokeWidth={1.7} />
-              {label}
-              {href === "/quiz" && (
-                <span className="nav-new" aria-hidden="true">
-                  NEW
-                </span>
-              )}
-            </Link>
+              <span className="nav-caption">{group.label}</span>
+              {group.items.map(({ href, label, icon: Icon }) => (
+                <Link
+                  onClick={() => setOpen(false)}
+                  aria-current={pathname === href ? "page" : undefined}
+                  href={href}
+                  key={href}
+                  className={cn("nav-link", pathname === href && "active")}
+                >
+                  <Icon size={19} strokeWidth={1.7} />
+                  {label}
+                  {href === "/quiz" && (
+                    <span className="nav-new" aria-hidden="true">
+                      NEW
+                    </span>
+                  )}
+                </Link>
+              ))}
+            </div>
           ))}
         </nav>
         <div className="sidebar-bottom">
-          <div className="sidebar-quote">
-            <Sprout size={25} />
-            <p>
-              A little time in the Word.
-              <br />A little closer, every day.
-            </p>
-            <span>GROW AT YOUR OWN PACE</span>
-          </div>
           <Link
             href="/profile"
             className={cn("nav-link", pathname === "/profile" && "active")}
@@ -125,19 +211,25 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 {mode === "demo" ? "Local demo account" : "Private account"}
               </small>
             </div>
-            <Link href="/profile" aria-label="Open profile">
+            <Link
+              href="/profile"
+              aria-label="Open profile"
+              onClick={() => setOpen(false)}
+            >
               <ArrowUpRight size={17} />
             </Link>
           </div>
         </div>
       </aside>
-      <div className="app-main">
+      <div className="app-main" inert={mobile && open}>
         <header className="topbar">
           <div className="breadcrumb">
             <button
               className="mobile-menu icon-control"
               aria-label="Open navigation"
-              onClick={() => setOpen(true)}
+              aria-expanded={open}
+              aria-controls="journey-navigation"
+              onClick={openNavigation}
             >
               <Menu size={22} />
             </button>
@@ -177,7 +269,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             </Link>
           </div>
         </header>
-        <main id="main-content" className="content">
+        <main id="main-content" className="content" tabIndex={-1}>
           {error && (
             <div className="error-banner" role="alert">
               {error}{" "}
@@ -214,6 +306,37 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </footer>
         </main>
       </div>
+      <nav
+        className="mobile-bottom-nav"
+        aria-label="Quick navigation"
+        inert={mobile && open}
+      >
+        {quickNavigation.map(({ href, label, icon: Icon }) => (
+          <Link
+            href={href}
+            key={href}
+            className={cn("quick-link", pathname === href && "active")}
+            aria-current={pathname === href ? "page" : undefined}
+          >
+            <Icon size={21} aria-hidden="true" />
+            <span>{label}</span>
+          </Link>
+        ))}
+        <button
+          type="button"
+          className={cn(
+            "quick-link",
+            !quickNavigation.some((item) => item.href === pathname) && "active",
+          )}
+          aria-label="More navigation"
+          aria-controls="journey-navigation"
+          aria-expanded={open}
+          onClick={openNavigation}
+        >
+          <Menu size={21} aria-hidden="true" />
+          <span>More</span>
+        </button>
+      </nav>
     </div>
   );
 }

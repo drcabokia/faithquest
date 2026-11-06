@@ -9,7 +9,7 @@ import { prayerListFlowTest } from "../support/prayer-list-flow";
 import { readingComfortTests } from "../support/reading-comfort";
 import { brandingTest } from "../support/branding";
 import { publicSeoTest } from "../support/public-seo";
-import { quizBadgeTest } from "../support/navigation";
+import { quizBadgeTest, mobileNavigationTest } from "../support/navigation";
 import { firstRunTest } from "../support/first-run";
 import { test, expect } from "@playwright/test";
 import { readFile } from "node:fs/promises";
@@ -19,6 +19,7 @@ const KEY = "faithquest365.demo.v1";
 brandingTest();
 publicSeoTest();
 quizBadgeTest();
+mobileNavigationTest();
 firstRunTest();
 test("parallel demo grace claims preserve only one explicit date and no reading credit", async ({
   page,
@@ -1528,7 +1529,7 @@ test("mobile navigation, all feature routes, and persistent dark theme", async (
     "Community",
   ]) {
     await page
-      .getByRole("button", { name: "Open navigation", exact: true })
+      .getByRole("button", { name: "More navigation", exact: true })
       .click();
     await page.getByRole("link", { name: label, exact: true }).click();
     await expect(page.locator("#main-content h1")).toBeVisible();
