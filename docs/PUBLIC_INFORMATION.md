@@ -49,6 +49,8 @@ The Google-upload PNG is 120 × 120, 3,637 bytes. The larger PNG is 512 × 512, 
 
 The same source passed [GitHub CI](https://github.com/drcabokia/faithquest/actions/runs/39806256343): 255 automated tests, 107 browser tests, lint/application/Edge types, production build and the static information-site build. It is also deployed to the protected application as `dpl_NfTzwXsMttzv7baZvZafTDtg2rhq`, READY at `https://faithquest365.app`, on Node.js 22.x. Authorized health, privacy, terms and login requests returned 200; operator/contact details, the Google form, policy links and the new logo path were verified. Export returned 401 without an application session. Anonymous privacy/terms/health requests on both its stable and generated domains redirected to Vercel authentication. No new Google sign-in or real-account data mutation was performed during this release; earlier owner sign-in evidence remains separate.
 
+Later commits on this branch after `ce9b5a1a2deba70399e58badd1bc3f1ca4e9a5b8` were also validated by the same GitHub Actions `check` workflow. See the Actions runs linked from draft PR #1 for each commit; do not treat the ce9b5a1 evidence above as the only CI proof for the current tip.
+
 Both projects record the same source SHA and have no automatic Git connection. No database schema, Supabase/Google Auth configuration, session, paid plan or private-test protection setting was changed. `main` remains unchanged; source and publication records are on the feature branch/draft PR.
 
 ## Search Console ownership verification
