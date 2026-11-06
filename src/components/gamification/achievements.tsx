@@ -52,6 +52,15 @@ export function Achievements() {
           </span>
         }
       />
+      {earned === 0 && (
+        <section className="card achievement-empty">
+          <h2>Your first milestone is ahead.</h2>
+          <p>Complete a reading mission to start discovering your badges.</p>
+          <Link href="/reading-plan" className="text-link">
+            Choose a reading mission
+          </Link>
+        </section>
+      )}
       <section className="card achievement-level">
         <span className="level-medallion">
           <Sprout size={33} />

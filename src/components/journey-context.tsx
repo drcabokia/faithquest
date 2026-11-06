@@ -2,6 +2,7 @@
 import type { PrayerChange } from "@/lib/prayers";
 import type { JournalCategory } from "@/lib/journal";
 import { createContext, useContext } from "react";
+import { LoaderCircle } from "lucide-react";
 import type { JourneyState, Profile } from "@/lib/state";
 import type { BookId } from "@/data/books";
 import type { RestoreData } from "@/lib/backup";
@@ -53,11 +54,23 @@ export function useJourney() {
   if (!value) throw new Error("Journey provider is required.");
   return value;
 }
-export function JourneyLoading() {
+export function JourneyLoading({ title = "Your journey" }: { title?: string }) {
   return (
-    <div className="loading-state" role="status">
-      <span className="loading-dot" />
-      Opening your journey…
-    </div>
+    <section className="journey-state journey-loading" aria-busy="true">
+      <h1>{title}</h1>
+      <p className="loading-state" role="status">
+        <LoaderCircle className="spin" size={22} aria-hidden="true" />
+        Opening your journey…
+      </p>
+      <div className="journey-skeleton" aria-hidden="true">
+        {[0, 1, 2].map((index) => (
+          <div className="journey-skeleton-card" key={index}>
+            <span />
+            <span />
+            <span />
+          </div>
+        ))}
+      </div>
+    </section>
   );
 }

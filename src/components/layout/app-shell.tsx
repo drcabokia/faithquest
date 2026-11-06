@@ -27,7 +27,8 @@ import {
   Heart,
 } from "lucide-react";
 import { Logo } from "@/components/brand";
-import { useJourney } from "@/components/journey-provider";
+import { useJourney, JourneyLoading } from "@/components/journey-provider";
+import { JourneyLoadError } from "@/components/journey-load-error";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { LegalLinks } from "@/components/legal-links";
@@ -206,7 +207,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               {state?.profile.name.slice(0, 1).toUpperCase() ?? "F"}
             </span>
             <div>
-              <strong>{state?.profile.name ?? "Faith Explorer"}</strong>
+              <strong>{state?.profile.name ?? "Your journey"}</strong>
               <small>
                 {mode === "demo" ? "Local demo account" : "Private account"}
               </small>
@@ -270,7 +271,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </div>
         </header>
         <main id="main-content" className="content" tabIndex={-1}>
-          {error && (
+          {error && state && (
             <div className="error-banner" role="alert">
               {error}{" "}
               {mode === "demo"
@@ -288,7 +289,18 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               )}
             </div>
           )}
-          {children}
+          {state ? (
+            children
+          ) : error ? (
+            <JourneyLoadError
+              title={current}
+              error={error}
+              busy={busy}
+              onRetry={refresh ?? (() => window.location.reload())}
+            />
+          ) : (
+            <JourneyLoading title={current} />
+          )}
           <footer className="app-footer">
             <span>
               Read. Discover. Grow in Faith.

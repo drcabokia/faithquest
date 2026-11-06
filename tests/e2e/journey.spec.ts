@@ -11,6 +11,10 @@ import { brandingTest } from "../support/branding";
 import { publicSeoTest } from "../support/public-seo";
 import { quizBadgeTest, mobileNavigationTest } from "../support/navigation";
 import { firstRunTest } from "../support/first-run";
+import {
+  emptyJourneyTest,
+  renderingRecoveryTest,
+} from "../support/journey-states";
 import { test, expect } from "@playwright/test";
 import { readFile } from "node:fs/promises";
 import { addDays, dateInZone } from "../../src/lib/dates";
@@ -21,6 +25,8 @@ publicSeoTest();
 quizBadgeTest();
 mobileNavigationTest();
 firstRunTest();
+emptyJourneyTest("demo");
+renderingRecoveryTest();
 test("parallel demo grace claims preserve only one explicit date and no reading credit", async ({
   page,
   context,

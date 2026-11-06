@@ -5637,3 +5637,75 @@ body {
     outline-offset: 1px;
   }
 }
+
+/* Honest loading and recovery views shared by journey routes. */
+.journey-state {
+  padding-block: 12px 24px;
+}
+.journey-state > h1 {
+  margin-bottom: 24px;
+}
+.journey-skeleton {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+.journey-skeleton-card {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--card);
+  padding: 24px;
+}
+.journey-skeleton-card span {
+  display: block;
+  height: 14px;
+  margin-block: 12px;
+  border-radius: 6px;
+  background: var(--soft);
+  animation: journey-pulse 1.6s ease-in-out infinite;
+}
+.journey-skeleton-card span:first-child {
+  width: 55%;
+  height: 22px;
+}
+.journey-skeleton-card span:last-child {
+  width: 75%;
+}
+.journey-load-error,
+.journey-render-error,
+.achievement-empty {
+  padding: 28px;
+  margin-bottom: 24px;
+}
+.journey-load-error h2 {
+  font-size: 1.375rem;
+}
+.journey-render-error {
+  display: grid;
+  justify-items: start;
+  gap: 20px;
+}
+.achievement-empty p {
+  margin-block: 12px;
+  color: var(--muted);
+}
+@keyframes journey-pulse {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+@media (max-width: 767px) {
+  .journey-skeleton {
+    grid-template-columns: 1fr;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .journey-skeleton-card span,
+  .journey-state .spin {
+    animation: none;
+  }
+}

@@ -1,7 +1,7 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { LockKeyhole, Users } from "lucide-react";
+import { LoaderCircle, LockKeyhole, Users } from "lucide-react";
 import { useJourney, JourneyLoading } from "./journey-provider";
 import { PageHeading, Progress } from "./ui/shared";
 import { Button } from "./ui/button";
@@ -301,7 +301,10 @@ function AccountFellowship() {
       )}
       {notice && <p role="status">{notice}</p>}
       {!data ? (
-        <p role="status">
+        <p role="status" className={error ? undefined : "loading-state"}>
+          {!error && (
+            <LoaderCircle className="spin" size={20} aria-hidden="true" />
+          )}
           {error
             ? "Your groups could not be loaded. Use Check saved groups to retry."
             : "Opening your groups…"}

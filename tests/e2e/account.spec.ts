@@ -11,6 +11,10 @@ import { brandingTest } from "../support/branding";
 import { publicSeoTest } from "../support/public-seo";
 import { quizBadgeTest, mobileNavigationTest } from "../support/navigation";
 import { firstRunTest } from "../support/first-run";
+import {
+  emptyJourneyTest,
+  accountJourneyStateTests,
+} from "../support/journey-states";
 import { readFile } from "node:fs/promises";
 import { test, expect } from "@playwright/test";
 import { addDays, dateInZone } from "../../src/lib/dates";
@@ -21,6 +25,8 @@ publicSeoTest();
 quizBadgeTest();
 mobileNavigationTest();
 firstRunTest();
+emptyJourneyTest("account");
+accountJourneyStateTests();
 async function pkceOnly(context: import("@playwright/test").BrowserContext) {
   await context.clearCookies();
   await context.addCookies([
