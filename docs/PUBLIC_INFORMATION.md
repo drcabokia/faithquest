@@ -1,6 +1,6 @@
 # Public information website and Google branding
 
-The public information site is separate from the protected application. It contains only a homepage describing FaithQuest365, Privacy Policy, Terms of Service and brand assets. It has no sign-in handler, account API, application bundle, database configuration, tracking script or environment variables. The application at `https://faithquest365-testing.vercel.app` retains Vercel Authentication for All Deployments.
+The public information site is separate from the protected application. It contains only a homepage describing FaithQuest365, Privacy Policy, Terms of Service and brand assets. It has no sign-in handler, account API, application bundle, database configuration, tracking script or environment variables. The application at `https://faithquest365.app` retains Vercel Authentication for All Deployments.
 
 ## Public identity and links
 
@@ -8,11 +8,11 @@ The owner supplied **Titanium Overcomer** as the operator and **drchristinelee@g
 
 Use these values in Google Auth Platform → Branding → App domain. All three were verified anonymously after deployment:
 
-| Google field                      | Value                                           |
-| --------------------------------- | ----------------------------------------------- |
-| Application home page             | `https://faithquest365-info.vercel.app/`        |
-| Application privacy policy link   | `https://faithquest365-info.vercel.app/privacy` |
-| Application terms of service link | `https://faithquest365-info.vercel.app/terms`   |
+| Google field                      | Value                                    |
+| --------------------------------- | ---------------------------------------- |
+| Application home page             | `https://info.faithquest365.app/`        |
+| Application privacy policy link   | `https://info.faithquest365.app/privacy` |
+| Application terms of service link | `https://info.faithquest365.app/terms`   |
 
 The name is **FaithQuest365**. Google still controls brand/domain verification and publishing; creating these pages does not guarantee approval. A `.vercel.app` hostname does not remove Google's ownership checks. Keep the existing Google-to-Supabase OAuth callback and protected app origin; this information website performs no OAuth itself.
 
@@ -39,18 +39,20 @@ Inspect the exact artifact with the pinned Vercel CLI's `deploy --dry --json`, s
 
 ## Validation
 
+The deployment IDs and test results below are historical evidence from the initial test release, not verification of the new custom-domain deployment. Current canonical public links use the owner-confirmed custom domains above. Changing these links does not update deployment configuration or OAuth settings.
+
 Local static browser checks passed at 1440 px and 320 px for all three pages, including logo loading, no horizontal overflow, keyboard navigation to Privacy Policy, working contents anchors, zero script requests and 404 responses for account/private paths. The Vercel dry-run manifest contains exactly eleven files, about 56 KB, with no environment or application files. Six additional checks on the production account-mode app verified anonymous legal/login rendering, mobile layout, client navigation and no journey requests on those routes. The original development server was not restarted; an attempted read-only localhost probe found it unavailable, so these app checks used a separate temporary production server on port 3196, which was stopped afterward.
 
-The information site is published as deployment `dpl_6SWJntH5AoqNRr3t7EbJhHHRnjGT`, READY at `https://faithquest365-info.vercel.app`, from source `ce9b5a1a2deba70399e58badd1bc3f1ca4e9a5b8`. Anonymous HTTPS checks of the homepage, `/privacy`, `/terms` and both PNGs returned 200. Operator/contact text and script-free HTML were verified, along with the deployed CSP. The public project has zero environment variables. Its account, export, OAuth, dashboard and `.env.local` paths returned 404. The authenticated app's health URL still redirected anonymous visitors to Vercel authentication.
+The information site is published as deployment `dpl_6SWJntH5AoqNRr3t7EbJhHHRnjGT`, READY at `https://info.faithquest365.app`, from source `ce9b5a1a2deba70399e58badd1bc3f1ca4e9a5b8`. Anonymous HTTPS checks of the homepage, `/privacy`, `/terms` and both PNGs returned 200. Operator/contact text and script-free HTML were verified, along with the deployed CSP. The public project has zero environment variables. Its account, export, OAuth, dashboard and `.env.local` paths returned 404. The authenticated app's health URL still redirected anonymous visitors to Vercel authentication.
 
 The Google-upload PNG is 120 × 120, 3,637 bytes. The larger PNG is 512 × 512, 20,400 bytes. Both are below Google's 1 MB limit.
 
-The same source passed [GitHub CI](https://github.com/drcabokia/faithquest/actions/runs/39806256343): 255 automated tests, 107 browser tests, lint/application/Edge types, production build and the static information-site build. It is also deployed to the protected application as `dpl_NfTzwXsMttzv7baZvZafTDtg2rhq`, READY at `https://faithquest365-testing.vercel.app`, on Node.js 22.x. Authorized health, privacy, terms and login requests returned 200; operator/contact details, the Google form, policy links and the new logo path were verified. Export returned 401 without an application session. Anonymous privacy/terms/health requests on both its stable and generated domains redirected to Vercel authentication. No new Google sign-in or real-account data mutation was performed during this release; earlier owner sign-in evidence remains separate.
+The same source passed [GitHub CI](https://github.com/drcabokia/faithquest/actions/runs/39806256343): 255 automated tests, 107 browser tests, lint/application/Edge types, production build and the static information-site build. It is also deployed to the protected application as `dpl_NfTzwXsMttzv7baZvZafTDtg2rhq`, READY at `https://faithquest365.app`, on Node.js 22.x. Authorized health, privacy, terms and login requests returned 200; operator/contact details, the Google form, policy links and the new logo path were verified. Export returned 401 without an application session. Anonymous privacy/terms/health requests on both its stable and generated domains redirected to Vercel authentication. No new Google sign-in or real-account data mutation was performed during this release; earlier owner sign-in evidence remains separate.
 
 Both projects record the same source SHA and have no automatic Git connection. No database schema, Supabase/Google Auth configuration, session, paid plan or private-test protection setting was changed. `main` remains unchanged; source and publication records are on the feature branch/draft PR.
 
 ## Search Console ownership verification
 
-The owner supplied a Google Search Console HTML verification tag for the URL-prefix property `https://faithquest365-info.vercel.app/` after Google's branding review requested ownership proof. Its public value is stored as `googleSiteVerification` in `src/content/site.json`. The static build validates the value and inserts the exact meta tag once near the start of the homepage's `<head>`. It is not a sign-in credential, analytics script or change to the protected app's authentication.
+The owner supplied a Google Search Console HTML verification tag for the original information-site URL-prefix property after Google's branding review requested ownership proof. Its public value is stored as `googleSiteVerification` in `src/content/site.json`. The static build validates the value and inserts the exact meta tag once near the start of the homepage's `<head>`. It is not a sign-in credential, analytics script or change to the protected app's authentication.
 
 Keep the tag in future public deployments: Google periodically rechecks it. After the published tag is confirmed accessible without authentication, the owner must click **Verify** in Search Console. Only after Google confirms ownership should the owner start the **24-hour wait** requested by the branding review, then retry **Verify Branding**. Publishing the tag alone is not a claim of successful Search Console or OAuth brand verification. See [Google's HTML-tag instructions](https://support.google.com/webmasters/answer/9008080?hl=en).
