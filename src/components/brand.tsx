@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-export function Logo({ short = false }: { short?: boolean }) {
+export function Logo() {
   return (
     <Link href="/" className="brand" aria-label="FaithQuest365 home">
       <Image
@@ -12,13 +12,7 @@ export function Logo({ short = false }: { short?: boolean }) {
         unoptimized
       />
       <span>
-        {short ? (
-          "FaithQuest"
-        ) : (
-          <>
-            FaithQuest<span className="brand-365">365</span>
-          </>
-        )}
+        FaithQuest<span className="brand-365">365</span>
         <small>YOUR DAILY WALK IN THE WORD</small>
       </span>
     </Link>

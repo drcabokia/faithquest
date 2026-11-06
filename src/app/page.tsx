@@ -26,7 +26,7 @@ export default function Home() {
         <Logo />
         <nav aria-label="Landing navigation">
           <a href="#the-journey">The journey</a>
-          <a href="#features">Why FaithQuest?</a>
+          <a href="#features">Why FaithQuest365?</a>
           <Button asChild variant="secondary" size="sm">
             <Link href="/login">
               Get started <ArrowRight size={15} />

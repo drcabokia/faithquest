@@ -36,7 +36,7 @@ export function RestoreBackup() {
       <Upload size={23} />
       <h2>Restore a backup</h2>
       <p>
-        Choose a FaithQuest JSON export, up to 5 MB. Preview it before adding
+        Choose a FaithQuest365 JSON export, up to 5 MB. Preview it before adding
         missing chapters, quiz answers, reflections, saved verses, challenge
         history, private verse notes, prayer requests and grace dates. Existing
         entries and your reading preferences stay in place. XP is calculated

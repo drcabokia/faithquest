@@ -466,7 +466,7 @@ export function Fellowship() {
           <h2>Live groups require a signed-in account</h2>
           <p>
             This is a personal demo stored in your browser. It does not create
-            groups or share participation. Use FaithQuest’s account mode to
+            groups or share participation. Use FaithQuest365’s account mode to
             create or join a private group.
           </p>
           <Button asChild>

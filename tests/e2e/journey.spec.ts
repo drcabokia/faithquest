@@ -7,11 +7,13 @@ import { readingRhythmUiTest } from "../support/reading-rhythm-ui";
 import { journalConflictTests } from "../support/journal-conflicts";
 import { prayerListFlowTest } from "../support/prayer-list-flow";
 import { readingComfortTests } from "../support/reading-comfort";
+import { brandingTest } from "../support/branding";
 import { test, expect } from "@playwright/test";
 import { readFile } from "node:fs/promises";
 import { addDays, dateInZone } from "../../src/lib/dates";
 import { PLAN } from "../../src/services/reading-plan";
 const KEY = "faithquest365.demo.v1";
+brandingTest();
 test("parallel demo grace claims preserve only one explicit date and no reading credit", async ({
   page,
   context,

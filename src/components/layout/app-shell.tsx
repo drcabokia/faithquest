@@ -69,7 +69,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       )}
       <aside className={cn("sidebar", open && "sidebar-open")}>
         <div className="sidebar-brand">
-          <Logo short />
+          <Logo />
           <button
             className="mobile-close icon-control"
             aria-label="Close navigation"

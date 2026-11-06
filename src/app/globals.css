@@ -419,7 +419,7 @@ em {
   margin: 0 6px 39px;
 }
 .sidebar .brand > span {
-  font-size: 1.4375rem;
+  font-size: 1.25rem;
 }
 .sidebar .brand svg,
 .sidebar .brand img {
@@ -427,7 +427,8 @@ em {
   height: 38px;
 }
 .sidebar .brand small {
-  font-size: 0.75rem;
+  font-size: 0.625rem;
+  max-width: 13em;
 }
 .nav-caption {
   font-size: 0.875rem;
@@ -2962,7 +2963,7 @@ select {
     padding-inline: 13px;
   }
   .sidebar .brand > span {
-    font-size: 1.3125rem;
+    font-size: 1.1875rem;
   }
   .app-main {
     margin-left: 216px;
@@ -3272,7 +3273,7 @@ select {
     margin-bottom: 30px;
   }
   .sidebar .brand > span {
-    font-size: 1.4375rem;
+    font-size: 1.125rem;
   }
   .mobile-close {
     width: 25px;

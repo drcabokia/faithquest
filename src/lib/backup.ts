@@ -113,11 +113,11 @@ export function parseBackup(
   try {
     raw = JSON.parse(text);
   } catch {
-    throw new Error("Choose a valid FaithQuest JSON backup.");
+    throw new Error("Choose a valid FaithQuest365 JSON backup.");
   }
   const parsed = stateSchema.safeParse(raw);
   if (!parsed.success)
-    throw new Error("Choose a supported FaithQuest version 1 backup.");
+    throw new Error("Choose a supported FaithQuest365 version 1 backup.");
   const state = parsed.data;
   return validateRestore(
     {
