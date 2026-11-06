@@ -15,6 +15,8 @@ import { JourneyArt } from "@/components/journey-art";
 import { Button } from "@/components/ui/button";
 import { LegalLinks } from "@/components/legal-links";
 import { SiteSignature } from "@/components/site-signature";
+import { publicMetadata } from "@/lib/public-metadata";
+export const metadata = publicMetadata("/", "A daily walk in the Word");
 export default function Home() {
   const account = storageMode() === "supabase";
   return (

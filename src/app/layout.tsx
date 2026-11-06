@@ -2,7 +2,11 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { storageMode } from "@/lib/supabase/config";
 import { JourneyProvider } from "@/components/journey-provider";
+import site from "@/content/site.json";
+import { publicMetadata } from "@/lib/public-metadata";
 export const metadata: Metadata = {
+  ...publicMetadata("/", "A daily walk in the Word"),
+  metadataBase: new URL(site.appOrigin),
   icons: {
     icon: "/brand/faithquest365-mark.svg",
     apple: "/brand/faithquest365-logo-512.png",

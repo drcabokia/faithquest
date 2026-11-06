@@ -5,6 +5,12 @@ import { Button } from "@/components/ui/button";
 import { accountsEnabled, storageMode } from "@/lib/supabase/config";
 import { LegalLinks } from "@/components/legal-links";
 import { SiteSignature } from "@/components/site-signature";
+import { publicMetadata } from "@/lib/public-metadata";
+export const metadata = publicMetadata(
+  "/login",
+  "Sign in",
+  "Sign in to FaithQuest365 to continue your Bible reading journey and private reflections.",
+);
 export default async function Login({
   searchParams,
 }: {

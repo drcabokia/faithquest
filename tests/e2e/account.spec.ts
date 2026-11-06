@@ -8,12 +8,14 @@ import { journalConflictTests } from "../support/journal-conflicts";
 import { prayerListFlowTest } from "../support/prayer-list-flow";
 import { readingComfortTests } from "../support/reading-comfort";
 import { brandingTest } from "../support/branding";
+import { publicSeoTest } from "../support/public-seo";
 import { readFile } from "node:fs/promises";
 import { test, expect } from "@playwright/test";
 import { addDays, dateInZone } from "../../src/lib/dates";
 
 const control = "http://127.0.0.1:43191/__control";
 brandingTest();
+publicSeoTest();
 async function graceFixture(
   request: import("@playwright/test").APIRequestContext,
 ) {
