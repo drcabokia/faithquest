@@ -17,3 +17,7 @@ Each item receives a focused commit after lint, application type checks, the ful
 Phase 1 code is complete. All five items have focused commits. No migration, hosted setting or environment-file changes were made. Deployment is separate; confirm one real Google sign-in on the custom app domain after deployment. Synthetic tests cannot establish provider configuration or live Google acceptance.
 
 ## Phase 2 — Quick wins
+
+| Item          | Result and files                                                                                                                                                                                             | Verification                                                                           |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------- |
+| 6. Quiz badge | Fixed the `/quiz` comparison in `src/components/layout/app-shell.tsx`. The decorative badge preserves the Daily Quiz accessible name. Added `tests/support/navigation.ts` coverage shared by both e2e specs. | Lint, types, 261 unit tests, both builds, 38 demo and 78 account browser tests passed. |

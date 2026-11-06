@@ -9,6 +9,7 @@ import { prayerListFlowTest } from "../support/prayer-list-flow";
 import { readingComfortTests } from "../support/reading-comfort";
 import { brandingTest } from "../support/branding";
 import { publicSeoTest } from "../support/public-seo";
+import { quizBadgeTest } from "../support/navigation";
 import { test, expect } from "@playwright/test";
 import { readFile } from "node:fs/promises";
 import { addDays, dateInZone } from "../../src/lib/dates";
@@ -16,6 +17,7 @@ import { PLAN } from "../../src/services/reading-plan";
 const KEY = "faithquest365.demo.v1";
 brandingTest();
 publicSeoTest();
+quizBadgeTest();
 test("parallel demo grace claims preserve only one explicit date and no reading credit", async ({
   page,
   context,

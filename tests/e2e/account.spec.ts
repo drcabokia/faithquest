@@ -9,6 +9,7 @@ import { prayerListFlowTest } from "../support/prayer-list-flow";
 import { readingComfortTests } from "../support/reading-comfort";
 import { brandingTest } from "../support/branding";
 import { publicSeoTest } from "../support/public-seo";
+import { quizBadgeTest } from "../support/navigation";
 import { readFile } from "node:fs/promises";
 import { test, expect } from "@playwright/test";
 import { addDays, dateInZone } from "../../src/lib/dates";
@@ -16,6 +17,7 @@ import { addDays, dateInZone } from "../../src/lib/dates";
 const control = "http://127.0.0.1:43191/__control";
 brandingTest();
 publicSeoTest();
+quizBadgeTest();
 async function pkceOnly(context: import("@playwright/test").BrowserContext) {
   await context.clearCookies();
   await context.addCookies([

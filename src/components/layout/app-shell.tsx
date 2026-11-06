@@ -90,7 +90,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             >
               <Icon size={19} strokeWidth={1.7} />
               {label}
-              {href === "quiz" && <span className="nav-new">NEW</span>}
+              {href === "/quiz" && (
+                <span className="nav-new" aria-hidden="true">
+                  NEW
+                </span>
+              )}
             </Link>
           ))}
         </nav>
