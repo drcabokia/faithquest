@@ -10,6 +10,7 @@ import { readingComfortTests } from "../support/reading-comfort";
 import { brandingTest } from "../support/branding";
 import { publicSeoTest } from "../support/public-seo";
 import { quizBadgeTest } from "../support/navigation";
+import { firstRunTest } from "../support/first-run";
 import { test, expect } from "@playwright/test";
 import { readFile } from "node:fs/promises";
 import { addDays, dateInZone } from "../../src/lib/dates";
@@ -18,6 +19,7 @@ const KEY = "faithquest365.demo.v1";
 brandingTest();
 publicSeoTest();
 quizBadgeTest();
+firstRunTest();
 test("parallel demo grace claims preserve only one explicit date and no reading credit", async ({
   page,
   context,
@@ -865,13 +867,10 @@ test("demo fellowship clearly requires account mode and creates no fake groups o
   await expect(page).toHaveURL(/\/reading-plan$/);
   expect(groupRequests).toBe(0);
 });
-test("a demo challenge joins from the dashboard, counts a completed mission once and fits a phone", async ({
+test("a demo challenge counts a completed mission once and fits a phone", async ({
   page,
 }) => {
-  await page.goto("/dashboard");
-  await page
-    .getByRole("link", { name: /Start a seven-day reading challenge/ })
-    .click();
+  await page.goto("/challenges");
   await page
     .getByRole("button", { name: "Start seven-day challenge", exact: true })
     .click();
@@ -1408,10 +1407,13 @@ test("complete a mission, earn rewards once, save/edit a reflection, and retain 
   );
   await page.getByRole("link", { name: "Begin your journey" }).click();
   await expect(page.getByRole("heading", { level: 1 })).toContainText(
-    "Welcome back",
+    "Welcome to FaithQuest365",
   );
   await page
-    .getByRole("link", { name: "Continue reading", exact: true })
+    .getByRole("link", { name: "Start reading plan", exact: true })
+    .click();
+  await page
+    .getByRole("link", { name: "Open next mission", exact: true })
     .click();
   for (let chapter = 1; chapter <= 3; chapter++) {
     await expect(page.locator(".reader-title h2")).toHaveText(
@@ -1515,7 +1517,7 @@ test("mobile navigation, all feature routes, and persistent dark theme", async (
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/dashboard");
   await expect(page.getByRole("heading", { level: 1 })).toContainText(
-    "Welcome back",
+    "Welcome to FaithQuest365",
   );
   for (const label of [
     "My Reading Plan",
@@ -1544,7 +1546,7 @@ test("mobile navigation, all feature routes, and persistent dark theme", async (
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
   await page.goto("/dashboard");
   await expect(page.getByRole("heading", { level: 1 })).toContainText(
-    "Welcome back",
+    "Welcome to FaithQuest365",
   );
   await page.screenshot({
     path: ".cache/qa/dashboard-mobile-dark.png",

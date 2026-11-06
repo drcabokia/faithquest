@@ -640,6 +640,47 @@ em {
 [data-theme="dark"] .sun-icon {
   display: none;
 }
+.first-journey {
+  padding-block: 12px 28px;
+}
+.first-journey h1 {
+  overflow-wrap: anywhere;
+}
+.welcome-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+  margin-top: 30px;
+}
+.welcome-action {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  min-width: 0;
+  padding: 24px;
+}
+.welcome-action > svg {
+  color: var(--primary);
+}
+.welcome-action h2 {
+  font-size: 1.375rem;
+  line-height: 1.4;
+}
+.welcome-action p {
+  color: var(--muted);
+  margin: 0 0 8px;
+}
+.welcome-action .button {
+  margin-top: auto;
+  max-width: 100%;
+  white-space: normal;
+}
+@media (max-width: 1000px) {
+  .welcome-actions {
+    grid-template-columns: 1fr;
+  }
+}
 .dashboard-heading {
   display: flex;
   justify-content: space-between;
