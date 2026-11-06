@@ -800,7 +800,15 @@ describe("Google OAuth and session refresh", () => {
     expect(response.headers.get("location")).toBeNull();
     expect(response.cookies.get("sb-refresh")?.value).toBe("retained-token");
     expect(response.headers.get("cache-control")).toContain("no-store");
-    expect(await response.text()).not.toContain("Private Reader");
+    expect(response.headers.get("content-type")).toContain("text/html");
+    expect(response.headers.get("retry-after")).toBe("5");
+    const html = await response.text();
+    expect(html).toContain("/brand/faithquest365-mark.svg");
+    expect(html).toContain("Try again</button>");
+    expect(html).toContain(
+      `Reference: ${response.headers.get("x-request-id")}`,
+    );
+    expect(html).not.toContain("Private Reader");
   });
   it("keeps a thrown proxy connection failure retryable", async () => {
     mocks.claims.mockRejectedValue(new TypeError("fetch failed"));

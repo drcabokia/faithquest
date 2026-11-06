@@ -1607,7 +1607,10 @@ test("chronological account previews and review downloads cannot activate a draf
     }),
   ).toBeVisible();
   await expect(
-    catalogue.getByRole("link", { name: "Job 1:1 · Read source", exact: true }),
+    catalogue.getByRole("link", {
+      name: "Job 1:1 · Read source",
+      exact: true,
+    }),
   ).toHaveAttribute("href", "/bible?book=JOB&chapter=1#verse-1");
   await catalogue
     .getByLabel("Preview week", { exact: true })
@@ -3099,6 +3102,38 @@ test("an identity-service outage preserves the session and allows a later export
   expect((await download).suggestedFilename()).toBe(
     "faithquest365-account-export.json",
   );
+});
+
+test("a branded account outage can retry the same reader location on a phone", async ({
+  page,
+  request,
+}) => {
+  await page.setViewportSize({ width: 320, height: 720 });
+  await request.post(control, { data: { authUnavailable: true } });
+  const response = await page.goto("/bible?book=GEN&chapter=2");
+  expect(response?.status()).toBe(503);
+  expect(response?.headers()["retry-after"]).toBe("5");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText(
+    "A moment to reconnect.",
+  );
+  await expect(
+    page.getByRole("link", { name: "FaithQuest365 home" }),
+  ).toBeVisible();
+  await expect(page.locator(".account-reference")).toContainText(
+    response!.headers()["x-request-id"],
+  );
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= innerWidth,
+    ),
+  ).toBe(true);
+  await request.post(control, { data: { authUnavailable: false } });
+  await page.getByRole("button", { name: "Try again", exact: true }).click();
+  await expect(page).toHaveURL(/\/bible\?book=GEN&chapter=2$/);
+  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Mark chapter as read", exact: true }),
+  ).toBeVisible();
 });
 
 test("a committed save with a lost response is recovered without another reward", async ({

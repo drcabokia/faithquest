@@ -8,6 +8,7 @@ import {
 import { authFailure } from "@/lib/supabase/auth-failure";
 import { accountSessionFailure } from "@/lib/supabase/account-session";
 import { operationTrace } from "../supabase/functions/_shared/operations";
+import { accountUnavailablePage } from "@/lib/account-unavailable-page";
 const journeyRoutes = [
   "/dashboard",
   "/reading-plan",
@@ -34,10 +35,16 @@ export async function proxy(request: NextRequest) {
   function unavailable() {
     const reference = trace.record(503);
     const failed = new NextResponse(
-      `Your account service is temporarily unavailable. Refresh this page to try again. Reference: ${reference}`,
+      accountUnavailablePage(reference, request.nextUrl),
       {
         status: 503,
-        headers: { "Retry-After": "5", "X-Request-ID": reference },
+        headers: {
+          "Content-Type": "text/html; charset=utf-8",
+          "Retry-After": "5",
+          "X-Request-ID": reference,
+          "Content-Security-Policy":
+            "default-src 'none'; img-src 'self'; style-src 'self'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'",
+        },
       },
     );
     for (const cookie of response.cookies.getAll()) failed.cookies.set(cookie);
